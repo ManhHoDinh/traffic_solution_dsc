@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/lineChartScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen.dart';
 
-void main() {
+void main() async {
+   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+ 
   runApp(const MyApp());
 }
 
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(body: LineChartSample1()),
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

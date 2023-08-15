@@ -9,9 +9,11 @@ class _LineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LineChart(
-      isShowingMainData ? sampleData1 : sampleData2,
-      duration: const Duration(milliseconds: 250),
+    return Scaffold(
+      body: LineChart(
+        isShowingMainData ? sampleData1 : sampleData2,
+        duration: const Duration(milliseconds: 250),
+      ),
     );
   }
 
@@ -109,7 +111,7 @@ class _LineChart extends StatelessWidget {
         text = '3m';
         break;
       case 4:
-        text = '5m';
+        text = '4m';
         break;
       case 5:
         text = '6m';
@@ -287,14 +289,14 @@ class _LineChart extends StatelessWidget {
       );
 }
 
-class LineChartSample1 extends StatefulWidget {
-  const LineChartSample1({super.key});
+class LineChartScreen extends StatefulWidget {
+  const LineChartScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => LineChartSample1State();
+  State<StatefulWidget> createState() => LineChartScreenState();
 }
 
-class LineChartSample1State extends State<LineChartSample1> {
+class LineChartScreenState extends State<LineChartScreen> {
   late bool isShowingMainData;
 
   @override
@@ -316,7 +318,7 @@ class LineChartSample1State extends State<LineChartSample1> {
                 height: 37,
               ),
               const Text(
-                'Monthly Sales',
+                'Traffic Counting',
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 32,
