@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "844473077697",
+    "project_id": "trafficsolution-395806",
+    "storage_bucket": "trafficsolution-395806.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844473077697:android:93fb2d9b759260d1416940",
+        "android_client_info": {
+          "package_name": "com.example.traffic_solution_dsc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844473077697-5m7f4dr20gk2vrvboh59brf9vg2q2ceb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL_Kn3lVo4ebBk9RdObFCAxUUEqvkswVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844473077697-5m7f4dr20gk2vrvboh59brf9vg2q2ceb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "844473077697-4q5j8978fvg6b1un6jgaudr3m7a9c59s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.trafficSolutionDsc.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

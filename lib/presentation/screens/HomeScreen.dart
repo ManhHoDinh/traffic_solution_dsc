@@ -8,6 +8,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/presentation/screens/lineChartScreen.dart';
 import 'package:traffic_solution_dsc/services/location_service.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:place_picker/place_picker.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -90,12 +93,43 @@ class MapSampleState extends State<MapSample> {
           Row(
             children: [
               Expanded(
-                child: TextFormField(
-                  controller: searchControl,
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (value) {
-                    print(value);
+                child: GooglePlaceAutoCompleteTextField(
+                  textEditingController: searchControl,
+                  googleAPIKey: "AIzaSyD_6AN4CVrPSkr3iWDVzO-rtuccuq6jgaM",
+                  inputDecoration: InputDecoration(),
+                  debounceTime: 800, // default 600 ms,
+                  countries: ["in", "fr"], // optional by default null is set
+                  isLatLngRequired:
+                      true, // if you required coordinates from place detail
+                  getPlaceDetailWithLatLng: (Prediction prediction) {
+                    // this method will return latlng with place detail
+                    print("placeDetails" + prediction.lng.toString());
+                  }, // this callback is called when isLatLngRequired is true
+                  itemClick: (Prediction prediction) {
+                    searchControl.text = prediction.description ?? '';
+                    searchControl.selection = TextSelection.fromPosition(
+                        TextPosition(offset: prediction.description!.length));
                   },
+                  // if we want to make custom list item builder
+                  itemBuilder: (context, index, Prediction prediction) {
+                    return Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(Icons.location_on),
+                          SizedBox(
+                            width: 7,
+                          ),
+                          Expanded(
+                              child: Text("${prediction.description ?? ""}"))
+                        ],
+                      ),
+                    );
+                  },
+                  // if you want to add seperator between list items
+                  seperatedBuilder: Divider(),
+                  // want to show close icon
+                  isCrossBtnShown: true,
                 ),
               ),
               ElevatedButton(
@@ -124,10 +158,8 @@ class MapSampleState extends State<MapSample> {
               onTap: (value) {
                 print(value);
                 Random r = Random(5);
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => LineChartScreen()));
+                showPlacePicker(value);
               },
-              
             ),
           ),
         ],
@@ -160,5 +192,13 @@ class MapSampleState extends State<MapSample> {
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  }
+
+  void showPlacePicker(LatLng value) async {
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PlacePicker(
+              "AIzaSyD_6AN4CVrPSkr3iWDVzO-rtuccuq6jgaM",
+              displayLocation: value,
+            )));
   }
 }
