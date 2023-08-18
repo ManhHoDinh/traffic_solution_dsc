@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (context) => PostCubit(),
-        child: PostScreen(),
+        child: HomeScreen(),
       ),
       debugShowCheckedModeBanner: false,
     );
