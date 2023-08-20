@@ -1,19 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'areaStreet.dart';
+part of 'business.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AreaStreet _$$_AreaStreetFromJson(Map<String, dynamic> json) =>
-    _$_AreaStreet(
+_$_Business _$$_BusinessFromJson(Map<String, dynamic> json) => _$_Business(
       id: json['id'] as String,
-      streetId: json['streetId'] as String?,
+      Name: json['Name'] as String?,
+      Type: json['Type'] as String?,
     );
 
-Map<String, dynamic> _$$_AreaStreetToJson(_$_AreaStreet instance) =>
+Map<String, dynamic> _$$_BusinessToJson(_$_Business instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'streetId': instance.streetId,
+      'Name': instance.Name,
+      'Type': instance.Type,
     };

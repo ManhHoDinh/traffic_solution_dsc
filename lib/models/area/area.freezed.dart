@@ -20,7 +20,7 @@ Area _$AreaFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Area {
-  int get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get wardId => throw _privateConstructorUsedError;
 
@@ -34,7 +34,7 @@ abstract class $AreaCopyWith<$Res> {
   factory $AreaCopyWith(Area value, $Res Function(Area) then) =
       _$AreaCopyWithImpl<$Res, Area>;
   @useResult
-  $Res call({int id, String? name, String? wardId});
+  $Res call({String id, String? name, String? wardId});
 }
 
 /// @nodoc
@@ -58,7 +58,7 @@ class _$AreaCopyWithImpl<$Res, $Val extends Area>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -77,7 +77,7 @@ abstract class _$$_AreaCopyWith<$Res> implements $AreaCopyWith<$Res> {
       __$$_AreaCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String? name, String? wardId});
+  $Res call({String id, String? name, String? wardId});
 }
 
 /// @nodoc
@@ -97,7 +97,7 @@ class __$$_AreaCopyWithImpl<$Res> extends _$AreaCopyWithImpl<$Res, _$_Area>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -118,7 +118,7 @@ class _$_Area with DiagnosticableTreeMixin implements _Area {
   factory _$_Area.fromJson(Map<String, dynamic> json) => _$$_AreaFromJson(json);
 
   @override
-  final int id;
+  final String id;
   @override
   final String? name;
   @override
@@ -169,14 +169,14 @@ class _$_Area with DiagnosticableTreeMixin implements _Area {
 
 abstract class _Area implements Area {
   const factory _Area(
-      {required final int id,
+      {required final String id,
       final String? name,
       final String? wardId}) = _$_Area;
 
   factory _Area.fromJson(Map<String, dynamic> json) = _$_Area.fromJson;
 
   @override
-  int get id;
+  String get id;
   @override
   String? get name;
   @override

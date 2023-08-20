@@ -6,7 +6,7 @@ part 'area.g.dart';
 @freezed
 class Area with _$Area {
   const factory Area({
-    required int id,
+    required String id,
     String? name,
     String? wardId,
   }) = _Area;
