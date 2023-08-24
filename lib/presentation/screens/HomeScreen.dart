@@ -3,14 +3,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
 import 'package:traffic_solution_dsc/presentation/screens/lineChartScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/services/location_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:place_picker/place_picker.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -37,14 +42,18 @@ class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
+  static const LatLng _pVNUDorm = LatLng(15.834257, 108.149133);
   static const CameraPosition _kBVNUDorm = CameraPosition(
-    target: LatLng(10.882495758523962, 106.78255494069631),
+    target: _pVNUDorm,
     zoom: 16,
   );
-  @override
-  void initState() {
-    super.initState();
-  }
+
+  static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
+
+  static const CameraPosition _kUIT = CameraPosition(
+    target: _pUIT,
+    zoom: 16,
+  );
 
 // created method for getting user current location
   Future<Position> getUserCurrentLocation() async {
@@ -57,11 +66,6 @@ class MapSampleState extends State<MapSample> {
     return await Geolocator.getCurrentPosition();
   }
 
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(310.882495758523962, 106.78255494069631),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
   static final Marker _kGooglePlexMarker = Marker(
       markerId: MarkerId('_kGooglePlex'),
       infoWindow: InfoWindow(title: 'Google Plex'),
@@ -82,6 +86,29 @@ class MapSampleState extends State<MapSample> {
   //     ],
   //     strokeWidth: 5);
   TextEditingController searchControl = TextEditingController();
+  List<LatLng> polylineCoordinates = [];
+  void getPolyPoints() async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        GlobalString.GoogleAPIKey,
+        PointLatLng(_pVNUDorm.latitude, _pVNUDorm.longitude),
+        PointLatLng(_pUIT.latitude, _pUIT.longitude));
+    if (result.points.isNotEmpty) {
+      print("Hello");
+      result.points.forEach((element) {
+        polylineCoordinates.add(LatLng(element.latitude, element.longitude));
+      });
+    }
+    print("Hello");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPolyPoints();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,59 +119,26 @@ class MapSampleState extends State<MapSample> {
         children: [
           Row(
             children: [
-              Expanded(
-                child: GooglePlaceAutoCompleteTextField(
-                  textEditingController: searchControl,
-                  googleAPIKey: "AIzaSyD_6AN4CVrPSkr3iWDVzO-rtuccuq6jgaM",
-                  inputDecoration: InputDecoration(),
-                  debounceTime: 800, // default 600 ms,
-                  countries: ["in", "fr"], // optional by default null is set
-                  isLatLngRequired:
-                      true, // if you required coordinates from place detail
-                  getPlaceDetailWithLatLng: (Prediction prediction) {
-                    // this method will return latlng with place detail
-                    print("placeDetails" + prediction.lng.toString());
-                  }, // this callback is called when isLatLngRequired is true
-                  itemClick: (Prediction prediction) {
-                    searchControl.text = prediction.description ?? '';
-                    searchControl.selection = TextSelection.fromPosition(
-                        TextPosition(offset: prediction.description!.length));
-                  },
-                  // if we want to make custom list item builder
-                  itemBuilder: (context, index, Prediction prediction) {
-                    return Container(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Icon(Icons.location_on),
-                          SizedBox(
-                            width: 7,
-                          ),
-                          Expanded(
-                              child: Text("${prediction.description ?? ""}"))
-                        ],
-                      ),
-                    );
-                  },
-                  // if you want to add seperator between list items
-                  seperatedBuilder: Divider(),
-                  // want to show close icon
-                  isCrossBtnShown: true,
-                ),
-              ),
-              ElevatedButton(
-                child: Icon(Icons.search),
-                onPressed: () {
-                  LocationService.getPlace(searchControl.text);
+              Expanded(child: TextField(
+                onTap: () {
+                  LocationService.route();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                            create: (context) => SearchCubit(),
+                            child: SearchScreen(),
+                          )));
                 },
-              )
+              )),
             ],
           ),
           Expanded(
             child: GoogleMap(
               mapType: MapType.normal,
               initialCameraPosition: _kBVNUDorm,
-              markers: {_kGooglePlexMarker, _kLakeMarker},
+              markers: {
+                Marker(markerId: MarkerId('KTX khu B'), position: _pVNUDorm),
+                Marker(markerId: MarkerId('UIT'), position: _pUIT),
+              },
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
@@ -154,11 +148,16 @@ class MapSampleState extends State<MapSample> {
               indoorViewEnabled: true,
               trafficEnabled: true,
               fortyFiveDegreeImageryEnabled: true,
-              //polygons: {_kPolygon},
+              polylines: {
+                Polyline(
+                    polylineId: PolylineId("Route"),
+                    points: polylineCoordinates,
+                    color: Colors.blue)
+              },
               onTap: (value) {
                 print(value);
                 Random r = Random(5);
-                showPlacePicker(value);
+                showPlacePicker(LatLng(10.870251224876043, 106.80337596158505));
               },
             ),
           ),
@@ -189,15 +188,15 @@ class MapSampleState extends State<MapSample> {
     );
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
+  // Future<void> _goToTheLake() async {
+  //   final GoogleMapController controller = await _controller.future;
+  //   await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  // }
 
   void showPlacePicker(LatLng value) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PlacePicker(
-              "AIzaSyD_6AN4CVrPSkr3iWDVzO-rtuccuq6jgaM",
+              GlobalString.GoogleAPIKey,
               displayLocation: value,
             )));
   }
