@@ -43,6 +43,7 @@ dependencies:
   place_picker: ^0.10.0
   geolocator: ^9.0.2
   google_places_flutter: ^2.0.6
+  label_marker: ^1.0.1
   #mapbox_gl: ^0.16.0
   #bloc
   flutter_bloc: ^8.1.3
@@ -57,7 +58,7 @@ dependencies:
   json_annotation: ^4.8.1
   #get API
   dio: ^4.0.6
-
+  #geospatial analysis
 dev_dependencies:
   flutter_test:
     sdk: flutter
