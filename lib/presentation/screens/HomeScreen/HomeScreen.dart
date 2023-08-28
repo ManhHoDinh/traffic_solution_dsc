@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/lineChartScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
@@ -47,12 +48,13 @@ class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  static const LatLng _pVNUDorm = LatLng(15.834257, 108.149133);
+  static const LatLng _pVNUDorm =
+      LatLng(10.882495758523962, 106.78255494069631);
   static const CameraPosition _kBVNUDorm = CameraPosition(
     target: _pVNUDorm,
     zoom: 16,
   );
-
+  
   static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
 
   static const CameraPosition _kUIT = CameraPosition(
@@ -81,15 +83,6 @@ class MapSampleState extends State<MapSample> {
       infoWindow: InfoWindow(title: 'Lake Plex'),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
       position: LatLng(37.43296265331129, -122.08832357078792));
-  // static final Polygon _kPolygon = Polygon(
-  //     polygonId: PolygonId('_kpolygon'),
-  //     points: [
-  //       LatLng(37.43296265331129, -122.08832357078792),
-  //       LatLng(37.42796133580664, -122.085749655962),
-  //       LatLng(37.41296265331129, -122.092),
-  //       LatLng(37.45, -122.092),
-  //     ],
-  //     strokeWidth: 5);
 
   Set<Marker> markers = {};
   Future<void> moveCamera(CameraPosition camera) async {
@@ -201,27 +194,33 @@ class MapSampleState extends State<MapSample> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => ChooseLocation()));
+          },
+          child: Icon(Icons.directions)),
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {
-      //     getUserCurrentLocation().then((value) async {
-      //       print(value.latitude.toString() + " " + value.longitude.toString());
+      //     // getUserCurrentLocation().then((value) async {
+      //     //   print(value.latitude.toString() + " " + value.longitude.toString());
 
-      //       // marker added for current users location
+      //     //   // marker added for current users location
 
-      //       // specified current users location
-      //       CameraPosition cameraPosition = new CameraPosition(
-      //         target: LatLng(value.latitude, value.longitude),
-      //         zoom: 14,
-      //       );
+      //     //   // specified current users location
+      //     //   CameraPosition cameraPosition = new CameraPosition(
+      //     //     target: LatLng(value.latitude, value.longitude),
+      //     //     zoom: 14,
+      //     //   );
 
-      //       final GoogleMapController controller = await _controller.future;
-      //       controller
-      //           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      //       setState(() {});
-      //     });
+      //     //   final GoogleMapController controller = await _controller.future;
+      //     //   controller
+      //     //       .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      //     //   setState(() {});
+      //     // });
       //   },
-      //   label: const Text('To the lake!'),
-      //   icon: const Icon(Icons.directions_boat),
+      //   label: const Text(''),
+      //   icon: const Icon(Icons.directions),
       // ),
     );
   }
@@ -247,7 +246,7 @@ class MapSampleState extends State<MapSample> {
     double height = boundingBox[1].latitude - boundingBox[0].latitude;
 
     // Tính toán tỉ lệ zoom dựa trên độ rộng và độ cao của khu vực
-    double zoomLevel = (log(height * width) / log(2.0) + 1.0);
+    double zoomLevel = height * width;
     print(zoomLevel);
     zoomLevel = min(max(zoomLevel, 1), 21);
 
