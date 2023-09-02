@@ -37,13 +37,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (context, index) {
                       return ElevatedButton(
                         onPressed: () {
-                          print(location[index]);
-                          Navigator.of(context).pop(location[index]);
+                          // print(location[index]);
+                          // Navigator.of(context).pop(location[index]);
                         },
                         child: ListTile(
-                          title: Text(
-                              location![index].placeName!.toString() ?? ""),
-                          subtitle: Text(location![index].center.toString()),
+                          title: Text(''),
+                          //     location![index].placeName!.toString() ?? ""),
+                          // subtitle: Text(location![index].center.toString()),
                         ),
                       );
                     }),

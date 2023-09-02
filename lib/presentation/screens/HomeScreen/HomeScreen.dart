@@ -2,25 +2,20 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
+import 'package:traffic_solution_dsc/constraints/status.dart';
+import 'package:traffic_solution_dsc/models/placeNear/placeNear.dart';
+import 'package:traffic_solution_dsc/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/lineChartScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
-import 'package:traffic_solution_dsc/services/location_service.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:place_picker/place_picker.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-import 'package:traffic_solution_dsc/models/searchResponse/feature.dart';
 import 'package:label_marker/label_marker.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,7 +39,7 @@ class MapSample extends StatefulWidget {
   State<MapSample> createState() => MapSampleState();
 }
 
-class MapSampleState extends State<MapSample> {
+class MapSampleState extends State<MapSample> with TickerProviderStateMixin {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -54,13 +49,9 @@ class MapSampleState extends State<MapSample> {
     target: _pVNUDorm,
     zoom: 16,
   );
-  
+  late AnimationController _bottomSheetController;
+  LatLng defaultLocation = LatLng(0, 0);
   static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
-
-  static const CameraPosition _kUIT = CameraPosition(
-    target: _pUIT,
-    zoom: 16,
-  );
 
 // created method for getting user current location
   Future<Position> getUserCurrentLocation() async {
@@ -72,17 +63,6 @@ class MapSampleState extends State<MapSample> {
     });
     return await Geolocator.getCurrentPosition();
   }
-
-  static final Marker _kGooglePlexMarker = Marker(
-      markerId: MarkerId('_kGooglePlex'),
-      infoWindow: InfoWindow(title: 'Google Plex'),
-      icon: BitmapDescriptor.defaultMarker,
-      position: LatLng(37.42796133580664, -122.085749655962));
-  static final Marker _kLakeMarker = Marker(
-      markerId: MarkerId('_kLake'),
-      infoWindow: InfoWindow(title: 'Lake Plex'),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-      position: LatLng(37.43296265331129, -122.08832357078792));
 
   Set<Marker> markers = {};
   Future<void> moveCamera(CameraPosition camera) async {
@@ -99,6 +79,7 @@ class MapSampleState extends State<MapSample> {
       Marker(markerId: MarkerId('KTX khu B'), position: _pVNUDorm),
       Marker(markerId: MarkerId('UIT'), position: _pUIT)
     ]);
+    _bottomSheetController = AnimationController(vsync: this);
   }
 
   @override
@@ -124,7 +105,6 @@ class MapSampleState extends State<MapSample> {
                       Features location = result;
                       LatLng latLng = LatLng(location.center!.elementAt(1),
                           location.center!.first);
-                      double screenWidth = MediaQuery.of(context).size.width;
 
                       markers.addLabelMarker(LabelMarker(
                           label: location.text!,
@@ -154,44 +134,77 @@ class MapSampleState extends State<MapSample> {
             ],
           ),
           Expanded(
-            child: BlocBuilder<HomeCubit, HomeState>(
-                buildWhen: (previous, current) => true,
-                builder: (context, state) => state.when(
-                    initial: () => Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                    loading: () => Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                    loaded: (camera) {
-                      return GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: camera,
-                        markers: markers,
-                        onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-                        },
-                        tiltGesturesEnabled: true,
-                        myLocationButtonEnabled: true,
-                        myLocationEnabled: true,
-                        indoorViewEnabled: true,
-                        trafficEnabled: true,
-                        fortyFiveDegreeImageryEnabled: true,
-                        polylines: {
-                          Polyline(
-                              polylineId: PolylineId("Route"),
-                              //points: polylineCoordinates,
-                              color: Colors.blue)
-                        },
-                        onTap: (value) {
-                          print(value);
-                        },
-                      );
-                    },
-                    error: (e) => Center(
-                          child: Text(e),
-                        ))),
-          ),
+              child: GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: _kBVNUDorm,
+            markers: markers,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+            tiltGesturesEnabled: true,
+            myLocationButtonEnabled: true,
+            myLocationEnabled: true,
+            indoorViewEnabled: true,
+            trafficEnabled: true,
+            zoomControlsEnabled: false,
+            fortyFiveDegreeImageryEnabled: true,
+            polylines: {
+              Polyline(
+                  polylineId: PolylineId("Route"),
+                  //points: polylineCoordinates,
+                  color: Colors.blue)
+            },
+            onTap: (value) {
+              setState(() {
+                defaultLocation = value;
+              });
+
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return defaultLocation != LatLng(0, 0)
+                        ? BlocProvider(
+                            create: (context) => HomeCubit(),
+                            child: BlocConsumer<HomeCubit, HomeState>(
+                              listener: (context, state) {
+                                context
+                                    .read<HomeCubit>()
+                                    .getPlaceNear(defaultLocation);
+                              },
+                              buildWhen: (previous, current) =>
+                                  previous.data != current.data,
+                              builder: (context, state) {
+                                if (state.data!.status == StatusType.loaded) {
+                                  context
+                                      .read<HomeCubit>()
+                                      .getPlaceNear(defaultLocation);
+
+                                  return Container(
+                                    height: 150,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Text(state.data!.locationSelected!
+                                              .results!.first.name
+                                              .toString() +
+                                          "$defaultLocation"),
+                                    ),
+                                  );
+                                }
+                                return Container(
+                                  height: 150,
+                                  width: double.infinity,
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                );
+                              },
+                            ),
+                          )
+                        : Container(
+                            height: 0,
+                          );
+                  });
+            },
+          )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -200,6 +213,24 @@ class MapSampleState extends State<MapSample> {
                 .push(MaterialPageRoute(builder: (_) => ChooseLocation()));
           },
           child: Icon(Icons.directions)),
+
+      // bottomSheet: BlocBuilder<HomeCubit, HomeState>(
+      //   buildWhen: (previous, current) => true,
+      //   builder: (context, state) {
+      //     if (defaultLocation != LatLng(0, 0)) {
+      //       context
+      //           .read<HomeCubit>()
+      //           .getPlaceNear(state.data!.locationSelected);
+      //       return Container(
+      //         height: 150,
+      //       );
+      //     }
+
+      //     return Container(
+      //       height: 0,
+      //     );
+      //   },
+      // ),
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {
       //     // getUserCurrentLocation().then((value) async {
@@ -229,14 +260,6 @@ class MapSampleState extends State<MapSample> {
   //   final GoogleMapController controller = await _controller.future;
   //   await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   // }
-
-  void showPlacePicker(LatLng value) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PlacePicker(
-              GlobalString.GoogleAPIKey,
-              displayLocation: value,
-            )));
-  }
 
   double calculateZoomLevel(List<LatLng> boundingBox) {
     // Tính toán độ rộng của khu vực theo kinh tuyến

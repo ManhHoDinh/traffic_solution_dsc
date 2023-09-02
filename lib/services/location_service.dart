@@ -2,7 +2,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
-import 'package:traffic_solution_dsc/models/searchResponse/searchResponse.dart';
 
 class LocationService {
   static final String key = GlobalString.GoogleAPIKey;

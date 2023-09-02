@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,21 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/cubit/direction_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/lineChartScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationChooseWidget.dart';
-import 'package:traffic_solution_dsc/services/location_service.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:place_picker/place_picker.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-
-import 'package:traffic_solution_dsc/models/searchResponse/feature.dart';
-import 'package:label_marker/label_marker.dart';
 
 class DirectionScreen extends StatefulWidget {
   const DirectionScreen({Key? key}) : super(key: key);
@@ -61,17 +48,8 @@ class _DirectionScreenState extends State<DirectionScreen> {
 
   static const LatLng _pVNUDorm =
       LatLng(10.882495758523962, 106.78255494069631);
-  static const CameraPosition _kBVNUDorm = CameraPosition(
-    target: _pVNUDorm,
-    zoom: 16,
-  );
 
   static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
-
-  static const CameraPosition _kUIT = CameraPosition(
-    target: _pUIT,
-    zoom: 16,
-  );
 
 // created method for getting user current location
   Future<Position> getUserCurrentLocation() async {
@@ -83,17 +61,6 @@ class _DirectionScreenState extends State<DirectionScreen> {
     });
     return await Geolocator.getCurrentPosition();
   }
-
-  static final Marker _kGooglePlexMarker = Marker(
-      markerId: MarkerId('_kGooglePlex'),
-      infoWindow: InfoWindow(title: 'Google Plex'),
-      icon: BitmapDescriptor.defaultMarker,
-      position: LatLng(37.42796133580664, -122.085749655962));
-  static final Marker _kLakeMarker = Marker(
-      markerId: MarkerId('_kLake'),
-      infoWindow: InfoWindow(title: 'Lake Plex'),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-      position: LatLng(37.43296265331129, -122.08832357078792));
 
   Set<Marker> markers = {};
   Future<void> moveCamera(CameraPosition camera) async {
@@ -207,47 +174,38 @@ class _DirectionScreenState extends State<DirectionScreen> {
                         Expanded(
                           child: BlocBuilder<HomeCubit, HomeState>(
                               buildWhen: (previous, current) => true,
-                              builder: (context, state) => state.when(
-                                  initial: () => Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  loading: () => Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  loaded: (camera) {
-                                    return GoogleMap(
-                                      mapType: MapType.normal,
-                                      initialCameraPosition: camera,
-                                      markers: {
-                                        Marker(
-                                            markerId: MarkerId(sourceText),
-                                            icon: BitmapDescriptor
-                                                .defaultMarkerWithHue(
-                                                    BitmapDescriptor.hueGreen),
-                                            position: source),
-                                        Marker(
-                                            markerId: MarkerId(destinationText),
-                                            position: destination)
-                                      },
-                                      onMapCreated:
-                                          (GoogleMapController controller) {
-                                        _controller.complete(controller);
-                                      },
-                                      tiltGesturesEnabled: true,
-                                      myLocationButtonEnabled: true,
-                                      myLocationEnabled: true,
-                                      indoorViewEnabled: true,
-                                      trafficEnabled: true,
-                                      fortyFiveDegreeImageryEnabled: true,
-                                      polylines: polylines,
-                                      onTap: (value) {
-                                        print(value);
-                                      },
-                                    );
+                              builder: (context, state) {
+                                return GoogleMap(
+                                  mapType: MapType.normal,
+                                  initialCameraPosition:
+                                      state.data!.locationSelectedCamera!,
+                                  markers: {
+                                    Marker(
+                                        markerId: MarkerId(sourceText),
+                                        icon: BitmapDescriptor
+                                            .defaultMarkerWithHue(
+                                                BitmapDescriptor.hueGreen),
+                                        position: source),
+                                    Marker(
+                                        markerId: MarkerId(destinationText),
+                                        position: destination)
                                   },
-                                  error: (e) => Center(
-                                        child: Text(e),
-                                      ))),
+                                  onMapCreated:
+                                      (GoogleMapController controller) {
+                                    _controller.complete(controller);
+                                  },
+                                  tiltGesturesEnabled: true,
+                                  myLocationButtonEnabled: true,
+                                  myLocationEnabled: true,
+                                  indoorViewEnabled: true,
+                                  trafficEnabled: true,
+                                  fortyFiveDegreeImageryEnabled: true,
+                                  polylines: polylines,
+                                  onTap: (value) {
+                                    print(value);
+                                  },
+                                );
+                              }),
                         ),
                       ],
                     );

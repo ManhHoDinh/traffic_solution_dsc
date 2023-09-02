@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'searchResponse.dart';
+part of 'map_box_search.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-SearchResponse _$SearchResponseFromJson(Map<String, dynamic> json) {
-  return _SearchResponse.fromJson(json);
+MapBoxSearch _$MapBoxSearchFromJson(Map<String, dynamic> json) {
+  return _MapBoxSearch.fromJson(json);
 }
 
 /// @nodoc
-mixin _$SearchResponse {
+mixin _$MapBoxSearch {
   @JsonKey(name: 'type')
   String? get type => throw _privateConstructorUsedError;
   @JsonKey(name: 'query')
@@ -31,15 +31,15 @@ mixin _$SearchResponse {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $SearchResponseCopyWith<SearchResponse> get copyWith =>
+  $MapBoxSearchCopyWith<MapBoxSearch> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SearchResponseCopyWith<$Res> {
-  factory $SearchResponseCopyWith(
-          SearchResponse value, $Res Function(SearchResponse) then) =
-      _$SearchResponseCopyWithImpl<$Res, SearchResponse>;
+abstract class $MapBoxSearchCopyWith<$Res> {
+  factory $MapBoxSearchCopyWith(
+          MapBoxSearch value, $Res Function(MapBoxSearch) then) =
+      _$MapBoxSearchCopyWithImpl<$Res, MapBoxSearch>;
   @useResult
   $Res call(
       {@JsonKey(name: 'type') String? type,
@@ -49,9 +49,9 @@ abstract class $SearchResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SearchResponseCopyWithImpl<$Res, $Val extends SearchResponse>
-    implements $SearchResponseCopyWith<$Res> {
-  _$SearchResponseCopyWithImpl(this._value, this._then);
+class _$MapBoxSearchCopyWithImpl<$Res, $Val extends MapBoxSearch>
+    implements $MapBoxSearchCopyWith<$Res> {
+  _$MapBoxSearchCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -88,11 +88,11 @@ class _$SearchResponseCopyWithImpl<$Res, $Val extends SearchResponse>
 }
 
 /// @nodoc
-abstract class _$$_SearchResponseCopyWith<$Res>
-    implements $SearchResponseCopyWith<$Res> {
-  factory _$$_SearchResponseCopyWith(
-          _$_SearchResponse value, $Res Function(_$_SearchResponse) then) =
-      __$$_SearchResponseCopyWithImpl<$Res>;
+abstract class _$$_MapBoxSearchCopyWith<$Res>
+    implements $MapBoxSearchCopyWith<$Res> {
+  factory _$$_MapBoxSearchCopyWith(
+          _$_MapBoxSearch value, $Res Function(_$_MapBoxSearch) then) =
+      __$$_MapBoxSearchCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -103,11 +103,11 @@ abstract class _$$_SearchResponseCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_SearchResponseCopyWithImpl<$Res>
-    extends _$SearchResponseCopyWithImpl<$Res, _$_SearchResponse>
-    implements _$$_SearchResponseCopyWith<$Res> {
-  __$$_SearchResponseCopyWithImpl(
-      _$_SearchResponse _value, $Res Function(_$_SearchResponse) _then)
+class __$$_MapBoxSearchCopyWithImpl<$Res>
+    extends _$MapBoxSearchCopyWithImpl<$Res, _$_MapBoxSearch>
+    implements _$$_MapBoxSearchCopyWith<$Res> {
+  __$$_MapBoxSearchCopyWithImpl(
+      _$_MapBoxSearch _value, $Res Function(_$_MapBoxSearch) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -118,7 +118,7 @@ class __$$_SearchResponseCopyWithImpl<$Res>
     Object? features = freezed,
     Object? attribution = freezed,
   }) {
-    return _then(_$_SearchResponse(
+    return _then(_$_MapBoxSearch(
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -141,10 +141,8 @@ class __$$_SearchResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_SearchResponse
-    with DiagnosticableTreeMixin
-    implements _SearchResponse {
-  const _$_SearchResponse(
+class _$_MapBoxSearch with DiagnosticableTreeMixin implements _MapBoxSearch {
+  const _$_MapBoxSearch(
       {@JsonKey(name: 'type') this.type,
       @JsonKey(name: 'query') final List<String>? query,
       @JsonKey(name: 'features') final List<Features>? features,
@@ -152,8 +150,8 @@ class _$_SearchResponse
       : _query = query,
         _features = features;
 
-  factory _$_SearchResponse.fromJson(Map<String, dynamic> json) =>
-      _$$_SearchResponseFromJson(json);
+  factory _$_MapBoxSearch.fromJson(Map<String, dynamic> json) =>
+      _$$_MapBoxSearchFromJson(json);
 
   @override
   @JsonKey(name: 'type')
@@ -186,14 +184,14 @@ class _$_SearchResponse
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchResponse(type: $type, query: $query, features: $features, attribution: $attribution)';
+    return 'MapBoxSearch(type: $type, query: $query, features: $features, attribution: $attribution)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'SearchResponse'))
+      ..add(DiagnosticsProperty('type', 'MapBoxSearch'))
       ..add(DiagnosticsProperty('type', type))
       ..add(DiagnosticsProperty('query', query))
       ..add(DiagnosticsProperty('features', features))
@@ -204,7 +202,7 @@ class _$_SearchResponse
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SearchResponse &&
+            other is _$_MapBoxSearch &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality().equals(other._query, _query) &&
             const DeepCollectionEquality().equals(other._features, _features) &&
@@ -224,27 +222,27 @@ class _$_SearchResponse
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_SearchResponseCopyWith<_$_SearchResponse> get copyWith =>
-      __$$_SearchResponseCopyWithImpl<_$_SearchResponse>(this, _$identity);
+  _$$_MapBoxSearchCopyWith<_$_MapBoxSearch> get copyWith =>
+      __$$_MapBoxSearchCopyWithImpl<_$_MapBoxSearch>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_SearchResponseToJson(
+    return _$$_MapBoxSearchToJson(
       this,
     );
   }
 }
 
-abstract class _SearchResponse implements SearchResponse {
-  const factory _SearchResponse(
+abstract class _MapBoxSearch implements MapBoxSearch {
+  const factory _MapBoxSearch(
           {@JsonKey(name: 'type') final String? type,
           @JsonKey(name: 'query') final List<String>? query,
           @JsonKey(name: 'features') final List<Features>? features,
           @JsonKey(name: 'attribution') final String? attribution}) =
-      _$_SearchResponse;
+      _$_MapBoxSearch;
 
-  factory _SearchResponse.fromJson(Map<String, dynamic> json) =
-      _$_SearchResponse.fromJson;
+  factory _MapBoxSearch.fromJson(Map<String, dynamic> json) =
+      _$_MapBoxSearch.fromJson;
 
   @override
   @JsonKey(name: 'type')
@@ -260,6 +258,6 @@ abstract class _SearchResponse implements SearchResponse {
   String? get attribution;
   @override
   @JsonKey(ignore: true)
-  _$$_SearchResponseCopyWith<_$_SearchResponse> get copyWith =>
+  _$$_MapBoxSearchCopyWith<_$_MapBoxSearch> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -20,7 +20,7 @@ mixin _$SearchState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<Features>? locations) loaded,
+    required TResult Function(List<SearchResult>? locations) loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +28,7 @@ mixin _$SearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<Features>? locations)? loaded,
+    TResult? Function(List<SearchResult>? locations)? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +36,7 @@ mixin _$SearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<Features>? locations)? loaded,
+    TResult Function(List<SearchResult>? locations)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -131,7 +131,7 @@ class _$_Initial with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<Features>? locations) loaded,
+    required TResult Function(List<SearchResult>? locations) loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -142,7 +142,7 @@ class _$_Initial with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<Features>? locations)? loaded,
+    TResult? Function(List<SearchResult>? locations)? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -153,7 +153,7 @@ class _$_Initial with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<Features>? locations)? loaded,
+    TResult Function(List<SearchResult>? locations)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -250,7 +250,7 @@ class _$_Loading with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<Features>? locations) loaded,
+    required TResult Function(List<SearchResult>? locations) loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -261,7 +261,7 @@ class _$_Loading with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<Features>? locations)? loaded,
+    TResult? Function(List<SearchResult>? locations)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -272,7 +272,7 @@ class _$_Loading with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<Features>? locations)? loaded,
+    TResult Function(List<SearchResult>? locations)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -329,7 +329,7 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<Features>? locations});
+  $Res call({List<SearchResult>? locations});
 }
 
 /// @nodoc
@@ -348,7 +348,7 @@ class __$$_LoadedCopyWithImpl<$Res>
       freezed == locations
           ? _value._locations
           : locations // ignore: cast_nullable_to_non_nullable
-              as List<Features>?,
+              as List<SearchResult>?,
     ));
   }
 }
@@ -356,11 +356,11 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
-  const _$_Loaded(final List<Features>? locations) : _locations = locations;
+  const _$_Loaded(final List<SearchResult>? locations) : _locations = locations;
 
-  final List<Features>? _locations;
+  final List<SearchResult>? _locations;
   @override
-  List<Features>? get locations {
+  List<SearchResult>? get locations {
     final value = _locations;
     if (value == null) return null;
     if (_locations is EqualUnmodifiableListView) return _locations;
@@ -405,7 +405,7 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<Features>? locations) loaded,
+    required TResult Function(List<SearchResult>? locations) loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(locations);
@@ -416,7 +416,7 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<Features>? locations)? loaded,
+    TResult? Function(List<SearchResult>? locations)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(locations);
@@ -427,7 +427,7 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<Features>? locations)? loaded,
+    TResult Function(List<SearchResult>? locations)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -476,9 +476,9 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements SearchState {
-  const factory _Loaded(final List<Features>? locations) = _$_Loaded;
+  const factory _Loaded(final List<SearchResult>? locations) = _$_Loaded;
 
-  List<Features>? get locations;
+  List<SearchResult>? get locations;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -556,7 +556,7 @@ class _$_Error with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<Features>? locations) loaded,
+    required TResult Function(List<SearchResult>? locations) loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -567,7 +567,7 @@ class _$_Error with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<Features>? locations)? loaded,
+    TResult? Function(List<SearchResult>? locations)? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -578,7 +578,7 @@ class _$_Error with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<Features>? locations)? loaded,
+    TResult Function(List<SearchResult>? locations)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
