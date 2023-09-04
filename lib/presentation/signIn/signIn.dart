@@ -9,7 +9,7 @@ import 'package:traffic_solution_dsc/presentation/signIn/subScreens/SignInWithPh
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
-
+  static String routeName = "/sign_in";
   @override
   State<SignIn> createState() => _SignInState();
 }
