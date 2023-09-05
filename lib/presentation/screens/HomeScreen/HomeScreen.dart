@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:custom_map_markers/custom_map_markers.dart';
+import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
 import 'package:traffic_solution_dsc/constraints/status.dart';
+import 'package:traffic_solution_dsc/helper/assets_helper.dart';
+import 'package:traffic_solution_dsc/helper/image_helper.dart';
 import 'package:traffic_solution_dsc/models/placeNear/placeNear.dart';
 import 'package:traffic_solution_dsc/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
@@ -39,7 +43,7 @@ class MapSample extends StatefulWidget {
   State<MapSample> createState() => MapSampleState();
 }
 
-class MapSampleState extends State<MapSample> with TickerProviderStateMixin {
+class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -49,7 +53,6 @@ class MapSampleState extends State<MapSample> with TickerProviderStateMixin {
     target: _pVNUDorm,
     zoom: 16,
   );
-  late AnimationController _bottomSheetController;
   LatLng defaultLocation = LatLng(0, 0);
   static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
 
@@ -70,20 +73,34 @@ class MapSampleState extends State<MapSample> with TickerProviderStateMixin {
     controller.moveCamera(CameraUpdate.newCameraPosition(camera));
   }
 
+  late BitmapDescriptor customIcon;
+
   @override
   void initState() {
     // TODO: implement initState
+    WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+    getIcons();
+
     super.initState();
     context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
-    markers.addAll([
-      Marker(markerId: MarkerId('KTX khu B'), position: _pVNUDorm),
-      Marker(markerId: MarkerId('UIT'), position: _pUIT)
-    ]);
-    _bottomSheetController = AnimationController(vsync: this);
+  }
+
+  getIcons() async {
+    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 20).then((value) {
+      markers.addAll([
+        Marker(
+          markerId: MarkerId('KTX khu B'),
+          position: _pVNUDorm,
+          icon: value,
+        ),
+        Marker(markerId: MarkerId('UIT'), position: _pUIT, icon: value)
+      ]);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+// make sure to initialize before map loading
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Traffic')),
@@ -134,77 +151,74 @@ class MapSampleState extends State<MapSample> with TickerProviderStateMixin {
             ],
           ),
           Expanded(
-              child: GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: _kBVNUDorm,
-            markers: markers,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
-            tiltGesturesEnabled: true,
-            myLocationButtonEnabled: true,
-            myLocationEnabled: true,
-            indoorViewEnabled: true,
-            trafficEnabled: true,
-            zoomControlsEnabled: false,
-            fortyFiveDegreeImageryEnabled: true,
-            polylines: {
-              Polyline(
-                  polylineId: PolylineId("Route"),
-                  //points: polylineCoordinates,
-                  color: Colors.blue)
-            },
-            onTap: (value) {
-              setState(() {
-                defaultLocation = value;
-              });
-
-              showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return defaultLocation != LatLng(0, 0)
-                        ? BlocProvider(
-                            create: (context) => HomeCubit(),
-                            child: BlocConsumer<HomeCubit, HomeState>(
-                              listener: (context, state) {
-                                context
-                                    .read<HomeCubit>()
-                                    .getPlaceNear(defaultLocation);
-                              },
-                              buildWhen: (previous, current) =>
-                                  previous.data != current.data,
-                              builder: (context, state) {
-                                if (state.data!.status == StatusType.loaded) {
-                                  context
-                                      .read<HomeCubit>()
-                                      .getPlaceNear(defaultLocation);
-
-                                  return Container(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: Text(state.data!.locationSelected!
-                                              .results!.first.name
-                                              .toString() +
-                                          "$defaultLocation"),
-                                    ),
-                                  );
-                                }
-                                return Container(
-                                  height: 150,
-                                  width: double.infinity,
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                );
-                              },
-                            ),
-                          )
-                        : Container(
-                            height: 0,
-                          );
+              child: CustomGoogleMapMarkerBuilder(
+            customMarkers: [
+              MarkerData(
+                marker:
+                    Marker(markerId: const MarkerId('id-1'), position: _pUIT),
+                child: Icon(Icons.shop),
+              ),
+              MarkerData(
+                marker: Marker(
+                    markerId: const MarkerId('id-2'), position: _pVNUDorm),
+                child: Icon(Icons.shop),
+              ),
+            ],
+            builder: (BuildContext context, Set<Marker>? markers) {
+              if (markers == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: _kBVNUDorm,
+                markers: markers,
+                // onMapCreated: (GoogleMapController controller) {
+                //   //_controller.complete(controller);
+                // },
+                tiltGesturesEnabled: true,
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
+                indoorViewEnabled: true,
+                trafficEnabled: true,
+                zoomControlsEnabled: false,
+                fortyFiveDegreeImageryEnabled: true,
+                polylines: {
+                  Polyline(
+                      polylineId: PolylineId("Route"),
+                      //points: polylineCoordinates,
+                      color: Colors.blue)
+                },
+                onTap: (value) {
+                  setState(() {
+                    defaultLocation = value;
+                    context
+                        .read<HomeCubit>()
+                        .getPlaceNear(defaultLocation)
+                        .then((value) => {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    if (value.status == StatusType.loaded) {
+                                      return Container(
+                                        height: 150,
+                                        width: double.infinity,
+                                        child: Center(
+                                          child: Text(
+                                              "${value.locationSelected!.results!.first.name} $defaultLocation"),
+                                        ),
+                                      );
+                                    }
+                                    return Container(
+                                      height: 150,
+                                      width: double.infinity,
+                                    );
+                                  })
+                            });
                   });
+                },
+              );
             },
-          )),
+          ))
         ],
       ),
       floatingActionButton: FloatingActionButton(

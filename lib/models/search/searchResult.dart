@@ -8,6 +8,6 @@ class SearchResult with _$SearchResult {
   const factory SearchResult({
     String? name,
     String? address,
-    LatLng? wardId,
+    LatLng? location,
   }) = _SearchResult;
 }
