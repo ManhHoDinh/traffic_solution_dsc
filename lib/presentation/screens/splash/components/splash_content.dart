@@ -30,6 +30,11 @@ class _SplashContentState extends State<SplashContent> {
         ),
         Text(
           widget.text!,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 16.0,
+          ),
           textAlign: TextAlign.center,
         ),
         Spacer(flex: 2),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-//import 'package:traffic_solution_dsc/constants.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
 import 'package:traffic_solution_dsc/constraints/size_config.dart';
-
+import 'dart:async';
 import './splash_content.dart';
 import '../../../../components/default_button.dart';
 
@@ -15,12 +14,12 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "text": "Welcome to Tokoto, Let’s shop!",
+      "text": "Navigate your traffic Help you can know info street and data.",
       "image": "assets/images/splash_1.png"
     },
     {
       "text":
-          "We help people conect with store \naround United State of America",
+          "We help people connect with stores \naround the United States of America",
       "image": "assets/images/splash_2.png"
     },
     {
@@ -28,6 +27,31 @@ class _BodyState extends State<Body> {
       "image": "assets/images/splash_3.png"
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Start a timer to automatically change slides
+    _startTimer();
+  }
+
+  void _startTimer() {
+    const slideDuration = Duration(seconds: 3);
+
+    Timer.periodic(slideDuration, (Timer timer) {
+      if (currentPage < splashData.length - 1) {
+        setState(() {
+          currentPage++;
+        });
+      } else {
+        // If we are at the last slide, cancel the timer
+        timer.cancel();
+        // Optionally, navigate to another screen here if needed
+        // Navigator.pushNamed(context, SignIn.routeName);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,10 +68,12 @@ class _BodyState extends State<Body> {
                   });
                 },
                 itemCount: splashData.length,
-                itemBuilder: (context, index) => SplashContent(
-                  image: splashData[index]["image"],
-                  text: splashData[index]['text'],
-                ),
+                itemBuilder: (context, index) {
+                  return SplashContent(
+                    image: splashData[currentPage]["image"],
+                    text: splashData[currentPage]['text'],
+                  );
+                },
               ),
             ),
             Expanded(
