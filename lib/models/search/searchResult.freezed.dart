@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$SearchResult {
   String? get name => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
-  LatLng? get wardId => throw _privateConstructorUsedError;
+  LatLng? get location => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SearchResultCopyWith<SearchResult> get copyWith =>
@@ -31,7 +31,7 @@ abstract class $SearchResultCopyWith<$Res> {
           SearchResult value, $Res Function(SearchResult) then) =
       _$SearchResultCopyWithImpl<$Res, SearchResult>;
   @useResult
-  $Res call({String? name, String? address, LatLng? wardId});
+  $Res call({String? name, String? address, LatLng? location});
 }
 
 /// @nodoc
@@ -49,7 +49,7 @@ class _$SearchResultCopyWithImpl<$Res, $Val extends SearchResult>
   $Res call({
     Object? name = freezed,
     Object? address = freezed,
-    Object? wardId = freezed,
+    Object? location = freezed,
   }) {
     return _then(_value.copyWith(
       name: freezed == name
@@ -60,9 +60,9 @@ class _$SearchResultCopyWithImpl<$Res, $Val extends SearchResult>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
-      wardId: freezed == wardId
-          ? _value.wardId
-          : wardId // ignore: cast_nullable_to_non_nullable
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
               as LatLng?,
     ) as $Val);
   }
@@ -76,7 +76,7 @@ abstract class _$$_SearchResultCopyWith<$Res>
       __$$_SearchResultCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? name, String? address, LatLng? wardId});
+  $Res call({String? name, String? address, LatLng? location});
 }
 
 /// @nodoc
@@ -92,7 +92,7 @@ class __$$_SearchResultCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? address = freezed,
-    Object? wardId = freezed,
+    Object? location = freezed,
   }) {
     return _then(_$_SearchResult(
       name: freezed == name
@@ -103,9 +103,9 @@ class __$$_SearchResultCopyWithImpl<$Res>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
-      wardId: freezed == wardId
-          ? _value.wardId
-          : wardId // ignore: cast_nullable_to_non_nullable
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
               as LatLng?,
     ));
   }
@@ -114,18 +114,18 @@ class __$$_SearchResultCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_SearchResult with DiagnosticableTreeMixin implements _SearchResult {
-  const _$_SearchResult({this.name, this.address, this.wardId});
+  const _$_SearchResult({this.name, this.address, this.location});
 
   @override
   final String? name;
   @override
   final String? address;
   @override
-  final LatLng? wardId;
+  final LatLng? location;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchResult(name: $name, address: $address, wardId: $wardId)';
+    return 'SearchResult(name: $name, address: $address, location: $location)';
   }
 
   @override
@@ -135,7 +135,7 @@ class _$_SearchResult with DiagnosticableTreeMixin implements _SearchResult {
       ..add(DiagnosticsProperty('type', 'SearchResult'))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('address', address))
-      ..add(DiagnosticsProperty('wardId', wardId));
+      ..add(DiagnosticsProperty('location', location));
   }
 
   @override
@@ -145,11 +145,12 @@ class _$_SearchResult with DiagnosticableTreeMixin implements _SearchResult {
             other is _$_SearchResult &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.address, address) || other.address == address) &&
-            (identical(other.wardId, wardId) || other.wardId == wardId));
+            (identical(other.location, location) ||
+                other.location == location));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, address, wardId);
+  int get hashCode => Object.hash(runtimeType, name, address, location);
 
   @JsonKey(ignore: true)
   @override
@@ -162,14 +163,14 @@ abstract class _SearchResult implements SearchResult {
   const factory _SearchResult(
       {final String? name,
       final String? address,
-      final LatLng? wardId}) = _$_SearchResult;
+      final LatLng? location}) = _$_SearchResult;
 
   @override
   String? get name;
   @override
   String? get address;
   @override
-  LatLng? get wardId;
+  LatLng? get location;
   @override
   @JsonKey(ignore: true)
   _$$_SearchResultCopyWith<_$_SearchResult> get copyWith =>

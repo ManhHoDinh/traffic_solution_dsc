@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/assets/app_resources.dart';
+import 'package:traffic_solution_dsc/helper/app_colors.dart';
 
 class _LineChart extends StatelessWidget {
   const _LineChart({required this.isShowingMainData});

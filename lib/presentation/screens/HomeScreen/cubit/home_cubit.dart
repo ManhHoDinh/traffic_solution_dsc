@@ -21,13 +21,12 @@ class HomeCubit extends Cubit<HomeState> {
       );
       emit(HomeState.getLocationSelectedCamera(
           data: state.data!.copyWith(locationSelectedCamera: _camera)));
-      print("Update");
     } catch (e) {
       emit(HomeState.error(data: state.data!.copyWith(error: e.toString())));
     }
   }
 
-  void getPlaceNear(LatLng latLng) async {
+  Future<HomeStateData> getPlaceNear(LatLng latLng) async {
     try {
       emit(HomeState.loading(
           data: state.data!.copyWith(status: StatusType.loading)));
@@ -51,10 +50,16 @@ class HomeCubit extends Cubit<HomeState> {
       final status = res.statusCode;
       if (status != 200) throw Exception('http.get error: statusCode= $status');
       PlaceNear place = PlaceNear.fromJson(convert.jsonDecode(res.body));
+
       print(res.body);
+
       emit(HomeState.getLocationSelected(
           data: state.data!
               .copyWith(locationSelected: place, status: StatusType.loaded)));
-    } catch (e) {}
+      print(state.data!.status.toString());
+      return state.data!;
+    } catch (e) {
+      return HomeStateData();
+    }
   }
 }
