@@ -5,10 +5,11 @@ import '../../../../constraints/size_config.dart';
 class SplashContent extends StatefulWidget {
   const SplashContent({
     Key? key,
+    this.title,
     this.text,
     this.image,
   }) : super(key: key);
-  final String? text, image;
+  final String? title, text, image;
 
   @override
   _SplashContentState createState() => _SplashContentState();
@@ -20,14 +21,21 @@ class _SplashContentState extends State<SplashContent> {
     return Column(
       children: <Widget>[
         Spacer(),
+        Image.asset(
+          widget.image!,
+          height: getProportionateScreenHeight(265),
+          width: getProportionateScreenWidth(235),
+        ),
+        Spacer(flex: 1),
         Text(
-          "TOKOTO",
+          widget.title!,
           style: TextStyle(
             fontSize: getProportionateScreenWidth(36),
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
+        Spacer(flex: 1),
         Text(
           widget.text!,
           maxLines: 3,
@@ -36,12 +44,6 @@ class _SplashContentState extends State<SplashContent> {
             fontSize: 16.0,
           ),
           textAlign: TextAlign.center,
-        ),
-        Spacer(flex: 2),
-        Image.asset(
-          widget.image!,
-          height: getProportionateScreenHeight(265),
-          width: getProportionateScreenWidth(235),
         ),
       ],
     );

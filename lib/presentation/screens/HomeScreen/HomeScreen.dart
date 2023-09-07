@@ -24,7 +24,7 @@ import 'package:label_marker/label_marker.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
+  static String routeName = "/home";
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
 import 'package:traffic_solution_dsc/constraints/size_config.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import './splash_content.dart';
 import '../../../../components/default_button.dart';
@@ -14,16 +17,20 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "text": "Navigate your traffic Help you can know info street and data.",
+      "title": "Traffic Solution!",
+      "text": "Navigate your traffic\nHelp you can know info street\nand data.",
       "image": "assets/images/splash_1.png"
     },
     {
+      "title": "Store Exploration!",
       "text":
-          "We help people connect with stores \naround the United States of America",
+          "Provide info every street\nCompare info Industry Competitors\nManage your store.",
       "image": "assets/images/splash_2.png"
     },
     {
-      "text": "We show the easy way to shop. \nJust stay at home with us",
+      "title": "Your City Companion!",
+      "text":
+          "Provide info every street\nCompare info Industry Competitors\nManage your store.",
       "image": "assets/images/splash_3.png"
     },
   ];
@@ -70,8 +77,9 @@ class _BodyState extends State<Body> {
                 itemCount: splashData.length,
                 itemBuilder: (context, index) {
                   return SplashContent(
-                    image: splashData[currentPage]["image"],
-                    text: splashData[currentPage]['text'],
+                    title: splashData[index]["title"],
+                    image: splashData[index]["image"],
+                    text: splashData[index]['text'],
                   );
                 },
               ),
@@ -102,12 +110,35 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
-                    Spacer(flex: 3),
-                    DefaultButton(
-                      text: "Continue",
-                      press: () {
-                        Navigator.pushNamed(context, SignIn.routeName);
-                      },
+                    Spacer(flex: 1),
+                    Padding(
+                      padding:
+                          EdgeInsets.all(10.0), // Define the padding you want
+                      child: DefaultButton(
+                          color: Color(0xFFAFF8E9),
+                          text: "Continue as guest",
+                          press: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => HomeCubit(),
+                                  child: HomeScreen(),
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.all(10.0), // Define the padding you want
+                      child: DefaultButton(
+                        color: Color(0xFF003860),
+                        text: "Login",
+                        press: () {
+                          Navigator.pushNamed(context, SignIn.routeName);
+                        },
+                      ),
                     ),
                     Spacer(),
                   ],

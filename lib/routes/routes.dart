@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
 import 'package:traffic_solution_dsc/presentation/screens/splash/splash_screen.dart';
@@ -8,4 +9,5 @@ import 'package:traffic_solution_dsc/presentation/screens/splash/splash_screen.d
 final Map<String, WidgetBuilder> routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   SignIn.routeName: (context) => SignIn(),
+  HomeScreen.routeName: (context) => HomeScreen(),
 };
