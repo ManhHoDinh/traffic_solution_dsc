@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:traffic_solution_dsc/models/placeNear/locations.dart';
+import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
 part 'results.freezed.dart';
 part 'results.g.dart';
 

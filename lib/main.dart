@@ -1,12 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:traffic_solution_dsc/get_it.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
-import 'package:traffic_solution_dsc/services/firebase_options.dart';
+import 'package:traffic_solution_dsc/core/services/firebase_options.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+   await configureDependencies();
+
   Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
@@ -21,10 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(
-        create: (context) => HomeCubit(),
-        child: HomeScreen(),
-      ),
+      home: HomeScreen.provider(),
       debugShowCheckedModeBanner: false,
     );
   }

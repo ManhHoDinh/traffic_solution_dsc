@@ -53,11 +53,16 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_auth: ^4.7.3
   #freezed
-  freezed: ^2.4.2
+  freezed: ^2.4.1
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   #get API
   dio: ^4.0.6
+  retrofit: ^3.3.1
+  logger: ^1.1.0
+  get_it: ^7.2.0
+  injectable: ^2.1.0
+
   #geospatial analysis
   font_awesome_flutter: ^10.5.0
   custom_marker: ^1.0.0
@@ -65,6 +70,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  retrofit_generator: ^4.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -88,6 +94,7 @@ flutter:
   #flutter:
   assets:
     - assets/images/
+    - assets/
 #   - images/a_dot_burr.jpeg
 #   - images/a_dot_ham.jpeg
 

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/services/location_service.dart';
+import 'package:traffic_solution_dsc/core/services/location_service.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -37,12 +37,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (context, index) {
                       return ElevatedButton(
                         onPressed: () {
-                          print(location![index]);
+                          print(location[index]);
                           Navigator.of(context).pop(location[index]);
                         },
                         child: ListTile(
-                          title: Text(location![index].name!.toString() ?? ""),
-                          subtitle: Text(location[index].address.toString()),
+                          title: Text(location![index].text!.toString() ?? ""),
+                          subtitle: Text(location[index].placeName.toString()),
                         ),
                       );
                     }),
