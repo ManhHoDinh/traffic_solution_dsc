@@ -81,8 +81,13 @@ class MapSampleState extends State<MapSample> {
 
   Set<Marker> markers = {};
   Future<void> moveCamera(CameraPosition camera) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.moveCamera(CameraUpdate.newCameraPosition(camera));
+    try {
+      final GoogleMapController controller = await _controller.future;
+      // controller.moveCamera(CameraUpdate.newCameraPosition(camera));
+      setState(() {
+        context.read<HomeCubit>().getCameraPostion(camera.target);
+      });
+    } catch (e) {}
   }
 
   late BitmapDescriptor customIcon;
@@ -111,11 +116,6 @@ class MapSampleState extends State<MapSample> {
         });
       });
     });
-    _polylines.add(Polyline(
-      polylineId: PolylineId('106.802131'),
-      points: [LatLng(10.866129, 106.802131), LatLng(10.866422, 106.802669)],
-      color: Colors.green,
-    ));
   }
 
   getIcons() async {
@@ -135,14 +135,144 @@ class MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
 // make sure to initialize before map loading
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Traffic')),
-      ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: TextField(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Expanded(
+                child: CustomGoogleMapMarkerBuilder(
+              customMarkers: [
+                MarkerData(
+                  marker:
+                      Marker(markerId: const MarkerId('id-1'), position: _pUIT),
+                  child: Icon(Icons.shop),
+                ),
+                MarkerData(
+                  marker: Marker(
+                      markerId: const MarkerId('id-2'), position: _pVNUDorm),
+                  child: Icon(Icons.shop),
+                ),
+              ],
+              builder: (BuildContext context, Set<Marker>? markers) {
+                if (markers == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) => GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition:
+                        state.data!.locationSelectedCamera ?? _kBVNUDorm,
+                    markers: markers,
+                    onMapCreated: (GoogleMapController controller) {
+                      if (!_controller.isCompleted) {
+                        //first calling is false
+                        //call "completer()"
+                        _controller.complete(controller);
+                      } else {
+                        //other calling, later is true,
+                        //don't call again completer()
+                      }
+                    },
+                    tiltGesturesEnabled: true,
+                    indoorViewEnabled: true,
+                    trafficEnabled: false,
+                    zoomControlsEnabled: false,
+                    fortyFiveDegreeImageryEnabled: true,
+                    polylines: _polylines,
+                    onTap: (value) {
+                      setState(() {
+                        defaultLocation = value;
+                        print(checkAllStreetSegment(value));
+                        String? streetId = checkAllStreetSegment(value);
+                        context
+                            .read<HomeCubit>()
+                            .getPlaceNear(defaultLocation)
+                            .then((value) => {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        if (value.status == StatusType.loaded) {
+                                          return InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ReportScreen(
+                                                            place: value
+                                                                .locationSelected,
+                                                            hasData: streetId !=
+                                                                null,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              height: 150,
+                                              width: double.infinity,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Text(
+                                                    "${value.locationSelected!.results!.first.name}",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  streetId != null
+                                                      ? Column(
+                                                          children: [
+                                                            Text(
+                                                                "Street ${value.locationSelected!.results!.first.types}"),
+                                                            SizedBox(
+                                                              height: 15,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : SizedBox(),
+                                                  Text(
+                                                      "Location: ${value.locationSelected!.results!.first.address}")
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        return Container(
+                                          height: 150,
+                                          width: double.infinity,
+                                        );
+                                      })
+                                });
+                      });
+                    },
+                  ),
+                );
+              },
+            )),
+            Positioned(
+              child: InkWell(
+                child: Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    width: double.infinity,
+                    child: Text(
+                      'Search here',
+                      style: TextStyle(color: Colors.grey, fontSize: 20),
+                    ),
+                  ),
+                ),
                 onTap: () async {
                   var result =
                       await Navigator.of(context).push(MaterialPageRoute(
@@ -162,143 +292,29 @@ class MapSampleState extends State<MapSample> {
                           position: latLng,
                           backgroundColor: Colors.green,
                           icon: BitmapDescriptor.defaultMarker));
-                      if (location.bbox != null) {
-                        List<LatLng> coordinates = [
-                          LatLng(location.bbox![1], result.bbox![0]),
-                          LatLng(location.bbox![3], result.bbox![2]),
-                        ];
+                      //   if (location.bbox != null) {
+                      //     List<LatLng> coordinates = [
+                      //       LatLng(location.bbox![1], result.bbox![0]),
+                      //       LatLng(location.bbox![3], result.bbox![2]),
+                      //     ];
 
-                        double zoomLevel = calculateZoomLevel(coordinates);
-                        print(zoomLevel);
-                        context.read<HomeCubit>().getCameraPostion(latLng);
-                        moveCamera(
-                            CameraPosition(target: latLng, zoom: zoomLevel));
-                      } else {
-                        moveCamera(CameraPosition(target: latLng, zoom: 13));
-                      }
+                      //     double zoomLevel = calculateZoomLevel(coordinates);
+                      //     print(zoomLevel);
+                      //     context.read<HomeCubit>().getCameraPostion(latLng);
+                      //     moveCamera(
+                      //         CameraPosition(target: latLng, zoom: zoomLevel));
+                      //   } else {
+                      moveCamera(CameraPosition(target: latLng, zoom: 13));
+                      //   }
                     }
-                  } catch (e) {}
-                },
-              )),
-            ],
-          ),
-          Expanded(
-              child: CustomGoogleMapMarkerBuilder(
-            customMarkers: [
-              MarkerData(
-                marker:
-                    Marker(markerId: const MarkerId('id-1'), position: _pUIT),
-                child: Icon(Icons.shop),
-              ),
-              MarkerData(
-                marker: Marker(
-                    markerId: const MarkerId('id-2'), position: _pVNUDorm),
-                child: Icon(Icons.shop),
-              ),
-            ],
-            builder: (BuildContext context, Set<Marker>? markers) {
-              if (markers == null) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _kBVNUDorm,
-                markers: markers,
-                onMapCreated: (GoogleMapController controller) {
-                  if (!_controller.isCompleted) {
-                    //first calling is false
-                    //call "completer()"
-                    _controller.complete(controller);
-                  } else {
-                    //other calling, later is true,
-                    //don't call again completer()
+                  } catch (e) {
+                    print(e.toString());
                   }
                 },
-                tiltGesturesEnabled: true,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                indoorViewEnabled: true,
-                trafficEnabled: false,
-                zoomControlsEnabled: false,
-                fortyFiveDegreeImageryEnabled: true,
-                polylines: _polylines,
-                onTap: (value) {
-                  setState(() {
-                    defaultLocation = value;
-                    print(checkAllStreetSegment(value));
-                    String? streetId = checkAllStreetSegment(value);
-                    context
-                        .read<HomeCubit>()
-                        .getPlaceNear(defaultLocation)
-                        .then((value) => {
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    if (value.status == StatusType.loaded) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) => ReportScreen(
-                                                        place: value
-                                                            .locationSelected,
-                                                        hasData:
-                                                            streetId != null,
-                                                      )));
-                                        },
-                                        child: Container(
-                                          height: 150,
-                                          width: double.infinity,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text(
-                                                "${value.locationSelected!.results!.first.name}",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              streetId != null
-                                                  ? Column(
-                                                      children: [
-                                                        Text(
-                                                            "Street ${value.locationSelected!.results!.first.types}"),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : SizedBox(),
-                                              Text(
-                                                  "Location: ${value.locationSelected!.results!.first.address}")
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return Container(
-                                      height: 150,
-                                      width: double.infinity,
-                                    );
-                                  })
-                            });
-                  });
-                },
-              );
-            },
-          ))
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {

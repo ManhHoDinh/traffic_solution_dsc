@@ -23,6 +23,7 @@ class SearchCubit extends Cubit<SearchState> {
         'fuzzyMatch': 'true',
         'autocomplete': 'true',
         'routing': 'true',
+        'limit': '20'
       };
       final url = Uri.parse(
               'https://api.mapbox.com/geocoding/v5/mapbox.places/${text}.json')
