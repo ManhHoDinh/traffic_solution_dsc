@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/InternetConnectedBloc.dart';
 import 'package:traffic_solution_dsc/presentation/screens/InternetConnectedCubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/post/cubit/post_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/post/postScreen.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/bloc/SignInBloc.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (context) => PostCubit(),
-        child: HomeScreen(),
+        // child: HomeScreen(),
+        child: HomeAdminScreen(),
       ),
       debugShowCheckedModeBanner: false,
     );
