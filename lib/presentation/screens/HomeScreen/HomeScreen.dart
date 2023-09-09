@@ -23,7 +23,8 @@ import 'package:traffic_solution_dsc/presentation/screens/streetSegment/cubit/st
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
+  static String routeName = "/home";
+  static Page page() => const MaterialPage<void>(child: HomeScreen());
   @override
   _HomeScreenState createState() => _HomeScreenState();
   static MultiBlocProvider provider() {
