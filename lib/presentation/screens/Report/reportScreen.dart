@@ -1,6 +1,151 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/helper/app_colors.dart';
+import 'package:traffic_solution_dsc/core/helper/app_colors.dart';
+import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
+
+class ReportScreen extends StatefulWidget {
+  ReportScreen({super.key, this.place, this.hasData});
+  PlaceNear? place;
+  bool? hasData;
+  @override
+  State<StatefulWidget> createState() => ReportScreenState();
+}
+
+class ReportScreenState extends State<ReportScreen> {
+  late bool isShowingMainData;
+  List<TableRow> tableRows = [];
+  @override
+  void initState() {
+    super.initState();
+    isShowingMainData = true;
+    getDefaultTableRow();
+  }
+
+  getDefaultTableRow() {
+    tableRows.clear();
+    tableRows.add(TableRow(children: [
+      Container(
+          height: 50,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+              color: Color(0xffB9B9B9).withOpacity(0.5)),
+          child: Center(
+            child: Text(
+              'Time of day',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+      Container(
+          height: 50,
+          color: Color(0xffB9B9B9).withOpacity(0.5),
+          child: Center(
+            child: Text(
+              'Traffic volume of daily',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+      Container(
+          height: 50,
+          color: Color(0xffB9B9B9).withOpacity(0.5),
+          child: Center(
+            child: Text(
+              'Ratio(%)',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+      Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+              color: Color(0xffB9B9B9).withOpacity(0.5)),
+          height: 50,
+          child: Center(
+            child: Text(
+              'Avg Speed(Km/h)',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+    ]));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "${widget.place!.results!.first.name}",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              widget.hasData!
+                  ? Column(
+                      children: [
+                        Text("Street ${widget.place!.results!.first.types}"),
+                        SizedBox(
+                          height: 15,
+                        ),
+                      ],
+                    )
+                  : SizedBox(),
+              Text("Location: ${widget.place!.results!.first.address}"),
+              Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder.all(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  columnWidths: {
+                    0: FixedColumnWidth(90),
+                    1: FixedColumnWidth(90),
+                    2: FixedColumnWidth(90),
+                    3: FixedColumnWidth(90),
+                    // 3: FixedColumnWidth(80),
+                    //
+                    // for (int i = 0;
+                    //     i < GuestKindModel.AllGuestKinds.length;
+                    //     i++)
+                    //   4 + i: FixedColumnWidth(120),
+                    // //
+                    // 4 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(100),
+                    // 5 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(80),
+                    // 6 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(140),
+                    // 7 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(200),
+                    // 8 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(200),
+                    // 9 + GuestKindModel.AllGuestKinds.length:
+                    //     FixedColumnWidth(100),
+                  },
+                  children: tableRows),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _LineChart extends StatelessWidget {
   const _LineChart({required this.isShowingMainData});
@@ -287,73 +432,4 @@ class _LineChart extends StatelessWidget {
           FlSpot(13, 4.5),
         ],
       );
-}
-
-class LineChartScreen extends StatefulWidget {
-  const LineChartScreen({super.key});
-
-  @override
-  State<StatefulWidget> createState() => LineChartScreenState();
-}
-
-class LineChartScreenState extends State<LineChartScreen> {
-  late bool isShowingMainData;
-
-  @override
-  void initState() {
-    super.initState();
-    isShowingMainData = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.23,
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const SizedBox(
-                height: 37,
-              ),
-              const Text(
-                'Traffic Counting',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 37,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16, left: 6),
-                  child: _LineChart(isShowingMainData: isShowingMainData),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
-              color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
-            ),
-            onPressed: () {
-              setState(() {
-                isShowingMainData = !isShowingMainData;
-              });
-            },
-          )
-        ],
-      ),
-    );
-  }
 }

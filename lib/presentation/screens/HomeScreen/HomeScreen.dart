@@ -8,19 +8,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
-import 'package:traffic_solution_dsc/constraints/status.dart';
-import 'package:traffic_solution_dsc/helper/assets_helper.dart';
-import 'package:traffic_solution_dsc/helper/image_helper.dart';
-import 'package:traffic_solution_dsc/models/placeNear/placeNear.dart';
-import 'package:traffic_solution_dsc/models/search/mapbox/feature.dart';
+import 'package:traffic_solution_dsc/core/constraints/status.dart';
+import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Report/reportScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:place_picker/place_picker.dart';
 
 import 'package:label_marker/label_marker.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetSegment/cubit/street_segment_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,6 +27,19 @@ class HomeScreen extends StatefulWidget {
   static Page page() => const MaterialPage<void>(child: HomeScreen());
   @override
   _HomeScreenState createState() => _HomeScreenState();
+  static MultiBlocProvider provider() {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeCubit>(
+          create: (BuildContext context) => HomeCubit(),
+        ),
+        BlocProvider<StreetSegmentCubit>(
+          create: (BuildContext context) => StreetSegmentCubit(),
+        ),
+      ],
+      child: const HomeScreen(),
+    );
+  }
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -70,20 +82,41 @@ class MapSampleState extends State<MapSample> {
 
   Set<Marker> markers = {};
   Future<void> moveCamera(CameraPosition camera) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.moveCamera(CameraUpdate.newCameraPosition(camera));
+    try {
+      final GoogleMapController controller = await _controller.future;
+      // controller.moveCamera(CameraUpdate.newCameraPosition(camera));
+      setState(() {
+        context.read<HomeCubit>().getCameraPostion(camera.target);
+      });
+    } catch (e) {}
   }
 
   late BitmapDescriptor customIcon;
-
+  Set<Polyline> _polylines = {};
+  List<StreetSegment> streetSegments = [];
   @override
   void initState() {
     // TODO: implement initState
-    WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
-    getIcons();
-
     super.initState();
-    context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
+
+    WidgetsBinding.instance.endOfFrame.then((value) async {
+      getIcons();
+      context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
+      context.read<StreetSegmentCubit>().getStreetSegment().then((value) {
+        streetSegments = value;
+        print(value);
+        value.forEach((e) {
+          _polylines.add(Polyline(
+            polylineId: PolylineId(e.id.toString()),
+            points: [
+              LatLng(e.StartLng!, e.StartLat!),
+              LatLng(e.EndLng!, e.EndLat!)
+            ],
+            color: Colors.green,
+          ));
+        });
+      });
+    });
   }
 
   getIcons() async {
@@ -103,14 +136,144 @@ class MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
 // make sure to initialize before map loading
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Traffic')),
-      ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: TextField(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Expanded(
+                child: CustomGoogleMapMarkerBuilder(
+              customMarkers: [
+                MarkerData(
+                  marker:
+                      Marker(markerId: const MarkerId('id-1'), position: _pUIT),
+                  child: Icon(Icons.shop),
+                ),
+                MarkerData(
+                  marker: Marker(
+                      markerId: const MarkerId('id-2'), position: _pVNUDorm),
+                  child: Icon(Icons.shop),
+                ),
+              ],
+              builder: (BuildContext context, Set<Marker>? markers) {
+                if (markers == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) => GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition:
+                        state.data!.locationSelectedCamera ?? _kBVNUDorm,
+                    markers: markers,
+                    onMapCreated: (GoogleMapController controller) {
+                      if (!_controller.isCompleted) {
+                        //first calling is false
+                        //call "completer()"
+                        _controller.complete(controller);
+                      } else {
+                        //other calling, later is true,
+                        //don't call again completer()
+                      }
+                    },
+                    tiltGesturesEnabled: true,
+                    indoorViewEnabled: true,
+                    trafficEnabled: false,
+                    zoomControlsEnabled: false,
+                    fortyFiveDegreeImageryEnabled: true,
+                    polylines: _polylines,
+                    onTap: (value) {
+                      setState(() {
+                        defaultLocation = value;
+                        print(checkAllStreetSegment(value));
+                        String? streetId = checkAllStreetSegment(value);
+                        context
+                            .read<HomeCubit>()
+                            .getPlaceNear(defaultLocation)
+                            .then((value) => {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        if (value.status == StatusType.loaded) {
+                                          return InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ReportScreen(
+                                                            place: value
+                                                                .locationSelected,
+                                                            hasData: streetId !=
+                                                                null,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              height: 150,
+                                              width: double.infinity,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Text(
+                                                    "${value.locationSelected!.results!.first.name}",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  streetId != null
+                                                      ? Column(
+                                                          children: [
+                                                            Text(
+                                                                "Street ${value.locationSelected!.results!.first.types}"),
+                                                            SizedBox(
+                                                              height: 15,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : SizedBox(),
+                                                  Text(
+                                                      "Location: ${value.locationSelected!.results!.first.address}")
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        return Container(
+                                          height: 150,
+                                          width: double.infinity,
+                                        );
+                                      })
+                                });
+                      });
+                    },
+                  ),
+                );
+              },
+            )),
+            Positioned(
+              child: InkWell(
+                child: Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    width: double.infinity,
+                    child: Text(
+                      'Search here',
+                      style: TextStyle(color: Colors.grey, fontSize: 20),
+                    ),
+                  ),
+                ),
                 onTap: () async {
                   var result =
                       await Navigator.of(context).push(MaterialPageRoute(
@@ -130,97 +293,29 @@ class MapSampleState extends State<MapSample> {
                           position: latLng,
                           backgroundColor: Colors.green,
                           icon: BitmapDescriptor.defaultMarker));
-                      if (location.bbox != null) {
-                        List<LatLng> coordinates = [
-                          LatLng(location.bbox![1], result.bbox![0]),
-                          LatLng(location.bbox![3], result.bbox![2]),
-                        ];
+                      //   if (location.bbox != null) {
+                      //     List<LatLng> coordinates = [
+                      //       LatLng(location.bbox![1], result.bbox![0]),
+                      //       LatLng(location.bbox![3], result.bbox![2]),
+                      //     ];
 
-                        print(latLng);
-                        double zoomLevel = calculateZoomLevel(coordinates);
-                        print(zoomLevel);
-                        context.read<HomeCubit>().getCameraPostion(latLng);
-                        moveCamera(
-                            CameraPosition(target: latLng, zoom: zoomLevel));
-                      } else {
-                        moveCamera(CameraPosition(target: latLng, zoom: 13));
-                      }
+                      //     double zoomLevel = calculateZoomLevel(coordinates);
+                      //     print(zoomLevel);
+                      //     context.read<HomeCubit>().getCameraPostion(latLng);
+                      //     moveCamera(
+                      //         CameraPosition(target: latLng, zoom: zoomLevel));
+                      //   } else {
+                      moveCamera(CameraPosition(target: latLng, zoom: 13));
+                      //   }
                     }
-                  } catch (e) {}
+                  } catch (e) {
+                    print(e.toString());
+                  }
                 },
-              )),
-            ],
-          ),
-          Expanded(
-              child: CustomGoogleMapMarkerBuilder(
-            customMarkers: [
-              MarkerData(
-                marker:
-                    Marker(markerId: const MarkerId('id-1'), position: _pUIT),
-                child: Icon(Icons.shop),
               ),
-              MarkerData(
-                marker: Marker(
-                    markerId: const MarkerId('id-2'), position: _pVNUDorm),
-                child: Icon(Icons.shop),
-              ),
-            ],
-            builder: (BuildContext context, Set<Marker>? markers) {
-              if (markers == null) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _kBVNUDorm,
-                markers: markers,
-                // onMapCreated: (GoogleMapController controller) {
-                //   //_controller.complete(controller);
-                // },
-                tiltGesturesEnabled: true,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                indoorViewEnabled: true,
-                trafficEnabled: true,
-                zoomControlsEnabled: false,
-                fortyFiveDegreeImageryEnabled: true,
-                polylines: {
-                  Polyline(
-                      polylineId: PolylineId("Route"),
-                      //points: polylineCoordinates,
-                      color: Colors.blue)
-                },
-                onTap: (value) {
-                  setState(() {
-                    defaultLocation = value;
-                    context
-                        .read<HomeCubit>()
-                        .getPlaceNear(defaultLocation)
-                        .then((value) => {
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    if (value.status == StatusType.loaded) {
-                                      return Container(
-                                        height: 150,
-                                        width: double.infinity,
-                                        child: Center(
-                                          child: Text(
-                                              "${value.locationSelected!.results!.first.name} $defaultLocation"),
-                                        ),
-                                      );
-                                    }
-                                    return Container(
-                                      height: 150,
-                                      width: double.infinity,
-                                    );
-                                  })
-                            });
-                  });
-                },
-              );
-            },
-          ))
-        ],
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -275,6 +370,51 @@ class MapSampleState extends State<MapSample> {
   //   final GoogleMapController controller = await _controller.future;
   //   await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   // }
+//   double calculateDistance(LatLng point1, LatLng point2) {
+//   const double earthRadius = 6371; // Earth's radius in kilometers
+
+//   double lat1 = point1.latitude;
+//   double lon1 = point1.longitude;
+//   double lat2 = point2.latitude;
+//   double lon2 = point2.longitude;
+
+//   double dLat = radians(lat2 - lat1);
+//   double dLon = radians(lon2 - lon1);
+
+//   double a = sin(dLat / 2) * sin(dLat / 2) +
+//       cos(radians(lat1)) * cos(radians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+
+//   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+//   double distance = earthRadius * c; // Distance in kilometers
+//   return distance;
+// }
+
+//   void _onTap(LatLng tappedPoint) {
+//     double minDistance = double.infinity;
+
+//     // Iterate through the polyline coordinates and calculate the distance
+//     for (int i = 0; i < polylineCoordinates.length - 1; i++) {
+//       final LatLng point1 = polylineCoordinates[i];
+//       final LatLng point2 = polylineCoordinates[i + 1];
+
+//       // Calculate the distance between the clicked point and the polyline segment
+//       final double distance = LatLng.distance(tappedPoint, point1, point2);
+
+//       // Check if this distance is smaller than the minimum distance found so far
+//       if (distance < minDistance) {
+//         minDistance = distance;
+//       }
+//     }
+
+//     // Define a threshold (in degrees) to consider it a click near the polyline
+//     final double clickThreshold = 0.01;
+
+//     if (minDistance < clickThreshold) {
+//       // The click is near the polyline
+//       print('Clicked near the polyline!');
+//     }
+//   }
 
   double calculateZoomLevel(List<LatLng> boundingBox) {
     // Tính toán độ rộng của khu vực theo kinh tuyến
@@ -297,5 +437,56 @@ class MapSampleState extends State<MapSample> {
     }
     // Trả về tỉ lệ zoom
     return 15;
+  }
+
+  double degreesToRadians(double degrees) {
+    return degrees * (pi / 180.0);
+  }
+
+  double distanceBetweenLatLng(
+      double lat1, double lng1, double lat2, double lng2) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+
+    double dLat = degreesToRadians(lat2 - lat1);
+    double dLng = degreesToRadians(lng2 - lng1);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(degreesToRadians(lat1)) *
+            cos(degreesToRadians(lat2)) *
+            sin(dLng / 2) *
+            sin(dLng / 2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    double distance = earthRadius * c;
+
+    return distance;
+  }
+
+  String? checkAllStreetSegment(LatLng position) {
+    String? results;
+    _polylines.forEach((element) {
+      if (checkStreetSegmentNear(
+          element.points[0], element.points[1], position)) {
+        results = element.polylineId.value;
+        return;
+      }
+    });
+    return results;
+  }
+
+  bool checkStreetSegmentNear(LatLng A, LatLng B, LatLng C) {
+    double radius = distanceBetweenLatLng(
+            A.latitude, A.longitude, B.latitude, B.longitude) /
+        2;
+    double distanceToCenter = distanceBetweenLatLng(C.latitude, C.longitude,
+        (A.latitude + B.latitude) / 2, (A.longitude + B.longitude) / 2);
+    if (distanceToCenter <= radius) {
+      // Điểm C nằm trong vùng bán kính của đường tròn
+      return true;
+    } else {
+      // Điểm C nằm ngoài vùng bán kính của đường tròn
+      return false;
+    }
   }
 }

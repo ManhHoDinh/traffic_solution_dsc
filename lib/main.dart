@@ -9,6 +9,7 @@ import './presentation/repositories/repositories.dart';
 import './presentation/blocs/bloc_observer.dart';
 import './presentation/blocs/app/app_bloc.dart';
 
+
 Future<void> main() {
   return BlocOverrides.runZoned(
     () async {
@@ -60,7 +61,6 @@ class AppView extends StatelessWidget {
         state: context.select((AppBloc bloc) => bloc.state.status),
         onGeneratePages: onGenerateAppViewPages,
       ),
-      // home: LoginScreen(),
     );
   }
 }

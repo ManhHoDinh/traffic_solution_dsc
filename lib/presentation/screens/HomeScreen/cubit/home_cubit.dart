@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:traffic_solution_dsc/constraints/status.dart';
-import 'package:traffic_solution_dsc/models/placeNear/placeNear.dart';
+import 'package:traffic_solution_dsc/core/constraints/status.dart';
+import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
 import 'dart:convert' as convert;
 
 part 'home_state.dart';
@@ -51,12 +51,9 @@ class HomeCubit extends Cubit<HomeState> {
       if (status != 200) throw Exception('http.get error: statusCode= $status');
       PlaceNear place = PlaceNear.fromJson(convert.jsonDecode(res.body));
 
-      print(res.body);
-
       emit(HomeState.getLocationSelected(
           data: state.data!
               .copyWith(locationSelected: place, status: StatusType.loaded)));
-      print(state.data!.status.toString());
       return state.data!;
     } catch (e) {
       return HomeStateData();

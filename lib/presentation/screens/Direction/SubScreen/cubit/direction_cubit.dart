@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:traffic_solution_dsc/models/direction/direction.dart';
+import 'package:traffic_solution_dsc/core/models/direction/direction.dart';
 import 'dart:convert' as convert;
 
 part 'direction_state.dart';

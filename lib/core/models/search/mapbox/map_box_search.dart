@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:traffic_solution_dsc/models/search/mapbox/feature.dart';
+import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 part 'map_box_search.freezed.dart';
 part 'map_box_search.g.dart';
 

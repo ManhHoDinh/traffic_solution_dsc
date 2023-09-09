@@ -1,10 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-import 'package:traffic_solution_dsc/constraints/GlobalString.dart';
+import 'package:traffic_solution_dsc/core/constraints/GlobalString.dart';
 
 class LocationService {
-  static final String key = GlobalString.GoogleAPIKey;
+  static final String key = GlobalConstraint.GoogleAPIKey;
   static Future<String> getPlaceId(String input) async {
     final String url =
         'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=paris&inputtype=textquery&key=AIzaSyD_6AN4CVrPSkr3iWDVzO-rtuccuq6jgaM';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../constraints/size_config.dart';
+import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
+
+//import './constants.dart';
 
 class DefaultButton extends StatelessWidget {
   const DefaultButton({

@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:traffic_solution_dsc/models/post/post.dart';
+import 'package:traffic_solution_dsc/core/models/post/post.dart';
+
 
 part 'post_state.dart';
 part 'post_cubit.freezed.dart';

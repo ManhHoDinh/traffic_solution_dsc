@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/bloc/SignInBloc.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/bloc/SignInEvent.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/bloc/SignInState.dart';
@@ -76,9 +77,9 @@ class _SignInState extends State<SignIn> {
             ),
             BlocBuilder<SignInBloc, SignInState>(
               builder: (context, state) {
-                if (state is SignInLoadingState)
+                if (state is SignInLoadingState) {
                   return CircularProgressIndicator();
-                else
+                } else {
                   return CupertinoButton(
                       child: Container(
                           width: double.maxFinite,
@@ -95,10 +96,13 @@ class _SignInState extends State<SignIn> {
                             style: TextStyle(color: Colors.white),
                           ))),
                       onPressed: () {
-                        BlocProvider.of<SignInBloc>(context).add(
-                            SignInSubmittedEvent(
-                                emailController.text, passwordController.text));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => HomeScreen.provider()));
+                        // BlocProvider.of<SignInBloc>(context).add(
+                        //     SignInSubmittedEvent(
+                        //         emailController.text, passwordController.text));
                       });
+                }
               },
             ),
             ElevatedButton(

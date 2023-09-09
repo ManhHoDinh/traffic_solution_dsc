@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 
-import '../../../../constraints/size_config.dart';
 import './components/body.dart'; // Assuming you have a Body widget defined
 
 class SplashScreen extends StatefulWidget {
