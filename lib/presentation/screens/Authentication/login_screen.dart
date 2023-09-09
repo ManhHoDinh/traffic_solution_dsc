@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:traffic_solution_dsc/constraints/size_config.dart';
 import '../../cubits/cubits.dart';
 import '../../repositories/repositories.dart';
 import 'package:traffic_solution_dsc/helper/app_resources.dart';
@@ -18,7 +18,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: BlocProvider(
         create: (_) => LoginCubit(context.read<AuthRepository>()),
         child: const LoginUI(),
@@ -57,7 +56,7 @@ class LoginUI extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image(
-            color: Colors.white,
+            color: Colors.transparent,
             image: const AssetImage("assets/images/bg.png"),
           ),
         ],
@@ -182,7 +181,7 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) {
             context.read<LoginCubit>().emailChanged(email);
           },
-          decoration: const InputDecoration(labelText: 'email'),
+          decoration: const InputDecoration(),
         );
       },
     );
@@ -233,17 +232,35 @@ class _LoginButton extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
-        return state.status == LoginStatus.submitting
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(200, 40),
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: AppColors.primary,
+            minimumSize:
+                Size(double.infinity, getProportionateScreenHeight(56)),
+          ),
+          onPressed: () {
+            context.read<LoginCubit>().logInWithCredentials();
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                "Login",
+                style: TextStyle(
+                  fontSize: getProportionateScreenWidth(18),
+                  color: Colors.white,
                 ),
-                onPressed: () {
-                  context.read<LoginCubit>().logInWithCredentials();
-                },
-                child: const Text('LOGIN'),
-              );
+              ),
+              if (state.status == LoginStatus.submitting)
+                CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+            ],
+          ),
+        );
       },
     );
   }
