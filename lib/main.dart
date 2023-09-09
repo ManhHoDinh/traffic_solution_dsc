@@ -1,45 +1,66 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_view.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/services/firebase_options.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/splash/splash_screen.dart';
 import 'package:traffic_solution_dsc/routes/routes.dart';
+import 'package:flow_builder/flow_builder.dart';
+import './presentation/repositories/repositories.dart';
+import './presentation/blocs/bloc_observer.dart';
+import './presentation/blocs/app/app_bloc.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
-  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+Future<void> main() {
+  return BlocOverrides.runZoned(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      final authRepository = AuthRepository();
+      runApp(MyApp(authRepository: authRepository));
+    },
+    blocObserver: AppBlocObserver(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    Key? key,
+    required AuthRepository authRepository,
+  })  : _authRepository = authRepository,
+        super(key: key);
+
+  final AuthRepository _authRepository;
 
   @override
   Widget build(BuildContext context) {
-    //   return MaterialApp(
-    //     title: 'Traffic',
-    //     theme: ThemeData(
-    //       primarySwatch: Colors.blue,
-    //     ),
-    //     home: BlocProvider(
-    //       create: (context) => HomeCubit(),
-    //       child: HomeScreen(),
-    //     ),
-    //     debugShowCheckedModeBanner: false,
-    //   );
-    // }
+    return RepositoryProvider.value(
+      value: _authRepository,
+      child: BlocProvider(
+        create: (_) => AppBloc(
+          authRepository: _authRepository,
+        ),
+        child: const AppView(),
+      ),
+    );
+  }
+}
+
+class AppView extends StatelessWidget {
+  const AppView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Traffic',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      home: FlowBuilder<AppStatus>(
+        state: context.select((AppBloc bloc) => bloc.state.status),
+        onGeneratePages: onGenerateAppViewPages,
       ),
-      home: LoginView(),
-      // initialRoute: SplashScreen.routeName,
-      // routes: routes,
+      // home: LoginScreen(),
     );
   }
 }

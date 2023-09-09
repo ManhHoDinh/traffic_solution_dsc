@@ -60,7 +60,7 @@ dependencies:
   font_awesome_flutter: ^10.5.0
   custom_marker: ^1.0.0
   custom_map_markers: ^0.0.2+1
-
+  flow_builder: ^0.0.9
   flutter_svg: ^1.0.1 # help us to use SVG in our app
   provider: ^6.0.5 # for State management
 dev_dependencies:

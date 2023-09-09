@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
@@ -136,7 +137,7 @@ class _BodyState extends State<Body> {
                         color: Color(0xFF003860),
                         text: "Login",
                         press: () {
-                          Navigator.pushNamed(context, SignIn.routeName);
+                          Navigator.of(context).push<void>(LoginScreen.route());
                         },
                       ),
                     ),

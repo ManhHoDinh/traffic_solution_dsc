@@ -5,6 +5,7 @@ import './components/body.dart'; // Assuming you have a Body widget defined
 
 class SplashScreen extends StatefulWidget {
   static String routeName = "/splash";
+  static Page page() => MaterialPage<void>(child: SplashScreen());
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
