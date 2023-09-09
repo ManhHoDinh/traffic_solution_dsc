@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:traffic_solution_dsc/constraints/size_config.dart';
+import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 import '../../cubits/cubits.dart';
 import '../../repositories/repositories.dart';
-import 'package:traffic_solution_dsc/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 
 late Size mediaSize;
 

@@ -3,7 +3,7 @@ import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_s
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
-import 'package:traffic_solution_dsc/constraints/size_config.dart';
+import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import './splash_content.dart';

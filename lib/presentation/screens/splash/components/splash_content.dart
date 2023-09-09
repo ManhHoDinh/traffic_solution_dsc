@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 
-
 class SplashContent extends StatefulWidget {
   const SplashContent({
     Key? key,
