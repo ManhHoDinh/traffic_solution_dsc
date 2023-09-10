@@ -9,6 +9,8 @@ class HomeAdminScreen extends StatefulWidget {
 }
 
 class _HomeAdminScreenState extends State<HomeAdminScreen> {
+  final String _imageUrl =
+      'https://images.unsplash.com/photo-1529397938791-2aba4681454f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +36,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                           // color: AppColors.iconBackground,
                           borderRadius: BorderRadius.circular(14),
                           image: DecorationImage(
-                            image:
-                                AssetImage('lib/assets/images/img_avatar.jpg'),
+                            image: NetworkImage(_imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -139,17 +140,8 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   }
 }
 
-class FeatureContainer extends StatelessWidget {
-  const FeatureContainer({
-    super.key,
-    required this.beginColor,
-    required this.endColor,
-    required this.title,
-  });
-
-  final Color beginColor;
-  final Color endColor;
-  final String title;
+class TestContainer extends StatelessWidget {
+  const TestContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +154,7 @@ class FeatureContainer extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [beginColor, endColor],
+            colors: const [Colors.red, Colors.blue],
           ),
           boxShadow: [
             BoxShadow(
@@ -187,8 +179,8 @@ class FeatureContainer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(100),
               ),
               child: GradientIcon(
-                beginColor: beginColor,
-                endColor: endColor,
+                beginColor: Colors.red,
+                endColor: Colors.blue,
                 child: Icon(
                   Icons.notifications_outlined,
                   color: Colors.white,
@@ -198,9 +190,9 @@ class FeatureContainer extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: const [
                 Text(
-                  title,
+                  'Test Container',
                   style: TextStyle(fontSize: 24, color: Colors.white),
                 ),
                 SizedBox(height: 6),
@@ -212,6 +204,90 @@ class FeatureContainer extends StatelessWidget {
               ],
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FeatureContainer extends StatelessWidget {
+  const FeatureContainer({
+    super.key,
+    required this.beginColor,
+    required this.endColor,
+    required this.title,
+  });
+
+  final Color beginColor;
+  final Color endColor;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed('/main_street');
+        },
+        child: Container(
+          padding: EdgeInsets.only(left: 20, right: 18, top: 12, bottom: 6),
+          height: 130,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [beginColor, endColor],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.25), // Shadow color
+                spreadRadius: 0, // Spread radius
+                blurRadius: 4, // Blur radius
+                offset: Offset(0, 4), // Offset of the shadow
+              ),
+            ],
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 12),
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: GradientIcon(
+                  beginColor: beginColor,
+                  endColor: endColor,
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 24, color: Colors.white),
+                  ),
+                  SizedBox(height: 6),
+                  Icon(
+                    Icons.arrow_right_alt,
+                    size: 34,
+                    color: Colors.white,
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -275,12 +351,13 @@ class OverviewContainer extends StatelessWidget {
               ),
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   title,
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
-                SizedBox(height: 6),
+                // SizedBox(height: 6),
                 Text(
                   '$quantity',
                   style: TextStyle(fontSize: 20, color: Colors.white),
