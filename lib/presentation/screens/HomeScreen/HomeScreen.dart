@@ -102,18 +102,20 @@ class MapSampleState extends State<MapSample> {
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getIcons();
       context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
-      context.read<StreetSegmentCubit>().getStreetSegment().then((value) {
-        streetSegments = value;
-        print(value);
-        value.forEach((e) {
-          _polylines.add(Polyline(
-            polylineId: PolylineId(e.id.toString()),
-            points: [
-              LatLng(e.StartLng!, e.StartLat!),
-              LatLng(e.EndLng!, e.EndLat!)
-            ],
-            color: Colors.green,
-          ));
+      setState(() {
+        context.read<StreetSegmentCubit>().getStreetSegment().then((value) {
+          streetSegments = value;
+          print(value);
+          value.forEach((e) {
+            _polylines.add(Polyline(
+              polylineId: PolylineId(e.id.toString()),
+              points: [
+                LatLng(e.StartLng!, e.StartLat!),
+                LatLng(e.EndLng!, e.EndLat!)
+              ],
+              color: Colors.green,
+            ));
+          });
         });
       });
     });
@@ -157,6 +159,7 @@ class MapSampleState extends State<MapSample> {
                 if (markers == null) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
                 return BlocBuilder<HomeCubit, HomeState>(
                   builder: (context, state) => GoogleMap(
                     mapType: MapType.normal,
@@ -178,6 +181,7 @@ class MapSampleState extends State<MapSample> {
                     trafficEnabled: false,
                     zoomControlsEnabled: false,
                     fortyFiveDegreeImageryEnabled: true,
+                    myLocationEnabled: true,
                     polylines: _polylines,
                     onTap: (value) {
                       setState(() {

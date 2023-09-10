@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:traffic_solution_dsc/get_it.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/core/services/firebase_options.dart';
 import 'package:traffic_solution_dsc/routes/routes.dart';
@@ -13,6 +14,7 @@ Future<void> main() {
   return BlocOverrides.runZoned(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await configureDependencies();
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
