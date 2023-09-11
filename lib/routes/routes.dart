@@ -24,6 +24,6 @@ List<Page> onGenerateAppViewPages(
     case AppStatus.authenticated:
       return [MainAdminScreen.page()];
     case AppStatus.unauthenticated:
-      return [LoginScreen.page()];
+      return [SplashScreen.page()];
   }
 }

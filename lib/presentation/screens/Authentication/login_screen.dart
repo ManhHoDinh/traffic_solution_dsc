@@ -243,6 +243,7 @@ class _LoginButton extends StatelessWidget {
           ),
           onPressed: () {
             context.read<LoginCubit>().logInWithCredentials();
+            Navigator.pop(context);
           },
           child: Stack(
             alignment: Alignment.center,
