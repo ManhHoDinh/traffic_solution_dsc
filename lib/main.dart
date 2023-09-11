@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:traffic_solution_dsc/presentation/router/admin_router.dart';
+import 'package:traffic_solution_dsc/presentation/router/app_router.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/InternetConnectedBloc.dart';
 import 'package:traffic_solution_dsc/presentation/screens/InternetConnectedCubit.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final AdminRouter _adminRouter = AdminRouter();
+  final AppRouter _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         child: HomeAdminScreen(),
       ),
       debugShowCheckedModeBanner: false,
-      onGenerateRoute: _adminRouter.onGenerateRoute,
+      onGenerateRoute: _appRouter.onGenerateRoute,
     );
   }
 }

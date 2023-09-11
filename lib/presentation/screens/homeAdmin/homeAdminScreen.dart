@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/assets/app_colors.dart';
+import 'package:traffic_solution_dsc/assets/app_resources.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -83,6 +83,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   OverviewContainer(
+                    icon: AppIcons.CAMERA,
                     title: 'Camera',
                     quantity: 5,
                     beginColor: Color(0xFF9B9CF8),
@@ -90,6 +91,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                   ),
                   SizedBox(width: 10),
                   OverviewContainer(
+                    icon: AppIcons.BUSINESS,
                     title: 'Business',
                     quantity: 10,
                     beginColor: Color(0xFFFEB4C5),
@@ -104,12 +106,14 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
+                    icon: AppIcons.STORE,
                     beginColor: Color(0xFF80E0FF),
                     endColor: Color(0xFF2F5DFD),
                     title: 'Store',
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
+                    icon: AppIcons.STREET,
                     beginColor: Color(0xFFFFF282),
                     endColor: Color(0xFFFC7E24),
                     title: 'Street',
@@ -120,12 +124,14 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
+                    icon: AppIcons.CAMERA,
                     beginColor: Color(0xFFAEFFAC),
                     endColor: Color(0xFF6B8FE9),
                     title: 'Camera',
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
+                    icon: AppIcons.REPORT,
                     beginColor: Color(0xFFFFE270),
                     endColor: Color(0xFF2D9344),
                     title: 'Report',
@@ -146,11 +152,13 @@ class FeatureContainer extends StatelessWidget {
     required this.beginColor,
     required this.endColor,
     required this.title,
+    required this.icon,
   });
 
   final Color beginColor;
   final Color endColor;
   final String title;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -184,6 +192,7 @@ class FeatureContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
+                padding: EdgeInsets.all(14),
                 margin: EdgeInsets.only(right: 12),
                 width: 56,
                 height: 56,
@@ -194,9 +203,14 @@ class FeatureContainer extends StatelessWidget {
                 child: GradientIcon(
                   beginColor: beginColor,
                   endColor: endColor,
-                  child: Icon(
-                    Icons.notifications_outlined,
+                  // child: Icon(
+                  //   Icons.notifications_outlined,
+                  //   color: Colors.white,
+                  // ),
+                  child: Image.asset(
+                    icon,
                     color: Colors.white,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -227,6 +241,7 @@ class FeatureContainer extends StatelessWidget {
 class OverviewContainer extends StatelessWidget {
   const OverviewContainer({
     super.key,
+    required this.icon,
     required this.beginColor,
     required this.endColor,
     required this.title,
@@ -237,6 +252,7 @@ class OverviewContainer extends StatelessWidget {
   final Color endColor;
   final String title;
   final int quantity;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -264,6 +280,7 @@ class OverviewContainer extends StatelessWidget {
         child: Row(
           children: [
             Container(
+              padding: EdgeInsets.all(9),
               margin: EdgeInsets.only(right: 12),
               width: 44,
               height: 44,
@@ -274,9 +291,14 @@ class OverviewContainer extends StatelessWidget {
               child: GradientIcon(
                 beginColor: beginColor,
                 endColor: endColor,
-                child: Icon(
-                  Icons.notifications_outlined,
+                // child: Icon(
+                //   Icons.notifications_outlined,
+                //   color: Colors.white,
+                // ),
+                child: Image.asset(
+                  icon,
                   color: Colors.white,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

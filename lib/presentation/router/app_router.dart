@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
 
-class AdminRouter {
+class AppRouter {
   Route? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
