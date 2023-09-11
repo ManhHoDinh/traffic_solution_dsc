@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/assets/app_resources.dart';
+// import 'package:traffic_solution_dsc/assets/app_resources.dart';
+import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -83,7 +84,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   OverviewContainer(
-                    icon: AppIcons.CAMERA,
+                    icon: AssetHelper.CAMERA,
                     title: 'Camera',
                     quantity: 5,
                     beginColor: Color(0xFF9B9CF8),
@@ -91,7 +92,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                   ),
                   SizedBox(width: 10),
                   OverviewContainer(
-                    icon: AppIcons.BUSINESS,
+                    icon: AssetHelper.BUSINESS,
                     title: 'Business',
                     quantity: 10,
                     beginColor: Color(0xFFFEB4C5),
@@ -106,14 +107,14 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
-                    icon: AppIcons.STORE,
+                    icon: AssetHelper.STORE,
                     beginColor: Color(0xFF80E0FF),
                     endColor: Color(0xFF2F5DFD),
                     title: 'Store',
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
-                    icon: AppIcons.STREET,
+                    icon: AssetHelper.STREET,
                     beginColor: Color(0xFFFFF282),
                     endColor: Color(0xFFFC7E24),
                     title: 'Street',
@@ -124,14 +125,14 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
-                    icon: AppIcons.CAMERA,
+                    icon: AssetHelper.CAMERA,
                     beginColor: Color(0xFFAEFFAC),
                     endColor: Color(0xFF6B8FE9),
                     title: 'Camera',
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
-                    icon: AppIcons.REPORT,
+                    icon: AssetHelper.REPORT,
                     beginColor: Color(0xFFFFE270),
                     endColor: Color(0xFF2D9344),
                     title: 'Report',

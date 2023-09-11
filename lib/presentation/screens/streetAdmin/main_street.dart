@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/assets/app_resources.dart';
+import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 
 class MainStreetScreen extends StatefulWidget {
   const MainStreetScreen({super.key});
@@ -40,7 +40,7 @@ class _MainStreetScreenState extends State<MainStreetScreen> {
                   child: Row(
                     children: [
                       // Icon(Icons.notifications_outlined, size: 24),
-                      Image.asset(AppIcons.MAP,
+                      Image.asset(AssetHelper.MAP,
                           color: Colors.black, width: 20, height: 20),
                       SizedBox(width: 20),
                       Column(

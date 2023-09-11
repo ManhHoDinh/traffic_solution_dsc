@@ -91,16 +91,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-<<<<<<< HEAD
-  assets:
-    - lib/assets/icons/
-
-=======
->>>>>>> origin/main
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
     - assets/
+    - assets/icons/
 #   - images/a_dot_burr.jpeg
 #   - images/a_dot_ham.jpeg
 
