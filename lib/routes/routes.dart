@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Authentication/cubit/login_cubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainAdmin_screen.dart';
 
@@ -22,6 +24,6 @@ List<Page> onGenerateAppViewPages(
     case AppStatus.authenticated:
       return [MainAdminScreen.page()];
     case AppStatus.unauthenticated:
-      return [SplashScreen.page()];
+      return [LoginScreen.page()];
   }
 }

@@ -17,6 +17,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       body: BlocProvider(
         create: (_) => LoginCubit(context.read<AuthRepository>()),
@@ -28,7 +29,6 @@ class LoginScreen extends StatelessWidget {
 
 class LoginUI extends StatelessWidget {
   const LoginUI({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     mediaSize = MediaQuery.of(context).size;
