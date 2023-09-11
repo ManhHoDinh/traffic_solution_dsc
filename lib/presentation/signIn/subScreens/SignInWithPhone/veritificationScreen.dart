@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/subScreens/SignInWithPhone/cubit/authCubit.dart';
 import 'package:traffic_solution_dsc/presentation/signIn/subScreens/SignInWithPhone/cubit/authState.dart';
 
