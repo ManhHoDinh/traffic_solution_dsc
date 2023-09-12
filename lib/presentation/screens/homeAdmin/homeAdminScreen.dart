@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:traffic_solution_dsc/assets/app_resources.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -167,7 +168,12 @@ class FeatureContainer extends StatelessWidget {
       flex: 1,
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed('/main_street');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MainStreetScreen(),
+            ),
+          );
         },
         child: Container(
           padding: EdgeInsets.only(left: 20, right: 18, top: 12, bottom: 6),

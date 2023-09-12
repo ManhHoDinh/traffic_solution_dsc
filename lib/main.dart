@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/core/services/firebase_options.dart';
+import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainadmin_screen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
 import 'package:traffic_solution_dsc/routes/routes.dart';
 import 'package:flow_builder/flow_builder.dart';
 import './presentation/repositories/repositories.dart';
@@ -61,11 +63,11 @@ class _AppViewState extends State<AppView> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FlowBuilder<AppStatus>(
-        state: context.select((AppBloc bloc) => bloc.state.status),
-        onGeneratePages: onGenerateAppViewPages,
-      ),
-      // home: LoginScreen(),
+      // home: FlowBuilder<AppStatus>(
+      //   state: context.select((AppBloc bloc) => bloc.state.status),
+      //   onGeneratePages: onGenerateAppViewPages,
+      // ),
+      home: HomeAdminScreen(),
     );
   }
 }
