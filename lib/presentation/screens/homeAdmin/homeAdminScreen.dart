@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:traffic_solution_dsc/assets/app_resources.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
 

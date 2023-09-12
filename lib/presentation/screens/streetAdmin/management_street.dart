@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 
 class ManagementStreetScreen extends StatefulWidget {
-  const ManagementStreetScreen({super.key});
-
+  const ManagementStreetScreen({super.key, required this.wardTitle});
+  final String wardTitle;
   @override
   State<ManagementStreetScreen> createState() => _ManagementStreetScreenState();
 }
@@ -24,7 +24,9 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
           child: Column(
             children: [
-              Center(child: Text('Linh Trung', style: TextStyle(fontSize: 22))),
+              Center(
+                  child:
+                      Text(widget.wardTitle, style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
               Container(
