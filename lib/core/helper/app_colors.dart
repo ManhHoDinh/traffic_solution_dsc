@@ -22,4 +22,8 @@ class AppColors {
   static const Color contentColorPink = Color(0xFFFF3AF2);
   static const Color contentColorRed = Color(0xFFE80054);
   static const Color contentColorCyan = Color(0xFF50E4FF);
+
+  static const Color compexDrawerCanvasColor = Color(0xffe3e9f7);
+  static const Color complexDrawerBlack = Color(0xff11111d);
+  static const Color complexDrawerBlueGrey = Color(0xff1d1b31);
 }

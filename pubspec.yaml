@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-
+  shared_preferences: ^2.0.9
   fl_chart: ^0.63.0
   #maps
   google_maps_flutter: ^2.4.0
@@ -50,6 +50,7 @@ dependencies:
   #firebase
   firebase_core: ^2.15.1
   firebase_auth: ^4.7.3
+  cloud_firestore: ^4.9.1
   #freezed
   freezed: ^2.4.1
   freezed_annotation: ^2.4.1

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/core/services/location_service.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
+  static MultiBlocProvider provider() {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SearchCubit(),
+        )
+      ],
+      child: SearchScreen(),
+    );
+  }
 }
 
 class _SearchScreenState extends State<SearchScreen> {
