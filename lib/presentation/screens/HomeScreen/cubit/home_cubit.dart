@@ -49,11 +49,11 @@ class HomeCubit extends Cubit<HomeState> {
       final res = await http.get(url, headers: headers);
       final status = res.statusCode;
       if (status != 200) throw Exception('http.get error: statusCode= $status');
+      print(res.body);
       PlaceNear place = PlaceNear.fromJson(convert.jsonDecode(res.body));
 
       emit(HomeState.getLocationSelected(
-          data: state.data!
-              .copyWith(locationSelected: place, status: StatusType.loaded)));
+          data: state.data!.copyWith(status: StatusType.loaded, locationSelected: place)));
       return state.data!;
     } catch (e) {
       return HomeStateData();

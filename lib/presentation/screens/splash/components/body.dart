@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import './splash_content.dart';
 import '../../../../components/default_button.dart';
+import 'package:flow_builder/flow_builder.dart';
+import 'package:traffic_solution_dsc/presentation/blocs/app/app_bloc.dart';
+import 'package:traffic_solution_dsc/routes/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -112,28 +113,33 @@ class _BodyState extends State<Body> {
                       ),
                     ),
                     Spacer(flex: 1),
-                    Padding(
-                      padding:
-                          EdgeInsets.all(10.0), // Define the padding you want
-                      child: DefaultButton(
-                          color: Color(0xFFAFF8E9),
-                          text: "Continue as guest",
-                          press: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen.provider()),
-                            );
-                          }),
-                    ),
+                    // Padding(
+                    //   padding:
+                    //       EdgeInsets.all(10.0), // Define the padding you want
+                    //   child: DefaultButton(
+                    //       color: Color(0xFFAFF8E9),
+                    //       text: "Continue as guest",
+                    //       press: () {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => BlocProvider(
+                    //               create: (context) => HomeCubit(),
+                    //               child: HomeScreen(),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       }),
+                    // ),
                     Padding(
                       padding:
                           EdgeInsets.all(10.0), // Define the padding you want
                       child: DefaultButton(
                         color: Color(0xFF003860),
-                        text: "Login",
+                        text: "Next",
                         press: () {
-                          Navigator.of(context).push<void>(LoginScreen.route());
+                          markOnboardingComplete();
+                          navigateToFlowBuilder();
                         },
                       ),
                     ),
@@ -146,5 +152,21 @@ class _BodyState extends State<Body> {
         ),
       ),
     );
+  }
+
+  void navigateToFlowBuilder() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) {
+        return FlowBuilder<AppStatus>(
+          state: context.select((AppBloc bloc) => bloc.state.status),
+          onGeneratePages: onGenerateAppViewPages,
+        );
+      },
+    ));
+  }
+
+  Future<void> markOnboardingComplete() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isFirstTimeUser', false);
   }
 }
