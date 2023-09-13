@@ -194,6 +194,7 @@ class _DirectionScreenState extends State<DirectionScreen> {
                                       (GoogleMapController controller) {
                                     _controller.complete(controller);
                                   },
+                                  zoomControlsEnabled: true,
                                   tiltGesturesEnabled: true,
                                   myLocationButtonEnabled: true,
                                   myLocationEnabled: true,

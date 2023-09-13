@@ -218,7 +218,7 @@ class MapSampleState extends State<MapSample> {
                           }
                         },
                         trafficEnabled: false,
-                        zoomControlsEnabled: false,
+                        zoomControlsEnabled: true,
                         myLocationEnabled: true,
                         myLocationButtonEnabled: true,
                         polylines: _polylines,
