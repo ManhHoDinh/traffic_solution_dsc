@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/app/app_bloc.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -12,8 +14,10 @@ class HomeAdminScreen extends StatefulWidget {
 class _HomeAdminScreenState extends State<HomeAdminScreen> {
   final String _imageUrl =
       'https://images.unsplash.com/photo-1529397938791-2aba4681454f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
+  final String username = "admin_dsc";
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AppBloc bloc) => bloc.state.user);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -37,7 +41,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                           // color: AppColors.iconBackground,
                           borderRadius: BorderRadius.circular(14),
                           image: DecorationImage(
-                            image: NetworkImage(_imageUrl),
+                            image: NetworkImage(user.image ?? _imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -46,9 +50,9 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                         width: 200,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'Admin Vu',
+                              user.username ?? username,
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),

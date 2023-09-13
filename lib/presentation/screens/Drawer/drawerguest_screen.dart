@@ -54,7 +54,7 @@ class _DrawerGuestPageState extends State<DrawerGuestPage> {
                 children: [
                   menuItem(1, "Map", Icons.map,
                       currentPage == DrawerSections.map ? true : false),
-                  menuItem(2, "Route", Icons.event,
+                  menuItem(2, "Route", Icons.route,
                       currentPage == DrawerSections.route ? true : false),
                   subMenu(),
                 ],

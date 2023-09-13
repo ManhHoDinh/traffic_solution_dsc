@@ -7,6 +7,7 @@ import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainadmin_sc
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/blocs/app/app_bloc.dart';
 import 'package:traffic_solution_dsc/models/user/user.dart';
+import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
 
 class DrawerAdminPage extends StatefulWidget {
   const DrawerAdminPage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
 
     var container;
     if (currentPage == DrawerSections.dashboard) {
-      container = MainAdminScreen();
+      container = HomeAdminScreen();
     } else if (currentPage == DrawerSections.map) {
       container = HomeScreen.provider();
     } else if (currentPage == DrawerSections.route) {
@@ -65,7 +66,7 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
                       currentPage == DrawerSections.dashboard ? true : false),
                   menuItem(2, "Map", Icons.map,
                       currentPage == DrawerSections.map ? true : false),
-                  menuItem(3, "Route", Icons.event,
+                  menuItem(3, "Route", Icons.route,
                       currentPage == DrawerSections.route ? true : false),
                   subMenu(),
                 ],
