@@ -101,3 +101,5 @@ flutter:
   assets:
     - assets/images/
     - assets/
+    - assets/icons/
+    - assets/smartcity.json
