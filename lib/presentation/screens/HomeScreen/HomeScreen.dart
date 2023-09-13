@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/core/constraints/status.dart';
 import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Report/reportScreen.dart';
@@ -19,7 +20,9 @@ import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSre
 import 'package:place_picker/place_picker.dart';
 
 import 'package:label_marker/label_marker.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetSegment/cubit/street_segment_cubit.dart';
+import 'dart:async';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -32,9 +35,6 @@ class HomeScreen extends StatefulWidget {
       providers: [
         BlocProvider<HomeCubit>(
           create: (BuildContext context) => HomeCubit(),
-        ),
-        BlocProvider<StreetSegmentCubit>(
-          create: (BuildContext context) => StreetSegmentCubit(),
         ),
       ],
       child: const HomeScreen(),
@@ -102,20 +102,12 @@ class MapSampleState extends State<MapSample> {
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getIcons();
       context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
-      context.read<StreetSegmentCubit>().getStreetSegment().then((value) {
-        streetSegments = value;
-        print(value);
-        value.forEach((e) {
-          _polylines.add(Polyline(
-            polylineId: PolylineId(e.id.toString()),
-            points: [
-              LatLng(e.StartLng!, e.StartLat!),
-              LatLng(e.EndLng!, e.EndLat!)
-            ],
-            color: Colors.green,
-          ));
-        });
-      });
+      final GoogleMapsFlutterPlatform mapsImplementation =
+          GoogleMapsFlutterPlatform.instance;
+      if (mapsImplementation is GoogleMapsFlutterAndroid) {
+        mapsImplementation.useAndroidViewSurface = true;
+        initializeMapRenderer();
+      }
     });
   }
 
@@ -137,183 +129,185 @@ class MapSampleState extends State<MapSample> {
 // make sure to initialize before map loading
     return Scaffold(
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Expanded(
-                child: CustomGoogleMapMarkerBuilder(
-              customMarkers: [
-                MarkerData(
-                  marker:
-                      Marker(markerId: const MarkerId('id-1'), position: _pUIT),
-                  child: Icon(Icons.shop),
+            InkWell(
+              child: Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  width: double.infinity,
+                  child: Text(
+                    'Search here',
+                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                  ),
                 ),
-                MarkerData(
-                  marker: Marker(
-                      markerId: const MarkerId('id-2'), position: _pVNUDorm),
-                  child: Icon(Icons.shop),
-                ),
-              ],
-              builder: (BuildContext context, Set<Marker>? markers) {
-                if (markers == null) {
-                  return const Center(child: CircularProgressIndicator());
+              ),
+              onTap: () async {
+                var result = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                          create: (context) => SearchCubit(),
+                          child: SearchScreen(),
+                        )));
+                try {
+                  if (result != null) {
+                    Features location = result;
+                    LatLng latLng = LatLng(
+                        location.center!.elementAt(1), location.center!.first);
+
+                    markers.addLabelMarker(LabelMarker(
+                        label: location.text!,
+                        markerId: MarkerId(location.text!),
+                        position: latLng,
+                        backgroundColor: Colors.green,
+                        icon: BitmapDescriptor.defaultMarker));
+                    //   if (location.bbox != null) {
+                    //     List<LatLng> coordinates = [
+                    //       LatLng(location.bbox![1], result.bbox![0]),
+                    //       LatLng(location.bbox![3], result.bbox![2]),
+                    //     ];
+
+                    //     double zoomLevel = calculateZoomLevel(coordinates);
+                    //     print(zoomLevel);
+                    //     context.read<HomeCubit>().getCameraPostion(latLng);
+                    //     moveCamera(
+                    //         CameraPosition(target: latLng, zoom: zoomLevel));
+                    //   } else {
+                    moveCamera(CameraPosition(target: latLng, zoom: 13));
+                    //   }
+                  }
+                } catch (e) {
+                  print(e.toString());
                 }
-                return BlocBuilder<HomeCubit, HomeState>(
-                  builder: (context, state) => GoogleMap(
-                    mapType: MapType.normal,
-                    initialCameraPosition:
-                        state.data!.locationSelectedCamera ?? _kBVNUDorm,
-                    markers: markers,
-                    onMapCreated: (GoogleMapController controller) {
-                      if (!_controller.isCompleted) {
-                        //first calling is false
-                        //call "completer()"
-                        _controller.complete(controller);
-                      } else {
-                        //other calling, later is true,
-                        //don't call again completer()
-                      }
-                    },
-                    tiltGesturesEnabled: true,
-                    indoorViewEnabled: true,
-                    trafficEnabled: false,
-                    zoomControlsEnabled: false,
-                    fortyFiveDegreeImageryEnabled: true,
-                    polylines: _polylines,
-                    onTap: (value) {
-                      setState(() {
-                        defaultLocation = value;
-                        print(checkAllStreetSegment(value));
-                        String? streetId = checkAllStreetSegment(value);
-                        context
-                            .read<HomeCubit>()
-                            .getPlaceNear(defaultLocation)
-                            .then((value) => {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        if (value.status == StatusType.loaded) {
-                                          return InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          ReportScreen(
-                                                            place: value
-                                                                .locationSelected,
-                                                            hasData: streetId !=
-                                                                null,
-                                                          )));
-                                            },
-                                            child: Container(
+              },
+            ),
+            StreamBuilder<List<StreetSegment>>(
+                stream: FireBaseDataBase.readStreetSegment(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Something went wrong! ${snapshot.error}'),
+                    );
+                  } else if (snapshot.hasData) {
+                    snapshot.data!.forEach((e) {
+                      _polylines.add(Polyline(
+                        polylineId: PolylineId(e.id.toString()),
+                        points: [
+                          LatLng(e.StartLat!, e.StartLng!),
+                          LatLng(e.EndLat!, e.EndLng!)
+                        ],
+                        color: Colors.green,
+                      ));
+                    });
+                    return Expanded(
+                      child: GoogleMap(
+                        mapType: MapType.normal,
+                        initialCameraPosition: _kBVNUDorm,
+                        markers: markers,
+                        onMapCreated: (GoogleMapController controller) {
+                          if (!_controller.isCompleted) {
+                            //first calling is false
+                            //call "completer()"
+                            _controller.complete(controller);
+                          } else {
+                            //other calling, later is true,
+                            //don't call again completer()
+                          }
+                        },
+                        trafficEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                        polylines: _polylines,
+                        onTap: (value) {
+                          setState(() {
+                            defaultLocation = value;
+                            print(checkAllStreetSegment(value));
+                            String? streetId = checkAllStreetSegment(value);
+                            context
+                                .read<HomeCubit>()
+                                .getPlaceNear(defaultLocation)
+                                .then((value) => {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            if (value.status ==
+                                                StatusType.loaded) {
+                                              print(value);
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              ReportScreen(
+                                                                place: value
+                                                                    .locationSelected,
+                                                                segmentId:
+                                                                    streetId,
+                                                              )));
+                                                },
+                                                child: Container(
+                                                  height: 150,
+                                                  width: double.infinity,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Text(
+                                                        "${value.locationSelected!.results!.first.name}",
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      streetId != null
+                                                          ? Column(
+                                                              children: [
+                                                                Text(
+                                                                    "Street ${value.locationSelected!.results!.first.types}"),
+                                                                SizedBox(
+                                                                  height: 15,
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : SizedBox(),
+                                                      Text(
+                                                          "Location: ${value.locationSelected!.results!.first.address}")
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            return Container(
                                               height: 150,
                                               width: double.infinity,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "${value.locationSelected!.results!.first.name}",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  streetId != null
-                                                      ? Column(
-                                                          children: [
-                                                            Text(
-                                                                "Street ${value.locationSelected!.results!.first.types}"),
-                                                            SizedBox(
-                                                              height: 15,
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : SizedBox(),
-                                                  Text(
-                                                      "Location: ${value.locationSelected!.results!.first.address}")
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                        return Container(
-                                          height: 150,
-                                          width: double.infinity,
-                                        );
-                                      })
-                                });
-                      });
-                    },
-                  ),
-                );
-              },
-            )),
-            Positioned(
-              child: InkWell(
-                child: Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    width: double.infinity,
-                    child: Text(
-                      'Search here',
-                      style: TextStyle(color: Colors.grey, fontSize: 20),
-                    ),
-                  ),
-                ),
-                onTap: () async {
-                  var result =
-                      await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => BlocProvider(
-                                create: (context) => SearchCubit(),
-                                child: SearchScreen(),
-                              )));
-                  try {
-                    if (result != null) {
-                      Features location = result;
-                      LatLng latLng = LatLng(location.center!.elementAt(1),
-                          location.center!.first);
-
-                      markers.addLabelMarker(LabelMarker(
-                          label: location.text!,
-                          markerId: MarkerId(location.text!),
-                          position: latLng,
-                          backgroundColor: Colors.green,
-                          icon: BitmapDescriptor.defaultMarker));
-                      //   if (location.bbox != null) {
-                      //     List<LatLng> coordinates = [
-                      //       LatLng(location.bbox![1], result.bbox![0]),
-                      //       LatLng(location.bbox![3], result.bbox![2]),
-                      //     ];
-
-                      //     double zoomLevel = calculateZoomLevel(coordinates);
-                      //     print(zoomLevel);
-                      //     context.read<HomeCubit>().getCameraPostion(latLng);
-                      //     moveCamera(
-                      //         CameraPosition(target: latLng, zoom: zoomLevel));
-                      //   } else {
-                      moveCamera(CameraPosition(target: latLng, zoom: 13));
-                      //   }
-                    }
-                  } catch (e) {
-                    print(e.toString());
+                                            );
+                                          })
+                                    });
+                          });
+                        },
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      child: Text("error roi"),
+                    );
                   }
-                },
-              ),
-            ),
+                })
           ],
         ),
       ),
@@ -489,4 +483,35 @@ class MapSampleState extends State<MapSample> {
       return false;
     }
   }
+}
+
+Completer<AndroidMapRenderer?>? _initializedRendererCompleter;
+
+/// Initializes map renderer to the `latest` renderer type for Android platform.
+///
+/// The renderer must be requested before creating GoogleMap instances,
+/// as the renderer can be initialized only once per application context.
+Future<AndroidMapRenderer?> initializeMapRenderer() async {
+  if (_initializedRendererCompleter != null) {
+    return _initializedRendererCompleter!.future;
+  }
+
+  final Completer<AndroidMapRenderer?> completer =
+      Completer<AndroidMapRenderer?>();
+  _initializedRendererCompleter = completer;
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
+  if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    unawaited(mapsImplementation
+        .initializeWithRenderer(AndroidMapRenderer.latest)
+        .then((AndroidMapRenderer initializedRenderer) =>
+            completer.complete(initializedRenderer)));
+  } else {
+    completer.complete(null);
+  }
+
+  return completer.future;
 }

@@ -4,11 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_colors.dart';
 import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
+import 'package:traffic_solution_dsc/core/models/report/report.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 
 class ReportScreen extends StatefulWidget {
-  ReportScreen({super.key, this.place, this.hasData});
+  ReportScreen({super.key, this.place, this.segmentId});
   PlaceNear? place;
-  bool? hasData;
+  String? segmentId;
   @override
   State<StatefulWidget> createState() => ReportScreenState();
 }
@@ -21,6 +23,7 @@ class ReportScreenState extends State<ReportScreen> {
     super.initState();
     isShowingMainData = true;
     getDefaultTableRow();
+    print(widget.segmentId);
   }
 
   getDefaultTableRow() {
@@ -91,7 +94,7 @@ class ReportScreenState extends State<ReportScreen> {
               SizedBox(
                 height: 15,
               ),
-              widget.hasData!
+              widget.segmentId != null
                   ? Column(
                       children: [
                         Text("Street ${widget.place!.results!.first.types}"),
@@ -102,51 +105,158 @@ class ReportScreenState extends State<ReportScreen> {
                     )
                   : SizedBox(),
               Text("Location: ${widget.place!.results!.first.address}"),
-              Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  border: TableBorder.all(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
-                  ),
-                  columnWidths: {
-                    0: FixedColumnWidth(90),
-                    1: FixedColumnWidth(90),
-                    2: FixedColumnWidth(90),
-                    3: FixedColumnWidth(90),
-                    // 3: FixedColumnWidth(80),
-                    //
-                    // for (int i = 0;
-                    //     i < GuestKindModel.AllGuestKinds.length;
-                    //     i++)
-                    //   4 + i: FixedColumnWidth(120),
-                    // //
-                    // 4 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(100),
-                    // 5 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(80),
-                    // 6 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(140),
-                    // 7 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(200),
-                    // 8 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(200),
-                    // 9 + GuestKindModel.AllGuestKinds.length:
-                    //     FixedColumnWidth(100),
-                  },
-                  children: tableRows),
+              widget.segmentId != null
+                  ? StreamBuilder<List<Report>>(
+                      stream: FireBaseDataBase.readReportBySegmentId(
+                          widget.segmentId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child:
+                                Text('Something went wrong! ${snapshot.error}'),
+                          );
+                        } else if (snapshot.hasData) {
+                          generateData(snapshot.data!);
+                          return Table(
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              border: TableBorder.all(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
+                              ),
+                              columnWidths: {
+                                0: FixedColumnWidth(90),
+                                1: FixedColumnWidth(90),
+                                2: FixedColumnWidth(90),
+                                3: FixedColumnWidth(90),
+                                // 3: FixedColumnWidth(80),
+                                //
+                                // for (int i = 0;
+                                //     i < GuestKindModel.AllGuestKinds.length;
+                                //     i++)
+                                //   4 + i: FixedColumnWidth(120),
+                                // //
+                                // 4 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(100),
+                                // 5 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(80),
+                                // 6 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(140),
+                                // 7 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(200),
+                                // 8 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(200),
+                                // 9 + GuestKindModel.AllGuestKinds.length:
+                                //     FixedColumnWidth(100),
+                              },
+                              children: tableRows);
+                        } else {
+                          return Container();
+                        }
+                      })
+                  : Container()
             ],
           ),
         ),
       ),
     );
   }
-}
 
+  void generateData(List<Report> report) {
+    getDefaultTableRow();
+    List<ReportTableData> reportTableData = getReportTableRowData(report);
+    reportTableData.forEach((e) {
+
+      tableRows.add(TableRow(children: [
+        Container(
+            height: 50,
+            child: Center(
+              child: Text(
+                e.timeOfDay,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Container(
+            height: 50,
+            color: Color(0xffB9B9B9).withOpacity(0.5),
+            child: Center(
+              child: Text(
+                e.trafficVolume,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Container(
+            height: 50,
+            color: Color(0xffB9B9B9).withOpacity(0.5),
+            child: Center(
+              child: Text(
+                '${e.ratio}(%)',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
+                color: Color(0xffB9B9B9).withOpacity(0.5)),
+            height: 50,
+            child: Center(
+              child: Text(
+                e.avgSpeed,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+      ]));
+    });
+  }
+
+  List<ReportTableData> getReportTableRowData(List<Report> report) {
+    List<ReportTableData> result = [];
+    //su ly gio
+    result.add(ReportTableData(
+        timeOfDay: '0 - 4',
+        trafficVolume: 'getTrafficValume(report)',
+        ratio: '23',
+        avgSpeed: '12.5'));
+    
+    result.add(ReportTableData(
+        timeOfDay: '4 - 8',
+        trafficVolume: '34',
+        ratio: '23',
+        avgSpeed: '12.5'));
+
+    result.add(ReportTableData(
+        timeOfDay: '8 - 12',
+        trafficVolume: '34',
+        ratio: '23',
+        avgSpeed: '12.5'));
+    
+    result.add(ReportTableData(
+        timeOfDay: '12 - 16',
+        trafficVolume: '34',
+        ratio: '23',
+        avgSpeed: '12.5'));
+    
+    result.add(ReportTableData(
+        timeOfDay: '16 - 20',
+        trafficVolume: '34',
+        ratio: '23',
+        avgSpeed: '12.5'));
+    
+    result.add(ReportTableData(
+        timeOfDay: '20 - 24',
+        trafficVolume: '34',
+        ratio: '23',
+        avgSpeed: '12.5'));
+    
+    return result;
+  }
+
+}
 class _LineChart extends StatelessWidget {
   const _LineChart({required this.isShowingMainData});
 
