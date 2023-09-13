@@ -1,45 +1,82 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/core/services/firebase_options.dart';
-import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/splash/splash_screen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainadmin_screen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
 import 'package:traffic_solution_dsc/routes/routes.dart';
+import 'package:flow_builder/flow_builder.dart';
+import './presentation/repositories/repositories.dart';
+import './presentation/blocs/bloc_observer.dart';
+import './presentation/blocs/app/app_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+Future<bool> isFirstTimeUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isFirstTimeUser') ?? true;
+}
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+bool firstTimeUser = true;
+Future<void> main() {
+  return BlocOverrides.runZoned(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      firstTimeUser = await isFirstTimeUser();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      final authRepository = AuthRepository();
+      runApp(MyApp(authRepository: authRepository));
+    },
+    blocObserver: AppBlocObserver(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    Key? key,
+    required AuthRepository authRepository,
+  })  : _authRepository = authRepository,
+        super(key: key);
+
+  final AuthRepository _authRepository;
 
   @override
   Widget build(BuildContext context) {
-    //   return MaterialApp(
-    //     title: 'Traffic',
-    //     theme: ThemeData(
-    //       primarySwatch: Colors.blue,
-    //     ),
-    //     home: BlocProvider(
-    //       create: (context) => HomeCubit(),
-    //       child: HomeScreen(),
-    //     ),
-    //     debugShowCheckedModeBanner: false,
-    //   );
-    // }
+    return RepositoryProvider.value(
+      value: _authRepository,
+      child: BlocProvider(
+        create: (_) => AppBloc(
+          authRepository: _authRepository,
+        ),
+        child: const AppView(),
+      ),
+    );
+  }
+}
+
+class AppView extends StatefulWidget {
+  const AppView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Traffic',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      routes: routes,
-      home: HomeScreen.provider(),
+      home: firstTimeUser
+          ? SplashScreen()
+          : FlowBuilder<AppStatus>(
+              state: context.select((AppBloc bloc) => bloc.state.status),
+              onGeneratePages: onGenerateAppViewPages,
+            ),
     );
   }
 }

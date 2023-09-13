@@ -1,10 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Drawer/draweradmin_screen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Drawer/drawerguest_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainAdmin_screen.dart';
-
 import 'package:traffic_solution_dsc/presentation/signIn/signIn.dart';
 import 'package:traffic_solution_dsc/presentation/screens/splash/splash_screen.dart';
-
 import 'package:traffic_solution_dsc/presentation/blocs/app/app_bloc.dart';
 
 // We use name route
@@ -20,8 +19,8 @@ List<Page> onGenerateAppViewPages(
 ) {
   switch (state) {
     case AppStatus.authenticated:
-      return [MainAdminScreen.page()];
+      return [DrawerAdminPage.page()];
     case AppStatus.unauthenticated:
-      return [SplashScreen.page()];
+      return [DrawerGuestPage.page()];
   }
 }
