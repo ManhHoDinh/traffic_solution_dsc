@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:traffic_solution_dsc/core/helper/app_colors.dart';
 import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
 import 'package:traffic_solution_dsc/core/models/report/report.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
+import 'package:traffic_solution_dsc/presentation/widgets/no_data_widget.dart';
 
 class ReportScreen extends StatefulWidget {
   ReportScreen({super.key, this.place, this.segmentId});
@@ -17,14 +19,13 @@ class ReportScreen extends StatefulWidget {
 }
 
 class ReportScreenState extends State<ReportScreen> {
-  late bool isShowingMainData;
   List<TableRow> tableRows = [];
   @override
   void initState() {
     super.initState();
-    isShowingMainData = true;
-    getDefaultTableRow();
-    print(widget.segmentId);
+
+    selectedStartDate = DateTime(now.year, now.month, now.day, 0, 0);
+    selectedEndDate = DateTime(now.year, now.month, now.day, 23, 59);
   }
 
   getDefaultTableRow() {
@@ -88,94 +89,152 @@ class ReportScreenState extends State<ReportScreen> {
                 height: 15,
               ),
               Text(
-                "${widget.place!.results!.first.name}",
+                toBeginningOfSentenceCase(
+                        widget.place!.results!.first.name ?? '') ??
+                    '',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
               ),
               SizedBox(
-                height: 15,
+                height: 10,
               ),
-              widget.segmentId != null
-                  ? Column(
-                      children: [
-                        Text("Street ${widget.place!.results!.first.types}"),
-                        SizedBox(
-                          height: 15,
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
-              Text("Location: ${widget.place!.results!.first.address}"),
+              Text(toBeginningOfSentenceCase(
+                      widget.place!.results!.first.address) ??
+                  ''),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: widget.segmentId != null
-                    ? StreamBuilder<List<Report>>(
-                        stream: FireBaseDataBase.readReportBySegmentId(
-                            widget.segmentId!),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Text(
-                                  'Something went wrong! ${snapshot.error}'),
-                            );
-                          } else if (snapshot.hasData) {
-                            generateData(snapshot.data!);
-                            return Column(
-                              children: [
-                                Table(
-                                    defaultVerticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    border: TableBorder.all(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    columnWidths: {
-                                      0: FixedColumnWidth(90),
-                                      1: FixedColumnWidth(90),
-                                      2: FixedColumnWidth(90),
-                                      3: FixedColumnWidth(90),
-                                      // 3: FixedColumnWidth(80),
-                                      //
-                                      // for (int i = 0;
-                                      //     i < GuestKindModel.AllGuestKinds.length;
-                                      //     i++)
-                                      //   4 + i: FixedColumnWidth(120),
-                                      // //
-                                      // 4 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(100),
-                                      // 5 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(80),
-                                      // 6 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(140),
-                                      // 7 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(200),
-                                      // 8 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(200),
-                                      // 9 + GuestKindModel.AllGuestKinds.length:
-                                      //     FixedColumnWidth(100),
-                                    },
-                                    children: tableRows),
-                                Expanded(
-                                    child: _BarChart(
-                                  data: reportTableData,
-                                ))
-                                // Expanded(
-                                //     child: _BarChart(
-                                //   data: [],
-                                // ))
-                              ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        })
-                    : Container(),
+                    ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        "Start Day",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18),
+                                      )),
+                                  ElevatedButton(
+                                    onPressed: () => _selectStartDate(context),
+                                    child: Text("${selectedStartDate.toLocal()}"
+                                        .split(' ')[0]),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        "End Day",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18),
+                                      )),
+                                  ElevatedButton(
+                                    onPressed: () => _selectEndDate(context),
+                                    child: Text("${selectedEndDate.toLocal()}"
+                                        .split(' ')[0]),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: StreamBuilder<List<Report>>(
+                                stream: FireBaseDataBase.readReportBySegmentId(
+                                    widget.segmentId!),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text(
+                                          'Something went wrong! ${snapshot.error}'),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    List<Report> report = snapshot.data!
+                                        .where((element) =>
+                                            element.time
+                                                .isAfter(selectedStartDate) &&
+                                            element.time
+                                                .isBefore(selectedEndDate))
+                                        .toList();
+                                    generateData(report);
+                                    return Column(
+                                      children: [
+                                        Table(
+                                            defaultVerticalAlignment:
+                                                TableCellVerticalAlignment.middle,
+                                            border: TableBorder.all(
+                                              color: Colors.grey,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                                bottomLeft: Radius.circular(10),
+                                                bottomRight: Radius.circular(10),
+                                              ),
+                                            ),
+                                            columnWidths: {
+                                              0: FixedColumnWidth(90),
+                                              1: FixedColumnWidth(90),
+                                              2: FixedColumnWidth(90),
+                                              3: FixedColumnWidth(90),
+                                              // 3: FixedColumnWidth(80),
+                                              //
+                                              // for (int i = 0;
+                                              //     i < GuestKindModel.AllGuestKinds.length;
+                                              //     i++)
+                                              //   4 + i: FixedColumnWidth(120),
+                                              // //
+                                              // 4 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(100),
+                                              // 5 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(80),
+                                              // 6 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(140),
+                                              // 7 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(200),
+                                              // 8 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(200),
+                                              // 9 + GuestKindModel.AllGuestKinds.length:
+                                              //     FixedColumnWidth(100),
+                                            },
+                                            children: tableRows),
+                                        Expanded(
+                                            child: _BarChart(
+                                          data: reportTableData,
+                                        ))
+                                        // Expanded(
+                                        //     child: _BarChart(
+                                        //   data: [],
+                                        // ))
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
+                          ),
+                        ],
+                      )
+                    : Center(child: NoDataWidget()),
               ),
             ],
           ),
@@ -213,6 +272,41 @@ class ReportScreenState extends State<ReportScreen> {
         random.nextInt(200) + 20; // Generates a random number between 0 and 4
 
     return traffic;
+  }
+
+  DateTime now = DateTime.now();
+  late DateTime selectedStartDate;
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedStartDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedStartDate) {
+      setState(() {
+        selectedStartDate = selectedStartDate =
+            DateTime(picked.year, picked.month, picked.day, 0, 0);
+      });
+    }
+  }
+
+  late DateTime selectedEndDate;
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedEndDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedEndDate) {
+      setState(() {
+        selectedEndDate = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          23,
+        );
+      });
+    }
   }
 
   DateTime getRandomDateTime(
@@ -382,6 +476,17 @@ class ReportScreenState extends State<ReportScreen> {
   }
 }
 
+bool checkLargeData(List<ReportTableData> data, double total) {
+  bool result = false;
+  for (int i = 0; i < data.length; i++) {
+    if (double.parse(data[i].trafficVolume) * 100 / total >= 50) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
 class _BarChart extends StatelessWidget {
   _BarChart({required this.data});
   List<ReportTableData> data;
@@ -391,6 +496,7 @@ class _BarChart extends StatelessWidget {
     data.forEach((element) {
       total += double.tryParse(element.trafficVolume) ?? 0;
     });
+    bool haveLargeData = checkLargeData(data, total);
     return data.isEmpty
         ? Container()
         : BarChart(
@@ -401,7 +507,7 @@ class _BarChart extends StatelessWidget {
               barGroups: barGroups,
               gridData: const FlGridData(show: false),
               alignment: BarChartAlignment.spaceAround,
-              maxY: total/3.3,
+              maxY: haveLargeData ? total * 1.25 : total / 3.3,
             ),
           );
   }
@@ -428,7 +534,6 @@ class _BarChart extends StatelessWidget {
           },
         ),
       );
-
   Widget getTitles(double value, TitleMeta meta) {
     final style = TextStyle(
       color: AppColors.contentColorBlue,
