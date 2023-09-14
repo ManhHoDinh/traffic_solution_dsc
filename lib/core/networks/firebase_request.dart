@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:traffic_solution_dsc/core/models/report/report.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
-import 'package:traffic_solution_dsc/core/services/firebase_options.dart';
 
 class FireBaseDataBase {
   static Stream<List<StreetSegment>> readStreetSegment() =>

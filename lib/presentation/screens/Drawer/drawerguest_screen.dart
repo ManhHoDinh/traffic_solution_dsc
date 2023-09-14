@@ -292,7 +292,7 @@ class _DrawerGuestPageState extends State<DrawerGuestPage> {
             height: 30,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/images/logout.jpg"),
+                image: AssetImage("assets/images/login.png"),
                 fit: BoxFit.cover,
               ),
             ),

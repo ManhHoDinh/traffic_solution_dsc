@@ -305,7 +305,7 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
             height: 30,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/images/logout.jpg"),
+                image: AssetImage("assets/images/logout.png"),
                 fit: BoxFit.cover,
               ),
             ),
