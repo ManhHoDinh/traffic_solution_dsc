@@ -2,6 +2,7 @@ class AssetHelper {
   //Assets in icons
   static const String ImageAssets = 'assets/images/';
   static const String icoStore = '${ImageAssets}store.png';
+  static const String imgNoData = '${ImageAssets}noData.png';
 
   // Icons
   static const String _root = 'assets/icons';

@@ -1,20 +1,41 @@
+import 'dart:ffi';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 part 'streetSegment.freezed.dart';
 part 'streetSegment.g.dart';
 
-@freezed
-class StreetSegment with _$StreetSegment {
-  const factory StreetSegment({
-    @JsonKey(name: 'segmentStreetId') String? id,
-    @JsonKey(name: 'startLongitude') double? StartLng,
-    @JsonKey(name: 'startLatitude') double? StartLat,
-    @JsonKey(name: 'endLongitude') double? EndLng,
-    @JsonKey(name: 'endLatitude') double? EndLat,
-    @JsonKey(name: 'status') int? status,
-    @JsonKey(name: 'streetId') String? streetId,
-  }) = _StreetSegment;
+class StreetSegment {
+  String? id;
+  double? StartLng;
+  double? StartLat;
+  double? EndLng;
+  double? EndLat;
+  bool? status;
+  String? streetId;
+  StreetSegment(StreetSegmentFromFirebase value) {
+    print(value);
+    this.id = value.id;
+    this.StartLng = double.tryParse(value.StartLng.toString());
+    this.StartLat = double.tryParse(value.StartLat.toString());
+    this.EndLat = double.tryParse(value.EndLat.toString());
+    this.EndLng = double.tryParse(value.EndLng.toString());
+    this.status = value.status;
+  }
+}
 
-  factory StreetSegment.fromJson(Map<String, Object?> json) =>
-      _$StreetSegmentFromJson(json);
+@freezed
+class StreetSegmentFromFirebase with _$StreetSegmentFromFirebase {
+  const factory StreetSegmentFromFirebase({
+    @JsonKey(name: 'SS_ID') String? id,
+    @JsonKey(name: 'SS_START_LONGITUDE') String? StartLng,
+    @JsonKey(name: 'SS_START_LATITUDE') String? StartLat,
+    @JsonKey(name: 'SS_END_LONGITUDE') String? EndLng,
+    @JsonKey(name: 'SS_END_LATITUDE') String? EndLat,
+    @JsonKey(name: 'SS_STATUS') bool? status,
+    @JsonKey(name: 'STREET_ID') String? streetId,
+  }) = _StreetSegmentFromFirebase;
+
+  factory StreetSegmentFromFirebase.fromJson(Map<String, dynamic?> json) =>
+      _$StreetSegmentFromFirebaseFromJson(json);
 }

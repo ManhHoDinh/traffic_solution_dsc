@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "844473077697-8c5kc5qbm0tr9a4i8gfv3dhm16g6tpt2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.traffic_solution_dsc",
+            "certificate_hash": "bfe4943ac92dc3260aa9880b3ee81c2b415ecd10"
+          }
+        },
+        {
           "client_id": "844473077697-5m7f4dr20gk2vrvboh59brf9vg2q2ceb.apps.googleusercontent.com",
           "client_type": 3
         }

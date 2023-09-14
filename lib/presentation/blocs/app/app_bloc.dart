@@ -46,6 +46,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     unawaited(_authRepository.logOut());
   }
 
+  void updateUser(User user) {
+    final updatedState = AppState.authenticated(user);
+    emit(updatedState);
+  }
+
   @override
   Future<void> close() {
     _userSubscription?.cancel();
