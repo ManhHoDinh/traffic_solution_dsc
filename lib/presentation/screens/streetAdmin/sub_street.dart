@@ -110,7 +110,7 @@ class ItemContainer extends StatelessWidget {
             child: Row(
               children: [
                 // Icon(Icons.notifications_outlined, size: 24),
-                Image.asset(AssetHelper.MAP,
+                Image.asset(AssetHelper.ICON_MAP,
                     color: Colors.black, width: 20, height: 20),
                 SizedBox(width: 20),
                 Column(
