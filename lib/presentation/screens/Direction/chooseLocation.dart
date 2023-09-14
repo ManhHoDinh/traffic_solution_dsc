@@ -187,8 +187,8 @@ class _ChooseLocationState extends State<ChooseLocation> {
       await Geolocator.requestPermission();
       print("ERROR" + error.toString());
     });
-    Position currentPostion = await Geolocator.getCurrentPosition();
-    source = LatLng(currentPostion.latitude, currentPostion.longitude);
+    Position currentPosition = await Geolocator.getCurrentPosition();
+    source = LatLng(currentPosition.latitude, currentPosition.longitude);
     //Fake Location In VNU Dorm:
     //source = LatLng(10.882495758523962, 106.78255494069631);
   }

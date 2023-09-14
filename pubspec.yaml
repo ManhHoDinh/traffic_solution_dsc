@@ -70,6 +70,8 @@ dependencies:
   flow_builder: ^0.0.9
   flutter_svg: ^1.0.1 # help us to use SVG in our app
   provider: ^6.0.5 # for State management
+  #intl
+  intl: ^0.18.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

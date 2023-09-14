@@ -107,69 +107,44 @@ class _DirectionScreenState extends State<DirectionScreen> {
                       polylines) {
                     return Column(
                       children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: Icon(Icons.arrow_back),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  LocationChooseWidget(
-                                      icon: FontAwesomeIcons.circleDot,
-                                      text: sourceText,
-                                      color: Colors.blue,
-                                      iconColor: Colors.blue,
-                                      iconSize: 15,
-                                      onTap: () {}),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  LocationChooseWidget(
-                                      icon: Icons.location_on_outlined,
-                                      text: destinationText,
-                                      color: Colors.grey,
-                                      iconColor: Colors.red,
-                                      iconSize: 20,
-                                      onTap: () {}),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // try {
-                                //   setState(() {
-                                //     if (destinationText == "Choose destination") {
-                                //       destinationText = sourceText;
-                                //       sourceText = "Choose Start Location";
-                                //     } else if (sourceText == "Choose Start Location") {
-                                //       sourceText = destinationText;
-                                //       destinationText = "Choose Start Location";
-                                //     } else {
-                                //       String temp = sourceText;
-                                //       sourceText = destinationText;
-                                //       destinationText = temp;
-                                //     }
+                        Padding(
 
-                                //     LatLng? lng = source;
-                                //     source = destination;
-                                //     destination = lng;
-                                //   });
-                                // } catch (e) {
-                                //   print(e);
-                                // }
-                              },
-                              icon: Icon(
-                                Icons.import_export,
-                                size: 28,
-                                color: Colors.black.withOpacity(0.6),
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: Icon(Icons.arrow_back),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    LocationChooseWidget(
+                                        icon: FontAwesomeIcons.circleDot,
+                                        text: sourceText,
+                                        color: Colors.blue,
+                                        iconColor: Colors.blue,
+                                        iconSize: 15,
+                                        onTap: () {}),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    LocationChooseWidget(
+                                        icon: Icons.location_on_outlined,
+                                        text: destinationText,
+                                        color: Colors.grey,
+                                        iconColor: Colors.red,
+                                        iconSize: 20,
+                                        onTap: () {}),
+                                  ],
+                                ),
+                              ),
+                           SizedBox(width: 25,)
+                            ],
+                          ),
                         ),
                         Expanded(
                           child: BlocBuilder<HomeCubit, HomeState>(

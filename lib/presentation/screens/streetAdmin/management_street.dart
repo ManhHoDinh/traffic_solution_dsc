@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/subScreens/addStreetSegment.dart';
 
 class ManagementStreetScreen extends StatefulWidget {
   const ManagementStreetScreen({super.key, required this.wardTitle});
@@ -87,15 +88,17 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: 36),
         onPressed: () {
-          showModalBottomSheet(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-            isScrollControlled: true,
-            context: context,
-            builder: (BuildContext context) {
-              return ModalBottom();
-            },
-          );
+          // showModalBottomSheet(
+          //   shape: const RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+          //   isScrollControlled: true,
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return ModalBottom();
+          //   },
+          // );
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => AddStreetSegment()));
         },
       ),
     );
