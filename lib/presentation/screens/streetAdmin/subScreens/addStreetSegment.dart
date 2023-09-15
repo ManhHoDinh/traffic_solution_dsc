@@ -26,10 +26,9 @@ import 'package:label_marker/label_marker.dart';
 import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/subScreens/widgets/location_widget.dart';
 
 class AddStreetSegment extends StatefulWidget {
-  const AddStreetSegment({Key? key}) : super(key: key);
-  static Page page() => const MaterialPage<void>(child: AddStreetSegment());
   @override
   _AddStreetSegmentState createState() => _AddStreetSegmentState();
 }
@@ -107,7 +106,6 @@ class MapSampleState extends State<MapSample> {
     getUserCurrentLocation();
 
     WidgetsBinding.instance.endOfFrame.then((value) async {
-      getIcons();
       getUserCurrentLocation();
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -119,18 +117,11 @@ class MapSampleState extends State<MapSample> {
     });
   }
 
-  getIcons() async {
-    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 20).then((value) {
-      markers.addAll([
-        Marker(
-          markerId: MarkerId('KTX khu B'),
-          position: _pVNUDorm,
-          icon: value,
-        ),
-        Marker(markerId: MarkerId('UIT'), position: _pUIT, icon: value)
-      ]);
-    });
-  }
+  TextEditingController startLongitudeController = TextEditingController();
+  TextEditingController startLatitudeController = TextEditingController();
+
+  TextEditingController endLongitudeController = TextEditingController();
+  TextEditingController endLatitudeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -139,58 +130,44 @@ class MapSampleState extends State<MapSample> {
       body: SafeArea(
         child: Column(
           children: [
-            InkWell(
-              child: Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  width: double.infinity,
-                  child: Text(
-                    'Search here',
-                    style: TextStyle(color: Colors.grey, fontSize: 20),
+            Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                    child: Column(
+                      children: [
+                        LocationTextField(
+                          title: 'From:',
+                          latitudeController: startLatitudeController,
+                          longitudeController: startLongitudeController,
+                        ),
+                        SizedBox(height: 10),
+                        Divider(color: Colors.grey),
+                        SizedBox(height: 10),
+                        LocationTextField(
+                          title: 'To:',
+                          latitudeController: endLatitudeController,
+                          longitudeController: endLongitudeController,
+                        ),
+                        SizedBox(height: 30),
+                      ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 5,
+                    right: 16,
+                    child: FloatingActionButton(
+                      backgroundColor: const Color.fromARGB(255, 148, 226, 58),
+                      child: Icon(Icons.check, size: 36, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
               ),
-              onTap: () async {
-                var result = await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                          create: (context) => SearchCubit(),
-                          child: SearchScreen(),
-                        )));
-                try {
-                  if (result != null) {
-                    Features location = result;
-                    LatLng latLng = LatLng(
-                        location.center!.elementAt(1), location.center!.first);
-
-                    markers.addLabelMarker(LabelMarker(
-                        label: location.text!,
-                        markerId: MarkerId(location.text!),
-                        position: latLng,
-                        backgroundColor: Colors.green,
-                        icon: BitmapDescriptor.defaultMarker));
-                    //   if (location.bbox != null) {
-                    //     List<LatLng> coordinates = [
-                    //       LatLng(location.bbox![1], result.bbox![0]),
-                    //       LatLng(location.bbox![3], result.bbox![2]),
-                    //     ];
-
-                    //     double zoomLevel = calculateZoomLevel(coordinates);
-                    //     print(zoomLevel);
-                    //     context.read<HomeCubit>().getCameraPostion(latLng);
-                    //     moveCamera(
-                    //         CameraPosition(target: latLng, zoom: zoomLevel));
-                    //   } else {
-                    moveCamera(CameraPosition(target: latLng, zoom: 13));
-                    //   }
-                  }
-                } catch (e) {
-                  print(e.toString());
-                }
-              },
             ),
             StreamBuilder<List<StreetSegment>>(
                 stream: FireBaseDataBase.readStreetSegment(),
@@ -233,15 +210,15 @@ class MapSampleState extends State<MapSample> {
                         onTap: (value) {
                           setState(() {
                             defaultLocation = value;
+                            markers.add(Marker(
+                                markerId: MarkerId('start'), position: value));
                             print(checkAllStreetSegment(value));
                           });
                         },
                       ),
                     );
                   } else {
-                    return Container(
-                      child: Text("error roi"),
-                    );
+                    return Center(child: CircularProgressIndicator());
                   }
                 })
           ],
