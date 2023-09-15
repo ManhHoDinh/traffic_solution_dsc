@@ -117,7 +117,7 @@ class MapSampleState extends State<MapSample> {
     // TODO: implement initState
     super.initState();
     getUserCurrentLocation();
-      
+
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getIcons();
       getUserCurrentLocation();
@@ -132,7 +132,7 @@ class MapSampleState extends State<MapSample> {
   }
 
   getIcons() async {
-    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 20).then((value) {
+    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 100).then((value) {
       markers.addAll([
         Marker(
           markerId: MarkerId('KTX khu B'),
@@ -208,8 +208,10 @@ class MapSampleState extends State<MapSample> {
                 stream: FireBaseDataBase.readStreetSegment(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Something went wrong! ${snapshot.error}'),
+                    return Expanded(
+                      child: Center(
+                        child: Text('Something went wrong! ${snapshot.error}'),
+                      ),
                     );
                   } else if (snapshot.hasData) {
                     snapshot.data!.forEach((e) {
@@ -244,12 +246,10 @@ class MapSampleState extends State<MapSample> {
                         polylines: _polylines,
                         onTap: (value) {
                           setState(() {
-                            defaultLocation = value;
-                            print(checkAllStreetSegment(value));
                             String? streetId = checkAllStreetSegment(value);
                             context
                                 .read<HomeCubit>()
-                                .getPlaceNear(defaultLocation)
+                                .getPlaceNear(value)
                                 .then((value) => {
                                       showModalBottomSheet(
                                           context: context,
@@ -369,9 +369,8 @@ class MapSampleState extends State<MapSample> {
                       ),
                     );
                   } else {
-                    return Container(
-                      child: Text("error roi"),
-                    );
+                    return Expanded(
+                        child: Center(child: CircularProgressIndicator()));
                   }
                 })
           ],

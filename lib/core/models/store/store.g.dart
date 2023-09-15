@@ -7,19 +7,21 @@ part of 'store.dart';
 // **************************************************************************
 
 _$_Store _$$_StoreFromJson(Map<String, dynamic> json) => _$_Store(
-      id: json['id'] as String,
-      businessId: json['businessId'] as String?,
-      name: json['name'] as String?,
-      LocationX: json['LocationX'] as String?,
-      LocationY: json['LocationY'] as int?,
-      status: json['status'] as String?,
+      businessId: json['business_id'] as String?,
+      id: json['store_id'] as String?,
+      latitude: (json['store_latitude'] as num?)?.toDouble(),
+      longitude: (json['store_longitude'] as num?)?.toDouble(),
+      name: json['store_name'] as String?,
+      status: json['store_status'] as bool?,
+      address: json['address'] as String?,
     );
 
 Map<String, dynamic> _$$_StoreToJson(_$_Store instance) => <String, dynamic>{
-      'id': instance.id,
-      'businessId': instance.businessId,
-      'name': instance.name,
-      'LocationX': instance.LocationX,
-      'LocationY': instance.LocationY,
-      'status': instance.status,
+      'business_id': instance.businessId,
+      'store_id': instance.id,
+      'store_latitude': instance.latitude,
+      'store_longitude': instance.longitude,
+      'store_name': instance.name,
+      'store_status': instance.status,
+      'address': instance.address,
     };

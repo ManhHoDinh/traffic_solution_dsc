@@ -20,9 +20,12 @@ Business _$BusinessFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Business {
-  String get id => throw _privateConstructorUsedError;
-  String? get Name => throw _privateConstructorUsedError;
-  String? get Type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'business_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'business_name')
+  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'business_type')
+  String? get type => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +38,10 @@ abstract class $BusinessCopyWith<$Res> {
   factory $BusinessCopyWith(Business value, $Res Function(Business) then) =
       _$BusinessCopyWithImpl<$Res, Business>;
   @useResult
-  $Res call({String id, String? Name, String? Type});
+  $Res call(
+      {@JsonKey(name: 'business_id') String? id,
+      @JsonKey(name: 'business_name') String? name,
+      @JsonKey(name: 'business_type') String? type});
 }
 
 /// @nodoc
@@ -51,22 +57,22 @@ class _$BusinessCopyWithImpl<$Res, $Val extends Business>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? Name = freezed,
-    Object? Type = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? type = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
               as String?,
-      Type: freezed == Type
-          ? _value.Type
-          : Type // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -79,7 +85,10 @@ abstract class _$$_BusinessCopyWith<$Res> implements $BusinessCopyWith<$Res> {
       __$$_BusinessCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? Name, String? Type});
+  $Res call(
+      {@JsonKey(name: 'business_id') String? id,
+      @JsonKey(name: 'business_name') String? name,
+      @JsonKey(name: 'business_type') String? type});
 }
 
 /// @nodoc
@@ -93,22 +102,22 @@ class __$$_BusinessCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? Name = freezed,
-    Object? Type = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? type = freezed,
   }) {
     return _then(_$_Business(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
               as String?,
-      Type: freezed == Type
-          ? _value.Type
-          : Type // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -117,21 +126,27 @@ class __$$_BusinessCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_Business with DiagnosticableTreeMixin implements _Business {
-  const _$_Business({required this.id, this.Name, this.Type});
+  const _$_Business(
+      {@JsonKey(name: 'business_id') this.id,
+      @JsonKey(name: 'business_name') this.name,
+      @JsonKey(name: 'business_type') this.type});
 
   factory _$_Business.fromJson(Map<String, dynamic> json) =>
       _$$_BusinessFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'business_id')
+  final String? id;
   @override
-  final String? Name;
+  @JsonKey(name: 'business_name')
+  final String? name;
   @override
-  final String? Type;
+  @JsonKey(name: 'business_type')
+  final String? type;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Business(id: $id, Name: $Name, Type: $Type)';
+    return 'Business(id: $id, name: $name, type: $type)';
   }
 
   @override
@@ -140,8 +155,8 @@ class _$_Business with DiagnosticableTreeMixin implements _Business {
     properties
       ..add(DiagnosticsProperty('type', 'Business'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('Name', Name))
-      ..add(DiagnosticsProperty('Type', Type));
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('type', type));
   }
 
   @override
@@ -150,13 +165,13 @@ class _$_Business with DiagnosticableTreeMixin implements _Business {
         (other.runtimeType == runtimeType &&
             other is _$_Business &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.Name, Name) || other.Name == Name) &&
-            (identical(other.Type, Type) || other.Type == Type));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, Name, Type);
+  int get hashCode => Object.hash(runtimeType, id, name, type);
 
   @JsonKey(ignore: true)
   @override
@@ -174,18 +189,21 @@ class _$_Business with DiagnosticableTreeMixin implements _Business {
 
 abstract class _Business implements Business {
   const factory _Business(
-      {required final String id,
-      final String? Name,
-      final String? Type}) = _$_Business;
+      {@JsonKey(name: 'business_id') final String? id,
+      @JsonKey(name: 'business_name') final String? name,
+      @JsonKey(name: 'business_type') final String? type}) = _$_Business;
 
   factory _Business.fromJson(Map<String, dynamic> json) = _$_Business.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'business_id')
+  String? get id;
   @override
-  String? get Name;
+  @JsonKey(name: 'business_name')
+  String? get name;
   @override
-  String? get Type;
+  @JsonKey(name: 'business_type')
+  String? get type;
   @override
   @JsonKey(ignore: true)
   _$$_BusinessCopyWith<_$_Business> get copyWith =>

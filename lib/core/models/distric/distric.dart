@@ -6,8 +6,9 @@ part 'distric.g.dart';
 @freezed
 class District with _$District {
   const factory District({
-    required String id,
-    String? Name,
+    @JsonKey(name: 'district_id') String? id,
+    @JsonKey(name: 'district_name') String? name,
+    
   }) = _District;
 
   factory District.fromJson(Map<String, Object?> json) => _$DistrictFromJson(json);

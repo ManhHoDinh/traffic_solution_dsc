@@ -6,8 +6,9 @@ part 'areaStreet.g.dart';
 @freezed
 class AreaStreet with _$AreaStreet {
   const factory AreaStreet({
-    required String id,
-    String? streetId,
+      @JsonKey(name: 'area_id') String? areaId,
+    @JsonKey(name: 'street_id') String? name,
+  
   }) = _AreaStreet;
 
   factory AreaStreet.fromJson(Map<String, Object?> json) => _$AreaStreetFromJson(json);

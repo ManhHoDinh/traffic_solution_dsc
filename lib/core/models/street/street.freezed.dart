@@ -20,9 +20,10 @@ Street _$StreetFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Street {
-  String get id => throw _privateConstructorUsedError;
-  String? get streetName => throw _privateConstructorUsedError;
-  String? get areaId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'street_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'street_name')
+  String? get name => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,9 @@ abstract class $StreetCopyWith<$Res> {
   factory $StreetCopyWith(Street value, $Res Function(Street) then) =
       _$StreetCopyWithImpl<$Res, Street>;
   @useResult
-  $Res call({String id, String? streetName, String? areaId});
+  $Res call(
+      {@JsonKey(name: 'street_id') String? id,
+      @JsonKey(name: 'street_name') String? name});
 }
 
 /// @nodoc
@@ -50,22 +53,17 @@ class _$StreetCopyWithImpl<$Res, $Val extends Street>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? streetName = freezed,
-    Object? areaId = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      streetName: freezed == streetName
-          ? _value.streetName
-          : streetName // ignore: cast_nullable_to_non_nullable
               as String?,
-      areaId: freezed == areaId
-          ? _value.areaId
-          : areaId // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -77,7 +75,9 @@ abstract class _$$_StreetCopyWith<$Res> implements $StreetCopyWith<$Res> {
       __$$_StreetCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? streetName, String? areaId});
+  $Res call(
+      {@JsonKey(name: 'street_id') String? id,
+      @JsonKey(name: 'street_name') String? name});
 }
 
 /// @nodoc
@@ -90,22 +90,17 @@ class __$$_StreetCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? streetName = freezed,
-    Object? areaId = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_$_Street(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      streetName: freezed == streetName
-          ? _value.streetName
-          : streetName // ignore: cast_nullable_to_non_nullable
               as String?,
-      areaId: freezed == areaId
-          ? _value.areaId
-          : areaId // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -114,21 +109,23 @@ class __$$_StreetCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_Street with DiagnosticableTreeMixin implements _Street {
-  const _$_Street({required this.id, this.streetName, this.areaId});
+  const _$_Street(
+      {@JsonKey(name: 'street_id') this.id,
+      @JsonKey(name: 'street_name') this.name});
 
   factory _$_Street.fromJson(Map<String, dynamic> json) =>
       _$$_StreetFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'street_id')
+  final String? id;
   @override
-  final String? streetName;
-  @override
-  final String? areaId;
+  @JsonKey(name: 'street_name')
+  final String? name;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Street(id: $id, streetName: $streetName, areaId: $areaId)';
+    return 'Street(id: $id, name: $name)';
   }
 
   @override
@@ -137,8 +134,7 @@ class _$_Street with DiagnosticableTreeMixin implements _Street {
     properties
       ..add(DiagnosticsProperty('type', 'Street'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('streetName', streetName))
-      ..add(DiagnosticsProperty('areaId', areaId));
+      ..add(DiagnosticsProperty('name', name));
   }
 
   @override
@@ -147,14 +143,12 @@ class _$_Street with DiagnosticableTreeMixin implements _Street {
         (other.runtimeType == runtimeType &&
             other is _$_Street &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.streetName, streetName) ||
-                other.streetName == streetName) &&
-            (identical(other.areaId, areaId) || other.areaId == areaId));
+            (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, streetName, areaId);
+  int get hashCode => Object.hash(runtimeType, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -172,18 +166,17 @@ class _$_Street with DiagnosticableTreeMixin implements _Street {
 
 abstract class _Street implements Street {
   const factory _Street(
-      {required final String id,
-      final String? streetName,
-      final String? areaId}) = _$_Street;
+      {@JsonKey(name: 'street_id') final String? id,
+      @JsonKey(name: 'street_name') final String? name}) = _$_Street;
 
   factory _Street.fromJson(Map<String, dynamic> json) = _$_Street.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'street_id')
+  String? get id;
   @override
-  String? get streetName;
-  @override
-  String? get areaId;
+  @JsonKey(name: 'street_name')
+  String? get name;
   @override
   @JsonKey(ignore: true)
   _$$_StreetCopyWith<_$_Street> get copyWith =>

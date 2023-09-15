@@ -7,13 +7,11 @@ part of 'street.dart';
 // **************************************************************************
 
 _$_Street _$$_StreetFromJson(Map<String, dynamic> json) => _$_Street(
-      id: json['id'] as String,
-      streetName: json['streetName'] as String?,
-      areaId: json['areaId'] as String?,
+      id: json['street_id'] as String?,
+      name: json['street_name'] as String?,
     );
 
 Map<String, dynamic> _$$_StreetToJson(_$_Street instance) => <String, dynamic>{
-      'id': instance.id,
-      'streetName': instance.streetName,
-      'areaId': instance.areaId,
+      'street_id': instance.id,
+      'street_name': instance.name,
     };

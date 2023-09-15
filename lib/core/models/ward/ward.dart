@@ -6,9 +6,10 @@ part 'ward.g.dart';
 @freezed
 class Ward with _$Ward {
   const factory Ward({
-    required String id,
-    String? districId,
-    String? Name,
+       @JsonKey(name: 'district_id') String? districtId,
+    @JsonKey(name: 'ward_id') String? id,
+ @JsonKey(name: 'ward_name') String? name,
+ 
     }) = _Ward;
 
   factory Ward.fromJson(Map<String, Object?> json) => _$WardFromJson(json);

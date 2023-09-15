@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/subScreens/addStreetSegment.dart';
+import 'package:traffic_solution_dsc/core/models/business/business.dart';
+import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/storeAdmin/add_store.dart';
 
-class ManagementStreetScreen extends StatefulWidget {
-  const ManagementStreetScreen({super.key, required this.wardTitle});
-  final String wardTitle;
+class ManagementStoreScreen extends StatefulWidget {
+  const ManagementStoreScreen({
+    super.key,
+    required this.business,
+  });
+  final Business business;
+
   @override
-  State<ManagementStreetScreen> createState() => _ManagementStreetScreenState();
+  State<ManagementStoreScreen> createState() => _ManagementStoreScreenState();
 }
 
-class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
+class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +26,7 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Text('Street', style: TextStyle(fontSize: 22)),
+        title: Text('Business', style: TextStyle(fontSize: 22)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -26,8 +35,8 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           child: Column(
             children: [
               Center(
-                  child:
-                      Text(widget.wardTitle, style: TextStyle(fontSize: 22))),
+                  child: Text(widget.business.name ?? '',
+                      style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
               Container(
@@ -73,13 +82,30 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
                 ],
               ),
               SizedBox(height: 20),
-              ItemContainer(
-                title: 'Camera 01',
-                subTitle: 'Ly Truc Coffee',
-              ),
-              ItemContainer(
-                title: 'Camera 02',
-                subTitle: 'Amos Coffee',
+              Expanded(
+                child: StreamBuilder<List<Store>>(
+                    stream: FireBaseDataBase.readStoreWithBusinessID(
+                        widget.business.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child:
+                              Text('Something went wrong! ${snapshot.error}'),
+                        );
+                      } else if (snapshot.hasData) {
+                        List<Store> stores = snapshot.data!;
+                        return ListView.builder(
+                          itemBuilder: (context, i) => ItemContainer(
+                            title: stores[i].name ?? '',
+                            address: stores[i].address ?? '',
+                          ),
+                          itemCount: stores.length,
+                        );
+                      } else {
+                        return Expanded(
+                            child: Center(child: CircularProgressIndicator()));
+                      }
+                    }),
               ),
             ],
           ),
@@ -88,6 +114,11 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: 36),
         onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (_) => HomeCubit(),
+                    child: AddStore(business: widget.business,),
+                  )));
           // showModalBottomSheet(
           //   shape: const RoundedRectangleBorder(
           //       borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
@@ -97,8 +128,6 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           //     return ModalBottom();
           //   },
           // );
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddStreetSegment()));
         },
       ),
     );
@@ -109,11 +138,11 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.title,
-    required this.subTitle,
+    required this.address,
   });
 
   final String title;
-  final String subTitle;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +150,6 @@ class ItemContainer extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20),
       child: Container(
         // margin: EdgeInsets.only(bottom: 20),
-        height: 76,
         decoration: BoxDecoration(
           border: Border.all(width: 2, color: Colors.black),
           borderRadius: BorderRadius.circular(10),
@@ -132,20 +160,22 @@ class ItemContainer extends StatelessWidget {
           child: Row(
             children: [
               // Icon(Icons.notifications_outlined, size: 24),
-              Image.asset(AssetHelper.ICON_CAMERA,
+              Image.asset(AssetHelper.ICON_STORE,
                   color: Colors.black, width: 20, height: 20),
               SizedBox(width: 20),
               Expanded(
+                flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(title, style: TextStyle(fontSize: 16)),
-                    Text(subTitle, style: TextStyle(fontSize: 12)),
+                    Text(address, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(

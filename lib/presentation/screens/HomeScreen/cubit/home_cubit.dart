@@ -39,7 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
         'location': '${latLng.latitude},${latLng.longitude}',
         //'type': 'cafe',
         //'radius': '180',
-        'language': 'en',
+        'language': 'vi',
       };
 
       final url =
