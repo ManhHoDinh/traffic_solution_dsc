@@ -113,19 +113,21 @@ class _AddStoreState extends State<AddStore> {
   Marker? _pickMarker;
   getStoreMarker(Store e) async {
     await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 100).then((value) {
-      markers.add(Marker(
+      setState(() {
+        markers.add(Marker(
           markerId: MarkerId(e.id!),
           position: LatLng(e.latitude!, e.longitude!),
           icon: value,
           onTap: () {
             print("Hello");
           }));
+      });
     });
   }
 
   void refreshScreen(double inputLat, double inputLong) async {
     {
-      await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 100)
+      await MarkerIcon.markerFromIcon(Icons.shop, Colors.yellow, 100)
           .then((value) {
         _pickMarker = Marker(
             markerId: MarkerId('start'),
@@ -240,7 +242,14 @@ class _AddStoreState extends State<AddStore> {
                                 address: addressController.text);
                             final json = report.toJson();
 
-                            await storeDoc.set(json);
+                            await storeDoc.set(json).whenComplete(() {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Add store success'),
+                            backgroundColor: Colors.green,
+                          ));
+                        
+                            });
                           }
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -334,6 +343,8 @@ class _AddStoreState extends State<AddStore> {
                                 value.longitude.toStringAsFixed(3);
                             _pickMarker = Marker(
                                 markerId: MarkerId('start'),
+                                icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueYellow),
                                 position: value,
                                 onTap: () {
                                   print("Hello");
