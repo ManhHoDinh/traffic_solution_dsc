@@ -14,7 +14,9 @@ class StreetSegment with _$StreetSegment {
     @JsonKey(name: 'ss_end_longitude') double? EndLng,
     @JsonKey(name: 'ss_end_latitude') double? EndLat,
     @JsonKey(name: 'ss_status') bool? status,
-    @JsonKey(name: 'store_id') String? streetId,
+    @JsonKey(name: 'store_id') String? storeId,
+    @JsonKey(name: 'street_id') String? streetId,
+    
   }) = _StreetSegment;
 
   factory StreetSegment.fromJson(Map<String, dynamic?> json) =>

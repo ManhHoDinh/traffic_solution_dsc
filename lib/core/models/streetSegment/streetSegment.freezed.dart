@@ -33,6 +33,8 @@ mixin _$StreetSegment {
   @JsonKey(name: 'ss_status')
   bool? get status => throw _privateConstructorUsedError;
   @JsonKey(name: 'store_id')
+  String? get storeId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'street_id')
   String? get streetId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,7 +56,8 @@ abstract class $StreetSegmentCopyWith<$Res> {
       @JsonKey(name: 'ss_end_longitude') double? EndLng,
       @JsonKey(name: 'ss_end_latitude') double? EndLat,
       @JsonKey(name: 'ss_status') bool? status,
-      @JsonKey(name: 'store_id') String? streetId});
+      @JsonKey(name: 'store_id') String? storeId,
+      @JsonKey(name: 'street_id') String? streetId});
 }
 
 /// @nodoc
@@ -76,6 +79,7 @@ class _$StreetSegmentCopyWithImpl<$Res, $Val extends StreetSegment>
     Object? EndLng = freezed,
     Object? EndLat = freezed,
     Object? status = freezed,
+    Object? storeId = freezed,
     Object? streetId = freezed,
   }) {
     return _then(_value.copyWith(
@@ -103,6 +107,10 @@ class _$StreetSegmentCopyWithImpl<$Res, $Val extends StreetSegment>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as bool?,
+      storeId: freezed == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       streetId: freezed == streetId
           ? _value.streetId
           : streetId // ignore: cast_nullable_to_non_nullable
@@ -126,7 +134,8 @@ abstract class _$$_StreetSegmentCopyWith<$Res>
       @JsonKey(name: 'ss_end_longitude') double? EndLng,
       @JsonKey(name: 'ss_end_latitude') double? EndLat,
       @JsonKey(name: 'ss_status') bool? status,
-      @JsonKey(name: 'store_id') String? streetId});
+      @JsonKey(name: 'store_id') String? storeId,
+      @JsonKey(name: 'street_id') String? streetId});
 }
 
 /// @nodoc
@@ -146,6 +155,7 @@ class __$$_StreetSegmentCopyWithImpl<$Res>
     Object? EndLng = freezed,
     Object? EndLat = freezed,
     Object? status = freezed,
+    Object? storeId = freezed,
     Object? streetId = freezed,
   }) {
     return _then(_$_StreetSegment(
@@ -173,6 +183,10 @@ class __$$_StreetSegmentCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as bool?,
+      storeId: freezed == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       streetId: freezed == streetId
           ? _value.streetId
           : streetId // ignore: cast_nullable_to_non_nullable
@@ -191,7 +205,8 @@ class _$_StreetSegment with DiagnosticableTreeMixin implements _StreetSegment {
       @JsonKey(name: 'ss_end_longitude') this.EndLng,
       @JsonKey(name: 'ss_end_latitude') this.EndLat,
       @JsonKey(name: 'ss_status') this.status,
-      @JsonKey(name: 'store_id') this.streetId});
+      @JsonKey(name: 'store_id') this.storeId,
+      @JsonKey(name: 'street_id') this.streetId});
 
   factory _$_StreetSegment.fromJson(Map<String, dynamic> json) =>
       _$$_StreetSegmentFromJson(json);
@@ -216,11 +231,14 @@ class _$_StreetSegment with DiagnosticableTreeMixin implements _StreetSegment {
   final bool? status;
   @override
   @JsonKey(name: 'store_id')
+  final String? storeId;
+  @override
+  @JsonKey(name: 'street_id')
   final String? streetId;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'StreetSegment(id: $id, StartLng: $StartLng, StartLat: $StartLat, EndLng: $EndLng, EndLat: $EndLat, status: $status, streetId: $streetId)';
+    return 'StreetSegment(id: $id, StartLng: $StartLng, StartLat: $StartLat, EndLng: $EndLng, EndLat: $EndLat, status: $status, storeId: $storeId, streetId: $streetId)';
   }
 
   @override
@@ -234,6 +252,7 @@ class _$_StreetSegment with DiagnosticableTreeMixin implements _StreetSegment {
       ..add(DiagnosticsProperty('EndLng', EndLng))
       ..add(DiagnosticsProperty('EndLat', EndLat))
       ..add(DiagnosticsProperty('status', status))
+      ..add(DiagnosticsProperty('storeId', storeId))
       ..add(DiagnosticsProperty('streetId', streetId));
   }
 
@@ -250,14 +269,15 @@ class _$_StreetSegment with DiagnosticableTreeMixin implements _StreetSegment {
             (identical(other.EndLng, EndLng) || other.EndLng == EndLng) &&
             (identical(other.EndLat, EndLat) || other.EndLat == EndLat) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.storeId, storeId) || other.storeId == storeId) &&
             (identical(other.streetId, streetId) ||
                 other.streetId == streetId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, StartLng, StartLat, EndLng, EndLat, status, streetId);
+  int get hashCode => Object.hash(runtimeType, id, StartLng, StartLat, EndLng,
+      EndLat, status, storeId, streetId);
 
   @JsonKey(ignore: true)
   @override
@@ -281,7 +301,8 @@ abstract class _StreetSegment implements StreetSegment {
       @JsonKey(name: 'ss_end_longitude') final double? EndLng,
       @JsonKey(name: 'ss_end_latitude') final double? EndLat,
       @JsonKey(name: 'ss_status') final bool? status,
-      @JsonKey(name: 'store_id') final String? streetId}) = _$_StreetSegment;
+      @JsonKey(name: 'store_id') final String? storeId,
+      @JsonKey(name: 'street_id') final String? streetId}) = _$_StreetSegment;
 
   factory _StreetSegment.fromJson(Map<String, dynamic> json) =
       _$_StreetSegment.fromJson;
@@ -306,6 +327,9 @@ abstract class _StreetSegment implements StreetSegment {
   bool? get status;
   @override
   @JsonKey(name: 'store_id')
+  String? get storeId;
+  @override
+  @JsonKey(name: 'street_id')
   String? get streetId;
   @override
   @JsonKey(ignore: true)

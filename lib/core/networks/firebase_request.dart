@@ -6,9 +6,13 @@ import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dar
 
 class FireBaseDataBase {
   static Stream<List<StreetSegment>> readStreetSegment() =>
-      FirebaseFirestore.instance.collection('streetSegment').snapshots().map(
-          (event) =>
-              event.docs.map((e) => StreetSegment.fromJson(e.data())).toList());
+      FirebaseFirestore.instance
+          .collection('streetsegments')
+          .snapshots()
+          .map((event) => event.docs.map((e) {
+                print(e);
+                return StreetSegment.fromJson(e.data());
+              }).toList());
   static Stream<List<Report>> readReportBySegmentId(String segmentId) =>
       FirebaseFirestore.instance
           .collection('Report')
@@ -30,8 +34,8 @@ class FireBaseDataBase {
           .snapshots()
           .map((event) =>
               event.docs.map((e) => Store.fromJson(e.data())).toList());
-  static Stream<List<Store>> readStores() =>
-      FirebaseFirestore.instance.collection('stores').snapshots().map(
-          (event) =>
-              event.docs.map((e) => Store.fromJson(e.data())).toList());
+  static Stream<List<Store>> readStores() => FirebaseFirestore.instance
+      .collection('stores')
+      .snapshots()
+      .map((event) => event.docs.map((e) => Store.fromJson(e.data())).toList());
 }

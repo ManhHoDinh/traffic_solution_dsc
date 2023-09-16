@@ -215,6 +215,7 @@ class MapSampleState extends State<MapSample> {
                     );
                   } else if (snapshot.hasData) {
                     snapshot.data!.forEach((e) {
+                      print(e);
                       _polylines.add(Polyline(
                         polylineId: PolylineId(e.id.toString()),
                         points: [

@@ -3,6 +3,7 @@ class AssetHelper {
   static const String ImageAssets = 'assets/images/';
   static const String icoStore = '${ImageAssets}store.png';
   static const String imgNoData = '${ImageAssets}noData.png';
+  //static const String icoStore = '${ImageAssets}store.png';
 
   // Icons
   static const String _root = 'assets/icons';
@@ -15,4 +16,10 @@ class AssetHelper {
   static const String ICON_MAP = '$_root/ic_map.png';
   static const String ICON_FILTER = '$_root/ic_filter.png';
   static const String ICON_LOCATION = '$_root/ic_location.png';
+  static const String enableStoreMarkerIcon =
+      '$_root/enableStoreMarkerIcon.png';
+  static const String disableStoreMarkerIcon =
+      '$_root/disableStoreMarkerIcon.png';
+  static const String selectedStoreMarkerIcon =
+      '$_root/selectedStoreMarkerIcon.png';
 }

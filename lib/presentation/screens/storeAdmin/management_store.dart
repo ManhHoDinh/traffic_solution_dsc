@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
 import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/storeAdmin/add_store.dart';
@@ -19,6 +21,7 @@ class ManagementStoreScreen extends StatefulWidget {
 }
 
 class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
+  List<StreetSegment> streetSegments = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +85,12 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                 ],
               ),
               SizedBox(height: 20),
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) streetSegments = snapshot.data!;
+                    return Container();
+                  }),
               Expanded(
                 child: StreamBuilder<List<Store>>(
                     stream: FireBaseDataBase.readStoreWithBusinessID(
@@ -96,8 +105,9 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                         List<Store> stores = snapshot.data!;
                         return ListView.builder(
                           itemBuilder: (context, i) => ItemContainer(
-                            title: stores[i].name ?? '',
-                            address: stores[i].address ?? '',
+                            business: widget.business,
+                            store: stores[i],
+                            streetSegments: streetSegments,
                           ),
                           itemCount: stores.length,
                         );
@@ -117,7 +127,9 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => BlocProvider(
                     create: (_) => HomeCubit(),
-                    child: AddStore(business: widget.business,),
+                    child: AddStore(
+                      business: widget.business,
+                    ),
                   )));
           // showModalBottomSheet(
           //   shape: const RoundedRectangleBorder(
@@ -137,13 +149,14 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
-    required this.title,
-    required this.address,
+    required this.store,
+    required this.business,
+    required this.streetSegments,
   });
 
-  final String title;
-  final String address;
-
+  final Store store;
+  final Business business;
+  final List<StreetSegment> streetSegments;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -169,8 +182,8 @@ class ItemContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(title, style: TextStyle(fontSize: 16)),
-                    Text(address, style: TextStyle(fontSize: 12)),
+                    Text(store.name ?? '', style: TextStyle(fontSize: 16)),
+                    Text(store.address ?? '', style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
@@ -183,7 +196,9 @@ class ItemContainer extends StatelessWidget {
                     width: 14,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: Colors.lightGreenAccent,
+                      color: (store.status ?? true)
+                          ? Colors.lightGreenAccent
+                          : Colors.redAccent,
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
@@ -192,15 +207,41 @@ class ItemContainer extends StatelessWidget {
               PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
-                    print('Edit');
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                              create: (_) => HomeCubit(),
+                              child: AddStore(
+                                business: business,
+                                store: store,
+                              ),
+                            )));
                   } else if (value == 'delete') {
-                    print('Delete');
+                    _showDeleteConfirmationDialog(context);
+                  } else if (value == 'status') {
+                    bool status = !(store.status ?? true);
+
+                    final storeDoc = FirebaseFirestore.instance
+                        .collection('stores')
+                        .doc(store.id);
+                    Store updateStore = Store(
+                        address: store.address,
+                        id: store.id,
+                        name: store.name,
+                        latitude: store.latitude,
+                        longitude: store.longitude,
+                        businessId: store.businessId,
+                        status: status);
+                    storeDoc.set(updateStore.toJson());
                   }
                 },
                 itemBuilder: (BuildContext context) => [
                   PopupMenuItem<String>(
                     value: 'edit',
                     child: Text('Edit'),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'status',
+                    child: Text((store.status ?? true) ? 'Disable' : 'Enable'),
                   ),
                   PopupMenuItem<String>(
                     value: 'delete',
@@ -217,6 +258,52 @@ class ItemContainer extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext _context) {
+        return AlertDialog(
+          title: Text("Confirm Deletion"),
+          content: Text("Are you sure you want to delete this store?"),
+          actions: [
+            TextButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(_context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text("Yes"),
+              onPressed: () async {
+                final docRoomKind = await FirebaseFirestore.instance
+                    .collection('stores')
+                    .doc(store.id);
+                Navigator.pop(_context);
+                print(streetSegments);
+                List<StreetSegment> streetWithStoreId = streetSegments
+                    .where((element) => element.storeId == store.id)
+                    .toList();
+                if (streetWithStoreId.isEmpty) {
+                   await docRoomKind.delete();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Delete Success!!!'),
+                    backgroundColor: Colors.green,
+                  ));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "This Store has linked to a camera, don't delete!!!!"),
+                    backgroundColor: Colors.red,
+                  ));
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -14,7 +14,8 @@ _$_StreetSegment _$$_StreetSegmentFromJson(Map<String, dynamic> json) =>
       EndLng: (json['ss_end_longitude'] as num?)?.toDouble(),
       EndLat: (json['ss_end_latitude'] as num?)?.toDouble(),
       status: json['ss_status'] as bool?,
-      streetId: json['store_id'] as String?,
+      storeId: json['store_id'] as String?,
+      streetId: json['street_id'] as String?,
     );
 
 Map<String, dynamic> _$$_StreetSegmentToJson(_$_StreetSegment instance) =>
@@ -25,5 +26,6 @@ Map<String, dynamic> _$$_StreetSegmentToJson(_$_StreetSegment instance) =>
       'ss_end_longitude': instance.EndLng,
       'ss_end_latitude': instance.EndLat,
       'ss_status': instance.status,
-      'store_id': instance.streetId,
+      'store_id': instance.storeId,
+      'street_id': instance.streetId,
     };

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +14,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:traffic_solution_dsc/core/constraints/status.dart';
+import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
 import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
 import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
@@ -93,9 +97,31 @@ class _AddStoreState extends State<AddStore> {
     // TODO: implement initState
     super.initState();
     getUserCurrentLocation();
-
+    
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
+      getIcon().whenComplete(() {
+      if (widget.store != null) {
+        latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
+        longitudeController.text = widget.store!.longitude!.toStringAsFixed(3);
+        moveCamera(CameraPosition(
+            target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+            zoom: 18));
+        addressController.text = widget.store!.address ?? '';
+        nameController.text = widget.store!.name ?? '';
+        _pickMarker = Marker(
+            markerId: MarkerId('start'),
+            position: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+            icon: selectedStoreIcon,
+            onTap: () {
+              print("Hello");
+            });
+        setState(() {
+          markers.add(_pickMarker!);
+        });
+      }
+    });
+
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
           GoogleMapsFlutterPlatform.instance;
@@ -111,17 +137,57 @@ class _AddStoreState extends State<AddStore> {
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   Marker? _pickMarker;
+  late BitmapDescriptor enableStoreIcon;
+  late BitmapDescriptor selectedStoreIcon;
+  late BitmapDescriptor disableStoreIcon;
+  Future getIcon() async {
+    enableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.enableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    selectedStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.selectedStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    disableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.disableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+  }
+
+  Future<BitmapDescriptor> createCustomMarkerFromAsset(
+      String assetName, Size size) async {
+    final ByteData byteData = await rootBundle.load(assetName);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    final Codec codec = await instantiateImageCodec(
+      uint8List,
+      targetHeight: size.height.toInt(),
+      targetWidth: size.width.toInt(),
+    );
+    final FrameInfo frameInfo = await codec.getNextFrame();
+    final ByteData? resizedByteData = await frameInfo.image.toByteData(
+      format: ImageByteFormat.png,
+    );
+    final Uint8List resizedUint8List = resizedByteData!.buffer.asUint8List();
+
+    final BitmapDescriptor customIcon =
+        BitmapDescriptor.fromBytes(resizedUint8List);
+    return customIcon;
+  }
+
   getStoreMarker(Store e) async {
-    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 100).then((value) {
-      setState(() {
-        markers.add(Marker(
+    if (widget.store != null) {
+      if (widget.store!.id == e.id) return;
+    }
+    setState(() {
+      markers.add(Marker(
           markerId: MarkerId(e.id!),
           position: LatLng(e.latitude!, e.longitude!),
-          icon: value,
+          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
           onTap: () {
             print("Hello");
           }));
-      });
     });
   }
 
@@ -132,7 +198,7 @@ class _AddStoreState extends State<AddStore> {
         _pickMarker = Marker(
             markerId: MarkerId('start'),
             position: LatLng(inputLat, inputLong),
-            icon: value,
+            icon: selectedStoreIcon,
             onTap: () {
               print("Hello");
             });
@@ -144,9 +210,7 @@ class _AddStoreState extends State<AddStore> {
           .read<HomeCubit>()
           .getPlaceNear(LatLng(inputLat, inputLong))
           .then((result) {
-        setState(() {
-          address = result.locationSelected!.results!.first.address ?? '';
-        });
+        address = result.locationSelected!.results!.first.address ?? '';
 
         // Split the string by commas
         List<String> parts = address.split(',');
@@ -229,26 +293,36 @@ class _AddStoreState extends State<AddStore> {
                               backgroundColor: Colors.red,
                             ));
                           } else {
-                            final storeDoc = FirebaseFirestore.instance
+                            DocumentReference storeDoc = FirebaseFirestore
+                                .instance
                                 .collection('stores')
                                 .doc();
+                            bool status = true;
+                            if (widget.store != null) {
+                              storeDoc = FirebaseFirestore.instance
+                                  .collection('stores')
+                                  .doc(widget.store!.id);
+                              status = widget.store!.status ?? true;
+                            }
                             Store report = Store(
                                 id: storeDoc.id,
-                                latitude: inputLat,
-                                longitude: inputLong,
+                                latitude: _pickMarker!.position.latitude,
+                                longitude: _pickMarker!.position.longitude,
                                 name: nameController.text,
-                                status: true,
+                                status: status,
                                 businessId: widget.business.id,
                                 address: addressController.text);
                             final json = report.toJson();
 
                             await storeDoc.set(json).whenComplete(() {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Add store success'),
-                            backgroundColor: Colors.green,
-                          ));
-                        
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(widget.store != null
+                                    ? 'Update store success'
+                                    : 'Add store success'),
+                                backgroundColor: Colors.green,
+                              ));
                             });
                           }
                         } catch (e) {
@@ -336,43 +410,25 @@ class _AddStoreState extends State<AddStore> {
                         polylines: _polylines,
                         onTap: (value) {
                           setState(() {
-                            defaultLocation = value;
                             latitudeController.text =
                                 value.latitude.toStringAsFixed(3);
                             longitudeController.text =
                                 value.longitude.toStringAsFixed(3);
                             _pickMarker = Marker(
                                 markerId: MarkerId('start'),
-                                icon: BitmapDescriptor.defaultMarkerWithHue(
-                                    BitmapDescriptor.hueYellow),
+                                icon: selectedStoreIcon,
                                 position: value,
                                 onTap: () {
                                   print("Hello");
                                 });
                             markers.add(_pickMarker!);
-                            String address = '';
                             context
                                 .read<HomeCubit>()
                                 .getPlaceNear(value)
                                 .then((result) {
-                              setState(() {
-                                address = result.locationSelected!.results!
-                                        .first.address ??
-                                    '';
-                              });
-                              addressController.text = address;
-                              // // Split the string by commas
-                              // List<String> parts = address.split(',');
-
-                              // // Check if there are at least 5 parts (0 to 4 are the first 5 parts)
-                              // if (parts.length >= 4) {
-                              //   // Join the first 5 parts using commas
-                              //   String resultString =
-                              //       parts.sublist(0, 4).join(',');
-                              //   addressController.text = resultString;
-                              // } else {
-                              //   addressController.text = address;
-                              // }
+                              addressController.text = result.locationSelected!
+                                      .results!.first.address ??
+                                  '';
                             });
                           });
                         },
@@ -405,7 +461,7 @@ class _AddStoreState extends State<AddStore> {
 
     // Nếu diện tích nhỏ, thì zoomLevel phải lớn
     if (height / width < 0.001) {
-      zoomLevel = 15;
+      zoomLevel = 16;
     }
     // Trả về tỉ lệ zoom
     return 15;
