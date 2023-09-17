@@ -4,6 +4,8 @@ import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_stree
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/app/app_bloc.dart';
 
+import '../storeAdmin/main_store.dart';
+
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
 
@@ -88,7 +90,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   OverviewContainer(
-                    icon: AssetHelper.CAMERA,
+                    icon: AssetHelper.ICON_CAMERA,
                     title: 'Camera',
                     quantity: 5,
                     beginColor: Color(0xFF9B9CF8),
@@ -96,7 +98,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                   ),
                   SizedBox(width: 10),
                   OverviewContainer(
-                    icon: AssetHelper.BUSINESS,
+                    icon: AssetHelper.ICON_BUSINESS,
                     title: 'Business',
                     quantity: 10,
                     beginColor: Color(0xFFFEB4C5),
@@ -111,17 +113,19 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
-                    icon: AssetHelper.STORE,
+                    icon: AssetHelper.ICON_STORE,
                     beginColor: Color(0xFF80E0FF),
                     endColor: Color(0xFF2F5DFD),
                     title: 'Store',
+                    destinationScreen: MainStoreScreen(),
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
-                    icon: AssetHelper.STREET,
+                    icon: AssetHelper.ICON_STREET,
                     beginColor: Color(0xFFFFF282),
                     endColor: Color(0xFFFC7E24),
                     title: 'Street',
+                    destinationScreen: MainStreetScreen(),
                   ),
                 ],
               ),
@@ -129,14 +133,14 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               Row(
                 children: const [
                   FeatureContainer(
-                    icon: AssetHelper.CAMERA,
+                    icon: AssetHelper.ICON_CAMERA,
                     beginColor: Color(0xFFAEFFAC),
                     endColor: Color(0xFF6B8FE9),
                     title: 'Camera',
                   ),
                   SizedBox(width: 10),
                   FeatureContainer(
-                    icon: AssetHelper.REPORT,
+                    icon: AssetHelper.ICON_REPORT,
                     beginColor: Color(0xFFFFE270),
                     endColor: Color(0xFF2D9344),
                     title: 'Report',
@@ -152,18 +156,19 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
 }
 
 class FeatureContainer extends StatelessWidget {
-  const FeatureContainer({
-    super.key,
-    required this.beginColor,
-    required this.endColor,
-    required this.title,
-    required this.icon,
-  });
+  const FeatureContainer(
+      {super.key,
+      required this.beginColor,
+      required this.endColor,
+      required this.title,
+      required this.icon,
+      this.destinationScreen});
 
   final Color beginColor;
   final Color endColor;
   final String title;
   final String icon;
+  final Widget? destinationScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -171,12 +176,14 @@ class FeatureContainer extends StatelessWidget {
       flex: 1,
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MainStreetScreen(),
-            ),
-          );
+          if (destinationScreen != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => destinationScreen!,
+              ),
+            );
+          }
         },
         child: Container(
           padding: EdgeInsets.only(left: 20, right: 18, top: 12, bottom: 6),

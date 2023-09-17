@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/subScreens/addStreetSegment.dart';
 
-class ManagementStreetScreen extends StatefulWidget {
-  const ManagementStreetScreen({super.key, required this.wardTitle});
-  final String wardTitle;
+class ManagementStoreScreen extends StatefulWidget {
+  const ManagementStoreScreen({
+    super.key,
+    required this.businessTitle,
+  });
+  final String businessTitle;
+
   @override
-  State<ManagementStreetScreen> createState() => _ManagementStreetScreenState();
+  State<ManagementStoreScreen> createState() => _ManagementStoreScreenState();
 }
 
-class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
+class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +20,7 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Text('Street', style: TextStyle(fontSize: 22)),
+        title: Text('Business', style: TextStyle(fontSize: 22)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -26,8 +29,8 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           child: Column(
             children: [
               Center(
-                  child:
-                      Text(widget.wardTitle, style: TextStyle(fontSize: 22))),
+                  child: Text(widget.businessTitle,
+                      style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
               Container(
@@ -74,12 +77,12 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
               ),
               SizedBox(height: 20),
               ItemContainer(
-                title: 'Camera 01',
-                store: 'Ly Truc Coffee',
+                title: 'Branch 01',
+                address: 'Nam Dan Nghe An',
               ),
               ItemContainer(
-                title: 'Camera 02',
-                store: 'Amos Coffee',
+                title: 'Branch 02',
+                address: 'Linh Trung',
               ),
             ],
           ),
@@ -88,17 +91,15 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: 36),
         onPressed: () {
-          // showModalBottomSheet(
-          //   shape: const RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-          //   isScrollControlled: true,
-          //   context: context,
-          //   builder: (BuildContext context) {
-          //     return ModalBottom();
-          //   },
-          // );
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddStreetSegment()));
+          showModalBottomSheet(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return ModalBottom();
+            },
+          );
         },
       ),
     );
@@ -109,11 +110,11 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.title,
-    required this.store,
+    required this.address,
   });
 
   final String title;
-  final String store;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +133,7 @@ class ItemContainer extends StatelessWidget {
           child: Row(
             children: [
               // Icon(Icons.notifications_outlined, size: 24),
-              Image.asset(AssetHelper.ICON_CAMERA,
+              Image.asset(AssetHelper.ICON_STORE,
                   color: Colors.black, width: 20, height: 20),
               SizedBox(width: 20),
               Expanded(
@@ -141,7 +142,7 @@ class ItemContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(title, style: TextStyle(fontSize: 16)),
-                    Text(store, style: TextStyle(fontSize: 12)),
+                    Text(address, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
@@ -209,11 +210,11 @@ class _ModalBottomState extends State<ModalBottom> {
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
             child: Column(
               children: const [
-                LocationTextField(title: 'From:', isLocation: true),
+                LocationTextField(title: 'Name:'),
                 SizedBox(height: 20),
                 Divider(color: Colors.grey),
                 SizedBox(height: 20),
-                LocationTextField(title: 'To:', isLocation: true),
+                LocationTextField(title: 'Address:', isLocation: true),
                 SizedBox(height: 72),
               ],
             ),
@@ -236,11 +237,8 @@ class _ModalBottomState extends State<ModalBottom> {
 }
 
 class LocationTextField extends StatelessWidget {
-  const LocationTextField({
-    super.key,
-    required this.title,
-    this.isLocation = false,
-  });
+  const LocationTextField(
+      {super.key, required this.title, this.isLocation = false});
 
   final String title;
   final bool isLocation;
@@ -250,7 +248,7 @@ class LocationTextField extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 70,
+          width: 100,
           child: Text(
             title,
             style: TextStyle(
@@ -266,22 +264,12 @@ class LocationTextField extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Longitude',
+                labelText:
+                    'Store ${title.substring(0, title.length - 1).toLowerCase()}',
                 fillColor: Colors.black,
-              ),
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        SizedBox(width: 24),
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Latitude',
-                fillColor: Colors.black,
+                isDense: true,
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 14, horizontal: 16),
               ),
               style: TextStyle(fontSize: 16),
             ),
