@@ -7,13 +7,13 @@ part of 'ward.dart';
 // **************************************************************************
 
 _$_Ward _$$_WardFromJson(Map<String, dynamic> json) => _$_Ward(
-      id: json['id'] as String,
-      districId: json['districId'] as String?,
-      Name: json['Name'] as String?,
+      districtId: json['district_id'] as String?,
+      id: json['ward_id'] as String?,
+      name: json['ward_name'] as String?,
     );
 
 Map<String, dynamic> _$$_WardToJson(_$_Ward instance) => <String, dynamic>{
-      'id': instance.id,
-      'districId': instance.districId,
-      'Name': instance.Name,
+      'district_id': instance.districtId,
+      'ward_id': instance.id,
+      'ward_name': instance.name,
     };

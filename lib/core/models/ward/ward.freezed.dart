@@ -20,9 +20,12 @@ Ward _$WardFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Ward {
-  String get id => throw _privateConstructorUsedError;
-  String? get districId => throw _privateConstructorUsedError;
-  String? get Name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'district_id')
+  String? get districtId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ward_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ward_name')
+  String? get name => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +37,10 @@ abstract class $WardCopyWith<$Res> {
   factory $WardCopyWith(Ward value, $Res Function(Ward) then) =
       _$WardCopyWithImpl<$Res, Ward>;
   @useResult
-  $Res call({String id, String? districId, String? Name});
+  $Res call(
+      {@JsonKey(name: 'district_id') String? districtId,
+      @JsonKey(name: 'ward_id') String? id,
+      @JsonKey(name: 'ward_name') String? name});
 }
 
 /// @nodoc
@@ -50,22 +56,22 @@ class _$WardCopyWithImpl<$Res, $Val extends Ward>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? districId = freezed,
-    Object? Name = freezed,
+    Object? districtId = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      districtId: freezed == districtId
+          ? _value.districtId
+          : districtId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      districId: freezed == districId
-          ? _value.districId
-          : districId // ignore: cast_nullable_to_non_nullable
               as String?,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -77,7 +83,10 @@ abstract class _$$_WardCopyWith<$Res> implements $WardCopyWith<$Res> {
       __$$_WardCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? districId, String? Name});
+  $Res call(
+      {@JsonKey(name: 'district_id') String? districtId,
+      @JsonKey(name: 'ward_id') String? id,
+      @JsonKey(name: 'ward_name') String? name});
 }
 
 /// @nodoc
@@ -89,22 +98,22 @@ class __$$_WardCopyWithImpl<$Res> extends _$WardCopyWithImpl<$Res, _$_Ward>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? districId = freezed,
-    Object? Name = freezed,
+    Object? districtId = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_$_Ward(
-      id: null == id
+      districtId: freezed == districtId
+          ? _value.districtId
+          : districtId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      districId: freezed == districId
-          ? _value.districId
-          : districId // ignore: cast_nullable_to_non_nullable
               as String?,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -113,20 +122,26 @@ class __$$_WardCopyWithImpl<$Res> extends _$WardCopyWithImpl<$Res, _$_Ward>
 /// @nodoc
 @JsonSerializable()
 class _$_Ward with DiagnosticableTreeMixin implements _Ward {
-  const _$_Ward({required this.id, this.districId, this.Name});
+  const _$_Ward(
+      {@JsonKey(name: 'district_id') this.districtId,
+      @JsonKey(name: 'ward_id') this.id,
+      @JsonKey(name: 'ward_name') this.name});
 
   factory _$_Ward.fromJson(Map<String, dynamic> json) => _$$_WardFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'district_id')
+  final String? districtId;
   @override
-  final String? districId;
+  @JsonKey(name: 'ward_id')
+  final String? id;
   @override
-  final String? Name;
+  @JsonKey(name: 'ward_name')
+  final String? name;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Ward(id: $id, districId: $districId, Name: $Name)';
+    return 'Ward(districtId: $districtId, id: $id, name: $name)';
   }
 
   @override
@@ -134,9 +149,9 @@ class _$_Ward with DiagnosticableTreeMixin implements _Ward {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Ward'))
+      ..add(DiagnosticsProperty('districtId', districtId))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('districId', districId))
-      ..add(DiagnosticsProperty('Name', Name));
+      ..add(DiagnosticsProperty('name', name));
   }
 
   @override
@@ -144,15 +159,15 @@ class _$_Ward with DiagnosticableTreeMixin implements _Ward {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Ward &&
+            (identical(other.districtId, districtId) ||
+                other.districtId == districtId) &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.districId, districId) ||
-                other.districId == districId) &&
-            (identical(other.Name, Name) || other.Name == Name));
+            (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, districId, Name);
+  int get hashCode => Object.hash(runtimeType, districtId, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -170,18 +185,21 @@ class _$_Ward with DiagnosticableTreeMixin implements _Ward {
 
 abstract class _Ward implements Ward {
   const factory _Ward(
-      {required final String id,
-      final String? districId,
-      final String? Name}) = _$_Ward;
+      {@JsonKey(name: 'district_id') final String? districtId,
+      @JsonKey(name: 'ward_id') final String? id,
+      @JsonKey(name: 'ward_name') final String? name}) = _$_Ward;
 
   factory _Ward.fromJson(Map<String, dynamic> json) = _$_Ward.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'district_id')
+  String? get districtId;
   @override
-  String? get districId;
+  @JsonKey(name: 'ward_id')
+  String? get id;
   @override
-  String? get Name;
+  @JsonKey(name: 'ward_name')
+  String? get name;
   @override
   @JsonKey(ignore: true)
   _$$_WardCopyWith<_$_Ward> get copyWith => throw _privateConstructorUsedError;

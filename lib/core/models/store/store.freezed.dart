@@ -20,12 +20,20 @@ Store _$StoreFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Store {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'business_id')
   String? get businessId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_latitude')
+  double? get latitude => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_longitude')
+  double? get longitude => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_name')
   String? get name => throw _privateConstructorUsedError;
-  String? get LocationX => throw _privateConstructorUsedError;
-  int? get LocationY => throw _privateConstructorUsedError;
-  String? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_status')
+  bool? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'address')
+  String? get address => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,12 +46,13 @@ abstract class $StoreCopyWith<$Res> {
       _$StoreCopyWithImpl<$Res, Store>;
   @useResult
   $Res call(
-      {String id,
-      String? businessId,
-      String? name,
-      String? LocationX,
-      int? LocationY,
-      String? status});
+      {@JsonKey(name: 'business_id') String? businessId,
+      @JsonKey(name: 'store_id') String? id,
+      @JsonKey(name: 'store_latitude') double? latitude,
+      @JsonKey(name: 'store_longitude') double? longitude,
+      @JsonKey(name: 'store_name') String? name,
+      @JsonKey(name: 'store_status') bool? status,
+      @JsonKey(name: 'address') String? address});
 }
 
 /// @nodoc
@@ -59,37 +68,42 @@ class _$StoreCopyWithImpl<$Res, $Val extends Store>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? businessId = freezed,
+    Object? id = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
     Object? name = freezed,
-    Object? LocationX = freezed,
-    Object? LocationY = freezed,
     Object? status = freezed,
+    Object? address = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       businessId: freezed == businessId
           ? _value.businessId
           : businessId // ignore: cast_nullable_to_non_nullable
               as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      LocationX: freezed == LocationX
-          ? _value.LocationX
-          : LocationX // ignore: cast_nullable_to_non_nullable
-              as String?,
-      LocationY: freezed == LocationY
-          ? _value.LocationY
-          : LocationY // ignore: cast_nullable_to_non_nullable
-              as int?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -102,12 +116,13 @@ abstract class _$$_StoreCopyWith<$Res> implements $StoreCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String id,
-      String? businessId,
-      String? name,
-      String? LocationX,
-      int? LocationY,
-      String? status});
+      {@JsonKey(name: 'business_id') String? businessId,
+      @JsonKey(name: 'store_id') String? id,
+      @JsonKey(name: 'store_latitude') double? latitude,
+      @JsonKey(name: 'store_longitude') double? longitude,
+      @JsonKey(name: 'store_name') String? name,
+      @JsonKey(name: 'store_status') bool? status,
+      @JsonKey(name: 'address') String? address});
 }
 
 /// @nodoc
@@ -119,37 +134,42 @@ class __$$_StoreCopyWithImpl<$Res> extends _$StoreCopyWithImpl<$Res, _$_Store>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? businessId = freezed,
+    Object? id = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
     Object? name = freezed,
-    Object? LocationX = freezed,
-    Object? LocationY = freezed,
     Object? status = freezed,
+    Object? address = freezed,
   }) {
     return _then(_$_Store(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       businessId: freezed == businessId
           ? _value.businessId
           : businessId // ignore: cast_nullable_to_non_nullable
               as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      LocationX: freezed == LocationX
-          ? _value.LocationX
-          : LocationX // ignore: cast_nullable_to_non_nullable
-              as String?,
-      LocationY: freezed == LocationY
-          ? _value.LocationY
-          : LocationY // ignore: cast_nullable_to_non_nullable
-              as int?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -159,32 +179,42 @@ class __$$_StoreCopyWithImpl<$Res> extends _$StoreCopyWithImpl<$Res, _$_Store>
 @JsonSerializable()
 class _$_Store with DiagnosticableTreeMixin implements _Store {
   const _$_Store(
-      {required this.id,
-      this.businessId,
-      this.name,
-      this.LocationX,
-      this.LocationY,
-      this.status});
+      {@JsonKey(name: 'business_id') this.businessId,
+      @JsonKey(name: 'store_id') this.id,
+      @JsonKey(name: 'store_latitude') this.latitude,
+      @JsonKey(name: 'store_longitude') this.longitude,
+      @JsonKey(name: 'store_name') this.name,
+      @JsonKey(name: 'store_status') this.status,
+      @JsonKey(name: 'address') this.address});
 
   factory _$_Store.fromJson(Map<String, dynamic> json) =>
       _$$_StoreFromJson(json);
 
   @override
-  final String id;
-  @override
+  @JsonKey(name: 'business_id')
   final String? businessId;
   @override
+  @JsonKey(name: 'store_id')
+  final String? id;
+  @override
+  @JsonKey(name: 'store_latitude')
+  final double? latitude;
+  @override
+  @JsonKey(name: 'store_longitude')
+  final double? longitude;
+  @override
+  @JsonKey(name: 'store_name')
   final String? name;
   @override
-  final String? LocationX;
+  @JsonKey(name: 'store_status')
+  final bool? status;
   @override
-  final int? LocationY;
-  @override
-  final String? status;
+  @JsonKey(name: 'address')
+  final String? address;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Store(id: $id, businessId: $businessId, name: $name, LocationX: $LocationX, LocationY: $LocationY, status: $status)';
+    return 'Store(businessId: $businessId, id: $id, latitude: $latitude, longitude: $longitude, name: $name, status: $status, address: $address)';
   }
 
   @override
@@ -192,12 +222,13 @@ class _$_Store with DiagnosticableTreeMixin implements _Store {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Store'))
-      ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('businessId', businessId))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('latitude', latitude))
+      ..add(DiagnosticsProperty('longitude', longitude))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('LocationX', LocationX))
-      ..add(DiagnosticsProperty('LocationY', LocationY))
-      ..add(DiagnosticsProperty('status', status));
+      ..add(DiagnosticsProperty('status', status))
+      ..add(DiagnosticsProperty('address', address));
   }
 
   @override
@@ -205,21 +236,22 @@ class _$_Store with DiagnosticableTreeMixin implements _Store {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Store &&
-            (identical(other.id, id) || other.id == id) &&
             (identical(other.businessId, businessId) ||
                 other.businessId == businessId) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.LocationX, LocationX) ||
-                other.LocationX == LocationX) &&
-            (identical(other.LocationY, LocationY) ||
-                other.LocationY == LocationY) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.address, address) || other.address == address));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, businessId, name, LocationX, LocationY, status);
+      runtimeType, businessId, id, latitude, longitude, name, status, address);
 
   @JsonKey(ignore: true)
   @override
@@ -237,27 +269,37 @@ class _$_Store with DiagnosticableTreeMixin implements _Store {
 
 abstract class _Store implements Store {
   const factory _Store(
-      {required final String id,
-      final String? businessId,
-      final String? name,
-      final String? LocationX,
-      final int? LocationY,
-      final String? status}) = _$_Store;
+      {@JsonKey(name: 'business_id') final String? businessId,
+      @JsonKey(name: 'store_id') final String? id,
+      @JsonKey(name: 'store_latitude') final double? latitude,
+      @JsonKey(name: 'store_longitude') final double? longitude,
+      @JsonKey(name: 'store_name') final String? name,
+      @JsonKey(name: 'store_status') final bool? status,
+      @JsonKey(name: 'address') final String? address}) = _$_Store;
 
   factory _Store.fromJson(Map<String, dynamic> json) = _$_Store.fromJson;
 
   @override
-  String get id;
-  @override
+  @JsonKey(name: 'business_id')
   String? get businessId;
   @override
+  @JsonKey(name: 'store_id')
+  String? get id;
+  @override
+  @JsonKey(name: 'store_latitude')
+  double? get latitude;
+  @override
+  @JsonKey(name: 'store_longitude')
+  double? get longitude;
+  @override
+  @JsonKey(name: 'store_name')
   String? get name;
   @override
-  String? get LocationX;
+  @JsonKey(name: 'store_status')
+  bool? get status;
   @override
-  int? get LocationY;
-  @override
-  String? get status;
+  @JsonKey(name: 'address')
+  String? get address;
   @override
   @JsonKey(ignore: true)
   _$$_StoreCopyWith<_$_Store> get copyWith =>

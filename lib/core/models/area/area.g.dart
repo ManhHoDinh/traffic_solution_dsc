@@ -7,13 +7,13 @@ part of 'area.dart';
 // **************************************************************************
 
 _$_Area _$$_AreaFromJson(Map<String, dynamic> json) => _$_Area(
-      id: json['id'] as String,
-      name: json['name'] as String?,
-      wardId: json['wardId'] as String?,
+      id: json['area_id'] as String?,
+      name: json['area_name'] as String?,
+      ward: json['ward_id'] as String?,
     );
 
 Map<String, dynamic> _$$_AreaToJson(_$_Area instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'wardId': instance.wardId,
+      'area_id': instance.id,
+      'area_name': instance.name,
+      'ward_id': instance.ward,
     };

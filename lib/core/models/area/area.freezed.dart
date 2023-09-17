@@ -20,9 +20,12 @@ Area _$AreaFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Area {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'area_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'area_name')
   String? get name => throw _privateConstructorUsedError;
-  String? get wardId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ward_id')
+  String? get ward => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +37,10 @@ abstract class $AreaCopyWith<$Res> {
   factory $AreaCopyWith(Area value, $Res Function(Area) then) =
       _$AreaCopyWithImpl<$Res, Area>;
   @useResult
-  $Res call({String id, String? name, String? wardId});
+  $Res call(
+      {@JsonKey(name: 'area_id') String? id,
+      @JsonKey(name: 'area_name') String? name,
+      @JsonKey(name: 'ward_id') String? ward});
 }
 
 /// @nodoc
@@ -50,22 +56,22 @@ class _$AreaCopyWithImpl<$Res, $Val extends Area>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? name = freezed,
-    Object? wardId = freezed,
+    Object? ward = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      wardId: freezed == wardId
-          ? _value.wardId
-          : wardId // ignore: cast_nullable_to_non_nullable
+      ward: freezed == ward
+          ? _value.ward
+          : ward // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -77,7 +83,10 @@ abstract class _$$_AreaCopyWith<$Res> implements $AreaCopyWith<$Res> {
       __$$_AreaCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? name, String? wardId});
+  $Res call(
+      {@JsonKey(name: 'area_id') String? id,
+      @JsonKey(name: 'area_name') String? name,
+      @JsonKey(name: 'ward_id') String? ward});
 }
 
 /// @nodoc
@@ -89,22 +98,22 @@ class __$$_AreaCopyWithImpl<$Res> extends _$AreaCopyWithImpl<$Res, _$_Area>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? name = freezed,
-    Object? wardId = freezed,
+    Object? ward = freezed,
   }) {
     return _then(_$_Area(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      wardId: freezed == wardId
-          ? _value.wardId
-          : wardId // ignore: cast_nullable_to_non_nullable
+      ward: freezed == ward
+          ? _value.ward
+          : ward // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -113,20 +122,26 @@ class __$$_AreaCopyWithImpl<$Res> extends _$AreaCopyWithImpl<$Res, _$_Area>
 /// @nodoc
 @JsonSerializable()
 class _$_Area with DiagnosticableTreeMixin implements _Area {
-  const _$_Area({required this.id, this.name, this.wardId});
+  const _$_Area(
+      {@JsonKey(name: 'area_id') this.id,
+      @JsonKey(name: 'area_name') this.name,
+      @JsonKey(name: 'ward_id') this.ward});
 
   factory _$_Area.fromJson(Map<String, dynamic> json) => _$$_AreaFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'area_id')
+  final String? id;
   @override
+  @JsonKey(name: 'area_name')
   final String? name;
   @override
-  final String? wardId;
+  @JsonKey(name: 'ward_id')
+  final String? ward;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Area(id: $id, name: $name, wardId: $wardId)';
+    return 'Area(id: $id, name: $name, ward: $ward)';
   }
 
   @override
@@ -136,7 +151,7 @@ class _$_Area with DiagnosticableTreeMixin implements _Area {
       ..add(DiagnosticsProperty('type', 'Area'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('wardId', wardId));
+      ..add(DiagnosticsProperty('ward', ward));
   }
 
   @override
@@ -146,12 +161,12 @@ class _$_Area with DiagnosticableTreeMixin implements _Area {
             other is _$_Area &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.wardId, wardId) || other.wardId == wardId));
+            (identical(other.ward, ward) || other.ward == ward));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, wardId);
+  int get hashCode => Object.hash(runtimeType, id, name, ward);
 
   @JsonKey(ignore: true)
   @override
@@ -169,18 +184,21 @@ class _$_Area with DiagnosticableTreeMixin implements _Area {
 
 abstract class _Area implements Area {
   const factory _Area(
-      {required final String id,
-      final String? name,
-      final String? wardId}) = _$_Area;
+      {@JsonKey(name: 'area_id') final String? id,
+      @JsonKey(name: 'area_name') final String? name,
+      @JsonKey(name: 'ward_id') final String? ward}) = _$_Area;
 
   factory _Area.fromJson(Map<String, dynamic> json) = _$_Area.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'area_id')
+  String? get id;
   @override
+  @JsonKey(name: 'area_name')
   String? get name;
   @override
-  String? get wardId;
+  @JsonKey(name: 'ward_id')
+  String? get ward;
   @override
   @JsonKey(ignore: true)
   _$$_AreaCopyWith<_$_Area> get copyWith => throw _privateConstructorUsedError;

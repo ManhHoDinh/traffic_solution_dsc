@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/models/business/business.dart';
+import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 
 import 'management_store.dart';
 
@@ -47,15 +51,29 @@ class _MainStoreScreenState extends State<MainStoreScreen> {
                 ),
                 SizedBox(height: 30),
                 // items
-                ItemContainer(
-                  title: 'Truc Coffee',
-                  type: 'Coffee',
-                  quantityStore: 3,
-                ),
-                ItemContainer(
-                  title: 'Hello Coffee',
-                  type: 'Coffee',
-                  quantityStore: 1,
+                Expanded(
+                  child: StreamBuilder<List<Business>>(
+                      stream: FireBaseDataBase.readBusinesses(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child:
+                                Text('Something went wrong! ${snapshot.error}'),
+                          );
+                        } else if (snapshot.hasData) {
+                          List<Business> business = snapshot.data!;
+                          return ListView.builder(
+                            itemBuilder: (context, i) => ItemContainer(
+                              business: business[i],
+                            ),
+                            itemCount: business.length,
+                          );
+                        } else {
+                          return Expanded(
+                              child:
+                                  Center(child: CircularProgressIndicator()));
+                        }
+                      }),
                 ),
               ],
             )),
@@ -67,16 +85,13 @@ class _MainStoreScreenState extends State<MainStoreScreen> {
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
-    required this.title,
-    required this.type,
-    required this.quantityStore,
+    required this.business,
   });
-  final String title;
-  final int quantityStore;
-  final String type;
+  final Business business;
 
   @override
   Widget build(BuildContext context) {
+    int quantityStore = 1;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: InkWell(
@@ -84,7 +99,7 @@ class ItemContainer extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ManagementStoreScreen(businessTitle: title),
+              builder: (_) => ManagementStoreScreen(business: business),
             ),
           );
         },
@@ -107,8 +122,8 @@ class ItemContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(title, style: TextStyle(fontSize: 16)),
-                    Text(type, style: TextStyle(fontSize: 12)),
+                    Text(business.name ?? '', style: TextStyle(fontSize: 16)),
+                    Text(business.type ?? '', style: TextStyle(fontSize: 12)),
                     Text(
                       quantityStore > 1
                           ? '$quantityStore stores'

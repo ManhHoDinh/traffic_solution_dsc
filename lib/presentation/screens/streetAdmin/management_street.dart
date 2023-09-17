@@ -75,11 +75,11 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
               SizedBox(height: 20),
               ItemContainer(
                 title: 'Camera 01',
-                store: 'Ly Truc Coffee',
+                subTitle: 'Ly Truc Coffee',
               ),
               ItemContainer(
                 title: 'Camera 02',
-                store: 'Amos Coffee',
+                subTitle: 'Amos Coffee',
               ),
             ],
           ),
@@ -109,11 +109,11 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.title,
-    required this.store,
+    required this.subTitle,
   });
 
   final String title;
-  final String store;
+  final String subTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class ItemContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(title, style: TextStyle(fontSize: 16)),
-                    Text(store, style: TextStyle(fontSize: 12)),
+                    Text(subTitle, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
@@ -187,123 +187,6 @@ class ItemContainer extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ModalBottom extends StatefulWidget {
-  const ModalBottom({super.key});
-
-  @override
-  State<ModalBottom> createState() => _ModalBottomState();
-}
-
-class _ModalBottomState extends State<ModalBottom> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-            child: Column(
-              children: const [
-                LocationTextField(title: 'From:', isLocation: true),
-                SizedBox(height: 20),
-                Divider(color: Colors.grey),
-                SizedBox(height: 20),
-                LocationTextField(title: 'To:', isLocation: true),
-                SizedBox(height: 72),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: const Color.fromARGB(255, 148, 226, 58),
-              child: Icon(Icons.check, size: 36, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LocationTextField extends StatelessWidget {
-  const LocationTextField({
-    super.key,
-    required this.title,
-    this.isLocation = false,
-  });
-
-  final String title;
-  final bool isLocation;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Longitude',
-                fillColor: Colors.black,
-              ),
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        SizedBox(width: 24),
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Latitude',
-                fillColor: Colors.black,
-              ),
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: isLocation,
-          child: Transform.translate(
-            offset: Offset(16, 0),
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AssetHelper.ICON_LOCATION),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
     );
   }
 }

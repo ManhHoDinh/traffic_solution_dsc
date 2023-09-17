@@ -7,12 +7,12 @@ part of 'distric.dart';
 // **************************************************************************
 
 _$_District _$$_DistrictFromJson(Map<String, dynamic> json) => _$_District(
-      id: json['id'] as String,
-      Name: json['Name'] as String?,
+      id: json['district_id'] as String?,
+      name: json['district_name'] as String?,
     );
 
 Map<String, dynamic> _$$_DistrictToJson(_$_District instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'Name': instance.Name,
+      'district_id': instance.id,
+      'district_name': instance.name,
     };

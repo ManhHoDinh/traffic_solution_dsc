@@ -5,37 +5,20 @@ import 'package:flutter/foundation.dart';
 part 'streetSegment.freezed.dart';
 part 'streetSegment.g.dart';
 
-class StreetSegment {
-  String? id;
-  double? StartLng;
-  double? StartLat;
-  double? EndLng;
-  double? EndLat;
-  bool? status;
-  String? streetId;
-  StreetSegment(StreetSegmentFromFirebase value) {
-    print(value);
-    this.id = value.id;
-    this.StartLng = double.tryParse(value.StartLng.toString());
-    this.StartLat = double.tryParse(value.StartLat.toString());
-    this.EndLat = double.tryParse(value.EndLat.toString());
-    this.EndLng = double.tryParse(value.EndLng.toString());
-    this.status = value.status;
-  }
-}
-
 @freezed
-class StreetSegmentFromFirebase with _$StreetSegmentFromFirebase {
-  const factory StreetSegmentFromFirebase({
-    @JsonKey(name: 'SS_ID') String? id,
-    @JsonKey(name: 'SS_START_LONGITUDE') String? StartLng,
-    @JsonKey(name: 'SS_START_LATITUDE') String? StartLat,
-    @JsonKey(name: 'SS_END_LONGITUDE') String? EndLng,
-    @JsonKey(name: 'SS_END_LATITUDE') String? EndLat,
-    @JsonKey(name: 'SS_STATUS') bool? status,
-    @JsonKey(name: 'STREET_ID') String? streetId,
-  }) = _StreetSegmentFromFirebase;
+class StreetSegment with _$StreetSegment {
+  const factory StreetSegment({
+    @JsonKey(name: 'ss_id') String? id,
+    @JsonKey(name: 'ss_start_longitude') double? StartLng,
+    @JsonKey(name: 'ss_start_latitude') double? StartLat,
+    @JsonKey(name: 'ss_end_longitude') double? EndLng,
+    @JsonKey(name: 'ss_end_latitude') double? EndLat,
+    @JsonKey(name: 'ss_status') bool? status,
+    @JsonKey(name: 'store_id') String? storeId,
+    @JsonKey(name: 'street_id') String? streetId,
+    
+  }) = _StreetSegment;
 
-  factory StreetSegmentFromFirebase.fromJson(Map<String, dynamic?> json) =>
-      _$StreetSegmentFromFirebaseFromJson(json);
+  factory StreetSegment.fromJson(Map<String, dynamic?> json) =>
+      _$StreetSegmentFromJson(json);
 }

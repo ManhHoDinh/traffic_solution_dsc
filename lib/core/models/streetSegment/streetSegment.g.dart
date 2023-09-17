@@ -6,26 +6,26 @@ part of 'streetSegment.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_StreetSegmentFromFirebase _$$_StreetSegmentFromFirebaseFromJson(
-        Map<String, dynamic> json) =>
-    _$_StreetSegmentFromFirebase(
-      id: json['SS_ID'] as String?,
-      StartLng: json['SS_START_LONGITUDE'] as String?,
-      StartLat: json['SS_START_LATITUDE'] as String?,
-      EndLng: json['SS_END_LONGITUDE'] as String?,
-      EndLat: json['SS_END_LATITUDE'] as String?,
-      status: json['SS_STATUS'] as bool?,
-      streetId: json['STREET_ID'] as String?,
+_$_StreetSegment _$$_StreetSegmentFromJson(Map<String, dynamic> json) =>
+    _$_StreetSegment(
+      id: json['ss_id'] as String?,
+      StartLng: (json['ss_start_longitude'] as num?)?.toDouble(),
+      StartLat: (json['ss_start_latitude'] as num?)?.toDouble(),
+      EndLng: (json['ss_end_longitude'] as num?)?.toDouble(),
+      EndLat: (json['ss_end_latitude'] as num?)?.toDouble(),
+      status: json['ss_status'] as bool?,
+      storeId: json['store_id'] as String?,
+      streetId: json['street_id'] as String?,
     );
 
-Map<String, dynamic> _$$_StreetSegmentFromFirebaseToJson(
-        _$_StreetSegmentFromFirebase instance) =>
+Map<String, dynamic> _$$_StreetSegmentToJson(_$_StreetSegment instance) =>
     <String, dynamic>{
-      'SS_ID': instance.id,
-      'SS_START_LONGITUDE': instance.StartLng,
-      'SS_START_LATITUDE': instance.StartLat,
-      'SS_END_LONGITUDE': instance.EndLng,
-      'SS_END_LATITUDE': instance.EndLat,
-      'SS_STATUS': instance.status,
-      'STREET_ID': instance.streetId,
+      'ss_id': instance.id,
+      'ss_start_longitude': instance.StartLng,
+      'ss_start_latitude': instance.StartLat,
+      'ss_end_longitude': instance.EndLng,
+      'ss_end_latitude': instance.EndLat,
+      'ss_status': instance.status,
+      'store_id': instance.storeId,
+      'street_id': instance.streetId,
     };

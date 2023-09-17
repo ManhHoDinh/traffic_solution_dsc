@@ -27,7 +27,7 @@ class ReportScreenState extends State<ReportScreen> {
     selectedStartDate = DateTime(now.year, now.month, now.day, 0, 0);
     selectedEndDate = DateTime(now.year, now.month, now.day, 23, 59);
   }
-
+  
   getDefaultTableRow() {
     tableRows.clear();
     tableRows.add(TableRow(children: [

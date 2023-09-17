@@ -20,8 +20,10 @@ District _$DistrictFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$District {
-  String get id => throw _privateConstructorUsedError;
-  String? get Name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'district_id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'district_name')
+  String? get name => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +36,9 @@ abstract class $DistrictCopyWith<$Res> {
   factory $DistrictCopyWith(District value, $Res Function(District) then) =
       _$DistrictCopyWithImpl<$Res, District>;
   @useResult
-  $Res call({String id, String? Name});
+  $Res call(
+      {@JsonKey(name: 'district_id') String? id,
+      @JsonKey(name: 'district_name') String? name});
 }
 
 /// @nodoc
@@ -50,17 +54,17 @@ class _$DistrictCopyWithImpl<$Res, $Val extends District>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? Name = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -73,7 +77,9 @@ abstract class _$$_DistrictCopyWith<$Res> implements $DistrictCopyWith<$Res> {
       __$$_DistrictCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? Name});
+  $Res call(
+      {@JsonKey(name: 'district_id') String? id,
+      @JsonKey(name: 'district_name') String? name});
 }
 
 /// @nodoc
@@ -87,17 +93,17 @@ class __$$_DistrictCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? Name = freezed,
+    Object? id = freezed,
+    Object? name = freezed,
   }) {
     return _then(_$_District(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      Name: freezed == Name
-          ? _value.Name
-          : Name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -106,19 +112,23 @@ class __$$_DistrictCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_District with DiagnosticableTreeMixin implements _District {
-  const _$_District({required this.id, this.Name});
+  const _$_District(
+      {@JsonKey(name: 'district_id') this.id,
+      @JsonKey(name: 'district_name') this.name});
 
   factory _$_District.fromJson(Map<String, dynamic> json) =>
       _$$_DistrictFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'district_id')
+  final String? id;
   @override
-  final String? Name;
+  @JsonKey(name: 'district_name')
+  final String? name;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'District(id: $id, Name: $Name)';
+    return 'District(id: $id, name: $name)';
   }
 
   @override
@@ -127,7 +137,7 @@ class _$_District with DiagnosticableTreeMixin implements _District {
     properties
       ..add(DiagnosticsProperty('type', 'District'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('Name', Name));
+      ..add(DiagnosticsProperty('name', name));
   }
 
   @override
@@ -136,12 +146,12 @@ class _$_District with DiagnosticableTreeMixin implements _District {
         (other.runtimeType == runtimeType &&
             other is _$_District &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.Name, Name) || other.Name == Name));
+            (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, Name);
+  int get hashCode => Object.hash(runtimeType, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -158,15 +168,18 @@ class _$_District with DiagnosticableTreeMixin implements _District {
 }
 
 abstract class _District implements District {
-  const factory _District({required final String id, final String? Name}) =
-      _$_District;
+  const factory _District(
+      {@JsonKey(name: 'district_id') final String? id,
+      @JsonKey(name: 'district_name') final String? name}) = _$_District;
 
   factory _District.fromJson(Map<String, dynamic> json) = _$_District.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'district_id')
+  String? get id;
   @override
-  String? get Name;
+  @JsonKey(name: 'district_name')
+  String? get name;
   @override
   @JsonKey(ignore: true)
   _$$_DistrictCopyWith<_$_District> get copyWith =>

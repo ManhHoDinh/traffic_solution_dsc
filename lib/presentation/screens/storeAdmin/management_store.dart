@@ -1,18 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/models/business/business.dart';
+import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
+import 'package:traffic_solution_dsc/presentation/screens/storeAdmin/add_store.dart';
 
 class ManagementStoreScreen extends StatefulWidget {
   const ManagementStoreScreen({
     super.key,
-    required this.businessTitle,
+    required this.business,
   });
-  final String businessTitle;
+  final Business business;
 
   @override
   State<ManagementStoreScreen> createState() => _ManagementStoreScreenState();
 }
 
 class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
+  List<StreetSegment> streetSegments = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +38,7 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
           child: Column(
             children: [
               Center(
-                  child: Text(widget.businessTitle,
+                  child: Text(widget.business.name ?? '',
                       style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
@@ -76,13 +85,37 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                 ],
               ),
               SizedBox(height: 20),
-              ItemContainer(
-                title: 'Branch 01',
-                address: 'Nam Dan Nghe An',
-              ),
-              ItemContainer(
-                title: 'Branch 02',
-                address: 'Linh Trung',
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) streetSegments = snapshot.data!;
+                    return Container();
+                  }),
+              Expanded(
+                child: StreamBuilder<List<Store>>(
+                    stream: FireBaseDataBase.readStoreWithBusinessID(
+                        widget.business.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child:
+                              Text('Something went wrong! ${snapshot.error}'),
+                        );
+                      } else if (snapshot.hasData) {
+                        List<Store> stores = snapshot.data!;
+                        return ListView.builder(
+                          itemBuilder: (context, i) => ItemContainer(
+                            business: widget.business,
+                            store: stores[i],
+                            streetSegments: streetSegments,
+                          ),
+                          itemCount: stores.length,
+                        );
+                      } else {
+                        return Expanded(
+                            child: Center(child: CircularProgressIndicator()));
+                      }
+                    }),
               ),
             ],
           ),
@@ -91,15 +124,22 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: 36),
         onPressed: () {
-          showModalBottomSheet(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-            isScrollControlled: true,
-            context: context,
-            builder: (BuildContext context) {
-              return ModalBottom();
-            },
-          );
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (_) => HomeCubit(),
+                    child: AddStore(
+                      business: widget.business,
+                    ),
+                  )));
+          // showModalBottomSheet(
+          //   shape: const RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+          //   isScrollControlled: true,
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return ModalBottom();
+          //   },
+          // );
         },
       ),
     );
@@ -109,20 +149,20 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
-    required this.title,
-    required this.address,
+    required this.store,
+    required this.business,
+    required this.streetSegments,
   });
 
-  final String title;
-  final String address;
-
+  final Store store;
+  final Business business;
+  final List<StreetSegment> streetSegments;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Container(
         // margin: EdgeInsets.only(bottom: 20),
-        height: 76,
         decoration: BoxDecoration(
           border: Border.all(width: 2, color: Colors.black),
           borderRadius: BorderRadius.circular(10),
@@ -137,16 +177,18 @@ class ItemContainer extends StatelessWidget {
                   color: Colors.black, width: 20, height: 20),
               SizedBox(width: 20),
               Expanded(
+                flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(title, style: TextStyle(fontSize: 16)),
-                    Text(address, style: TextStyle(fontSize: 12)),
+                    Text(store.name ?? '', style: TextStyle(fontSize: 16)),
+                    Text(store.address ?? '', style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -154,7 +196,9 @@ class ItemContainer extends StatelessWidget {
                     width: 14,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: Colors.lightGreenAccent,
+                      color: (store.status ?? true)
+                          ? Colors.lightGreenAccent
+                          : Colors.redAccent,
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
@@ -163,15 +207,41 @@ class ItemContainer extends StatelessWidget {
               PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
-                    print('Edit');
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                              create: (_) => HomeCubit(),
+                              child: AddStore(
+                                business: business,
+                                store: store,
+                              ),
+                            )));
                   } else if (value == 'delete') {
-                    print('Delete');
+                    _showDeleteConfirmationDialog(context);
+                  } else if (value == 'status') {
+                    bool status = !(store.status ?? true);
+
+                    final storeDoc = FirebaseFirestore.instance
+                        .collection('stores')
+                        .doc(store.id);
+                    Store updateStore = Store(
+                        address: store.address,
+                        id: store.id,
+                        name: store.name,
+                        latitude: store.latitude,
+                        longitude: store.longitude,
+                        businessId: store.businessId,
+                        status: status);
+                    storeDoc.set(updateStore.toJson());
                   }
                 },
                 itemBuilder: (BuildContext context) => [
                   PopupMenuItem<String>(
                     value: 'edit',
                     child: Text('Edit'),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'status',
+                    child: Text((store.status ?? true) ? 'Disable' : 'Enable'),
                   ),
                   PopupMenuItem<String>(
                     value: 'delete',
@@ -190,108 +260,50 @@ class ItemContainer extends StatelessWidget {
       ),
     );
   }
-}
 
-class ModalBottom extends StatefulWidget {
-  const ModalBottom({super.key});
-
-  @override
-  State<ModalBottom> createState() => _ModalBottomState();
-}
-
-class _ModalBottomState extends State<ModalBottom> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-            child: Column(
-              children: const [
-                LocationTextField(title: 'Name:'),
-                SizedBox(height: 20),
-                Divider(color: Colors.grey),
-                SizedBox(height: 20),
-                LocationTextField(title: 'Address:', isLocation: true),
-                SizedBox(height: 72),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: const Color.fromARGB(255, 148, 226, 58),
-              child: Icon(Icons.check, size: 36, color: Colors.white),
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext _context) {
+        return AlertDialog(
+          title: Text("Confirm Deletion"),
+          content: Text("Are you sure you want to delete this store?"),
+          actions: [
+            TextButton(
+              child: Text("No"),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(_context).pop(); // Close the dialog
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LocationTextField extends StatelessWidget {
-  const LocationTextField(
-      {super.key, required this.title, this.isLocation = false});
-
-  final String title;
-  final bool isLocation;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            TextButton(
+              child: Text("Yes"),
+              onPressed: () async {
+                final docRoomKind = await FirebaseFirestore.instance
+                    .collection('stores')
+                    .doc(store.id);
+                Navigator.pop(_context);
+                print(streetSegments);
+                List<StreetSegment> streetWithStoreId = streetSegments
+                    .where((element) => element.storeId == store.id)
+                    .toList();
+                if (streetWithStoreId.isEmpty) {
+                   await docRoomKind.delete();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Delete Success!!!'),
+                    backgroundColor: Colors.green,
+                  ));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "This Store has linked to a camera, don't delete!!!!"),
+                    backgroundColor: Colors.red,
+                  ));
+                }
+              },
             ),
-          ),
-        ),
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText:
-                    'Store ${title.substring(0, title.length - 1).toLowerCase()}',
-                fillColor: Colors.black,
-                isDense: true,
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-              ),
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: isLocation,
-          child: Transform.translate(
-            offset: Offset(16, 0),
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AssetHelper.ICON_LOCATION),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
+          ],
+        );
+      },
     );
   }
 }
