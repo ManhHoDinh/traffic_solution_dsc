@@ -507,7 +507,7 @@ class _BarChart extends StatelessWidget {
               barGroups: barGroups,
               gridData: const FlGridData(show: false),
               alignment: BarChartAlignment.spaceAround,
-              maxY: haveLargeData ? total * 1.25 : total / 3.3,
+              maxY: haveLargeData ? total * 3 : total / 3.3,
             ),
           );
   }

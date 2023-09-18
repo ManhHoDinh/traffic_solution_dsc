@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/district.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/app/app_bloc.dart';
 

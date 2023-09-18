@@ -32,16 +32,18 @@ class LocationTextField extends StatelessWidget {
             ),
           ),
         ),
-        isName == true||isAddress==true
+        isName == true || isAddress == true
             ? Expanded(
                 child: SingleChildScrollView(
                   child: TextFormField(
                     controller: nameController,
                     maxLines: null, // Allows multiple lines of text
                     keyboardType: TextInputType.multiline,
+                    enabled: false,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText:isName==true? 'Store Name':'Store Address',
+                      labelText:
+                          isName == true ? 'Store Name' : 'Store Address',
                     ),
                     style: TextStyle(fontSize: 16),
                   ),
@@ -56,6 +58,7 @@ class LocationTextField extends StatelessWidget {
                         child: TextField(
                           controller: longitudeController,
                           keyboardType: TextInputType.number,
+                          enabled: false,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Longitude',
@@ -65,7 +68,7 @@ class LocationTextField extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 24),
+                    SizedBox(width: 15),
                     Expanded(
                       child: SizedBox(
                         height: 40,
@@ -74,6 +77,7 @@ class LocationTextField extends StatelessWidget {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
+                            enabled: false,
                             labelText: 'Latitude',
                             fillColor: Colors.black,
                           ),

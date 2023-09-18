@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/models/street/street.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/subScreens/addStreetSegment.dart';
 
-class ManagementStreetScreen extends StatefulWidget {
-  const ManagementStreetScreen({super.key, required this.wardTitle});
-  final String wardTitle;
+class StreetSegmentScreen extends StatefulWidget {
+  const StreetSegmentScreen({super.key, required this.street});
+  final Street street;
   @override
-  State<ManagementStreetScreen> createState() => _ManagementStreetScreenState();
+  State<StreetSegmentScreen> createState() => _StreetSegmentScreenState();
 }
 
-class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
+class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
+  List<Store> stores = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +22,7 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Text('Street', style: TextStyle(fontSize: 22)),
+        title: Text('Camera', style: TextStyle(fontSize: 22)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -26,8 +31,8 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           child: Column(
             children: [
               Center(
-                  child:
-                      Text(widget.wardTitle, style: TextStyle(fontSize: 22))),
+                  child: Text(widget.street.name ?? '',
+                      style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
               Container(
@@ -64,23 +69,47 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              Row(
-                children: const [
-                  Text('4',
-                      style: TextStyle(fontSize: 20, color: Colors.black)),
-                  Text(' results',
-                      style: TextStyle(fontSize: 16, color: Colors.black)),
-                ],
+              StreamBuilder<List<Store>>(
+                  stream: FireBaseDataBase.readStores(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) stores = snapshot.data!;
+                    return Container();
+                  }),
+
+              Expanded(
+                child: StreamBuilder<List<StreetSegment>>(
+                    stream: FireBaseDataBase.readStreetSegmentByStreetId(
+                        widget.street.id ?? ''),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child:
+                              Text('Something went wrong! ${snapshot.error}'),
+                        );
+                      } else if (snapshot.hasData) {
+                        List<StreetSegment> streetSegments = snapshot.data!;
+                        return ListView.builder(
+                          itemBuilder: (context, i) => ItemContainer(
+                            index: i,
+                            streetSegment: streetSegments[i],
+                            stores: stores,
+                          ),
+                          itemCount: streetSegments.length,
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    }),
               ),
-              SizedBox(height: 20),
-              ItemContainer(
-                title: 'Camera 01',
-                subTitle: 'Ly Truc Coffee',
-              ),
-              ItemContainer(
-                title: 'Camera 02',
-                subTitle: 'Amos Coffee',
-              ),
+
+              // ItemContainer(
+              //   title: 'Camera 01',
+              //   subTitle: 'Ly Truc Coffee',
+              // ),
+              // ItemContainer(
+              //   title: 'Camera 02',
+              //   subTitle: 'Amos Coffee',
+              // ),
             ],
           ),
         ),
@@ -98,7 +127,7 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
           //   },
           // );
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddStreetSegment()));
+              .push(MaterialPageRoute(builder: (_) => AddStreetSegment(street: widget.street,)));
         },
       ),
     );
@@ -108,15 +137,17 @@ class _ManagementStreetScreenState extends State<ManagementStreetScreen> {
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
-    required this.title,
-    required this.subTitle,
+    required this.streetSegment,
+    required this.index,
+    required this.stores,
   });
-
-  final String title;
-  final String subTitle;
+  final int index;
+  final StreetSegment streetSegment;
+  final List<Store> stores;
 
   @override
   Widget build(BuildContext context) {
+    Store store = stores.where((e) => e.id == streetSegment.storeId).first;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Container(
@@ -140,8 +171,8 @@ class ItemContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(title, style: TextStyle(fontSize: 16)),
-                    Text(subTitle, style: TextStyle(fontSize: 12)),
+                    Text("Camera $index", style: TextStyle(fontSize: 16)),
+                    Text("${store.name}", style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),

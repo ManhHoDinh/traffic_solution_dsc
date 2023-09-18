@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/district.dart';
 
 class AppRouter {
   Route? onGenerateRoute(RouteSettings settings) {
