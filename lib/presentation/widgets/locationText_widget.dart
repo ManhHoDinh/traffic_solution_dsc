@@ -80,7 +80,6 @@ class LocationTextField extends StatelessWidget {
                           enabled: isEnable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            enabled: false,
                             labelText: 'Latitude',
                             fillColor: Colors.black,
                           ),

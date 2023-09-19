@@ -15,6 +15,7 @@ class StreetSegmentScreen extends StatefulWidget {
 
 class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
   List<Store> stores = [];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,39 +36,6 @@ class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
                       style: TextStyle(fontSize: 22))),
               SizedBox(height: 30),
               // search bar
-              Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      spreadRadius: 0,
-                      blurRadius: 4,
-                      offset: Offset(0, 1), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Icon(Icons.search, size: 30, color: Colors.black),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search your location ...',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               SizedBox(height: 20),
               StreamBuilder<List<Store>>(
                   stream: FireBaseDataBase.readStores(),
@@ -127,8 +95,10 @@ class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
           //     return ModalBottom();
           //   },
           // );
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddStreetSegment(street: widget.street,)));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => AddStreetSegment(
+                    street: widget.street,
+                  )));
         },
       ),
     );
@@ -142,7 +112,6 @@ class ItemContainer extends StatelessWidget {
     required this.index,
     required this.stores,
     required this.street,
-    
   });
   final int index;
   final StreetSegment streetSegment;
@@ -199,10 +168,10 @@ class ItemContainer extends StatelessWidget {
                   if (value == 'edit') {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => AddStreetSegment(
-                                street: street,
-                                store: store,
-                                streetSegment: streetSegment,
-                              )));
+                              street: street,
+                              store: store,
+                              streetSegment: streetSegment,
+                            )));
                   } else if (value == 'delete') {
                     print('Delete');
                   }
