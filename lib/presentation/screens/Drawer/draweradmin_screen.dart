@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 import 'package:traffic_solution_dsc/models/cdm.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/MainAdmin/mainadmin_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/blocs/app/app_bloc.dart';
 import 'package:traffic_solution_dsc/models/user/user.dart';

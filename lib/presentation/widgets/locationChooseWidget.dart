@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class LocationChooseWidget extends StatelessWidget {
@@ -9,7 +7,8 @@ class LocationChooseWidget extends StatelessWidget {
       required this.color,
       required this.icon,
       required this.iconColor,
-      required this.iconSize, required this.onTap});
+      required this.iconSize,
+      required this.onTap});
   String text;
   Color color;
   IconData icon;

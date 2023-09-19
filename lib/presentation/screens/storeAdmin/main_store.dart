@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
-import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 
 import 'management_store.dart';

@@ -1,29 +1,15 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:custom_map_markers/custom_map_markers.dart';
-import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 
-import 'package:traffic_solution_dsc/core/constraints/status.dart';
-import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
-import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/DirectionScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 
-import 'package:traffic_solution_dsc/presentation/screens/ReportScreen/reportScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:place_picker/place_picker.dart';
 
-import 'package:label_marker/label_marker.dart';
-import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationText_widget.dart';

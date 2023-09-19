@@ -3,35 +3,21 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
-
-import 'package:traffic_solution_dsc/core/constraints/status.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
-import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
-import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/core/models/store/store.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/DirectionScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 
-import 'package:traffic_solution_dsc/presentation/screens/ReportScreen/reportScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:place_picker/place_picker.dart';
 
-import 'package:label_marker/label_marker.dart';
-import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationText_widget.dart';
@@ -97,30 +83,32 @@ class _AddStoreState extends State<AddStore> {
     // TODO: implement initState
     super.initState();
     getUserCurrentLocation();
-    
+
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
-      if (widget.store != null) {
-        latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
-        longitudeController.text = widget.store!.longitude!.toStringAsFixed(3);
-        moveCamera(CameraPosition(
-            target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
-            zoom: 18));
-        addressController.text = widget.store!.address ?? '';
-        nameController.text = widget.store!.name ?? '';
-        _pickMarker = Marker(
-            markerId: MarkerId('start'),
-            position: LatLng(widget.store!.latitude!, widget.store!.longitude!),
-            icon: selectedStoreIcon,
-            onTap: () {
-              print("Hello");
-            });
-        setState(() {
-          markers.add(_pickMarker!);
-        });
-      }
-    });
+        if (widget.store != null) {
+          latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
+          longitudeController.text =
+              widget.store!.longitude!.toStringAsFixed(3);
+          moveCamera(CameraPosition(
+              target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+              zoom: 18));
+          addressController.text = widget.store!.address ?? '';
+          nameController.text = widget.store!.name ?? '';
+          _pickMarker = Marker(
+              markerId: MarkerId('start'),
+              position:
+                  LatLng(widget.store!.latitude!, widget.store!.longitude!),
+              icon: selectedStoreIcon,
+              onTap: () {
+                print("Hello");
+              });
+          setState(() {
+            markers.add(_pickMarker!);
+          });
+        }
+      });
 
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =

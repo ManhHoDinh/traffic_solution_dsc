@@ -32,21 +32,26 @@ class LoginUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     mediaSize = MediaQuery.of(context).size;
-    return Container(
-      width: mediaSize.width,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned(top: 20, child: _buildTop()),
-            Positioned(bottom: 0, child: _buildBottom()),
-          ],
-        ),
-      ),
-    );
+    return GestureDetector(
+        onTap: () {
+          // Remove focus from the text fields when tapping outside
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          width: mediaSize.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                Positioned(top: 20, child: _buildTop()),
+                Positioned(bottom: 0, child: _buildBottom()),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget _buildTop() {

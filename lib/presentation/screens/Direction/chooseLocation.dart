@@ -5,7 +5,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 
 import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/DirectionScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/cubit/direction_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationChooseWidget.dart';
@@ -116,8 +115,11 @@ class _ChooseLocationState extends State<ChooseLocation> {
 
                               if (checkCanRoute())
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) =>
-                                        DirectionScreen.providers(sourceText, source, destinationText,destination)));
+                                    builder: (_) => DirectionScreen.providers(
+                                        sourceText,
+                                        source,
+                                        destinationText,
+                                        destination)));
                               else
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(

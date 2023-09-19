@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +23,6 @@ import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSre
 import 'package:place_picker/place_picker.dart';
 
 import 'package:label_marker/label_marker.dart';
-import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 

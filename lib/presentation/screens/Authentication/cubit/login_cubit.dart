@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../models/user/user.dart';
 import '../../../repositories/repositories.dart';
 
 part 'login_state.dart';
