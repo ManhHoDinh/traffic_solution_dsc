@@ -102,8 +102,8 @@ class _AddStoreState extends State<AddStore> {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
       if (widget.store != null) {
-        latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
-        longitudeController.text = widget.store!.longitude!.toStringAsFixed(3);
+        latitudeController.text = widget.store!.latitude!.toStringAsFixed(7);
+        longitudeController.text = widget.store!.longitude!.toStringAsFixed(6);
         moveCamera(CameraPosition(
             target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
             zoom: 18));

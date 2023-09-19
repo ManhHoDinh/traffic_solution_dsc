@@ -96,10 +96,50 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
-        setState(() {});
+        setState(() {
+          if (widget.streetSegment != null) {
+            startLatitudeController.text =
+                widget.streetSegment!.StartLat!.toStringAsFixed(5);
+            startLongitudeController.text =
+                widget.streetSegment!.StartLng!.toStringAsFixed(5);
+            endLatitudeController.text =
+                widget.streetSegment!.EndLat!.toStringAsFixed(5);
+            endLongitudeController.text =
+                widget.streetSegment!.EndLng!.toStringAsFixed(5);
+
+            moveCamera(CameraPosition(
+                target:
+                    LatLng(widget.store!.latitude!, widget.store!.longitude!),
+                zoom: 18));
+            storeNameController.text = widget.store!.name ?? '';
+
+            startStoreNear = widget.store;
+            endStoreNear = widget.store;
+            startMarker = Marker(
+                markerId: MarkerId('start'),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueYellow),
+                position: LatLng(widget.streetSegment!.StartLat!,
+                    widget.streetSegment!.StartLng!),
+                onTap: () {
+                  print("Hello");
+                });
+            markers.add(startMarker!);
+
+            endMarker = Marker(
+                markerId: MarkerId('end'),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueYellow),
+                position: LatLng(widget.streetSegment!.EndLat!,
+                    widget.streetSegment!.EndLng!),
+                onTap: () {
+                  print("Hello");
+                });
+            markers.add(endMarker!);
+            drawerPolyline();
+          }
+        });
       });
-
-
 
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -172,46 +212,11 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
           markerId: MarkerId(e.id!),
           position: LatLng(e.latitude!, e.longitude!),
           icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+          infoWindow: InfoWindow(title: e.name!),
           onTap: () {
             print("Hello");
           }));
     });
-  }
-
-  void refreshScreen(double inputLat, double inputLong) async {
-    {
-      // await MarkerIcon.markerFromIcon(Icons.shop, Colors.yellow, 100)
-      //     .then((value) {
-      //   _pickMarker = Marker(
-      //       markerId: MarkerId('start'),
-      //       position: LatLng(inputLat, inputLong),
-      //       icon: selectedStoreIcon,
-      //       onTap: () {
-      //         print("Hello");
-      //       });
-      // });
-      // markers.add(_pickMarker!);
-      // moveCamera(CameraPosition(target: LatLng(inputLat, inputLong), zoom: 16));
-      // String address = '';
-      // context
-      //     .read<HomeCubit>()
-      //     .getPlaceNear(LatLng(inputLat, inputLong))
-      //     .then((result) {
-      //   address = result.locationSelected!.results!.first.address ?? '';
-
-      //   // Split the string by commas
-      //   List<String> parts = address.split(',');
-
-      //   // Check if there are at least 5 parts (0 to 4 are the first 5 parts)
-      //   if (parts.length >= 4) {
-      //     // Join the first 5 parts using commas
-      //     String resultString = parts.sublist(0, 4).join(',');
-      //     addressController.text = resultString;
-      //   } else {
-      //     addressController.text = address;
-      //   }
-      // });
-    }
   }
 
   @override
@@ -232,6 +237,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                           title: 'Store Name:',
                           nameController: storeNameController,
                           isName: true,
+                          isEnable: false,
                         ),
                         SizedBox(height: 25),
                         Row(
@@ -239,6 +245,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                             Expanded(
                               child: LocationTextField(
                                   title: 'From:',
+                                  isEnable: false,
                                   latitudeController: startLatitudeController,
                                   longitudeController:
                                       startLongitudeController),
@@ -259,6 +266,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                           children: [
                             Expanded(
                               child: LocationTextField(
+                                  isEnable: false,
                                   title: 'To:',
                                   latitudeController: endLatitudeController,
                                   longitudeController: endLongitudeController),
@@ -312,8 +320,11 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                                 id: streetSegmentDoc.id,
                                 StartLat: polyline.first.points.first.latitude,
                                 StartLng: polyline.first.points.first.longitude,
-                                EndLat: polyline.first.points.first.latitude,
-                                EndLng: polyline.first.points.first.longitude,
+                                EndLat:
+                                    polyline.first.points.elementAt(1).latitude,
+                                EndLng: polyline.first.points
+                                    .elementAt(1)
+                                    .longitude,
                                 status: status,
                                 streetId: widget.street.id,
                                 storeId: startStoreNear!.id);
@@ -366,6 +377,9 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                             } else if (snapshot.hasData) {
                               streetSegments = snapshot.data!;
                               snapshot.data!.forEach((e) {
+                                if (widget.streetSegment != null) {
+                                  if (e.id == widget.streetSegment!.id) return;
+                                }
                                 _polylines.add(Polyline(
                                   polylineId: PolylineId(e.id.toString()),
                                   points: [
@@ -539,18 +553,6 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
     double distance = earthRadius * c;
 
     return distance;
-  }
-
-  String? checkAllStreetSegment(LatLng position) {
-    String? results;
-    _polylines.forEach((element) {
-      if (checkStreetSegmentNear(
-          element.points[0], element.points[1], position)) {
-        results = element.polylineId.value;
-        return;
-      }
-    });
-    return results;
   }
 
   void drawerPolyline() {

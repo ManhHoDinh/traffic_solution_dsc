@@ -9,6 +9,7 @@ class LocationTextField extends StatelessWidget {
       this.latitudeController,
       this.nameController,
       this.isAddress,
+      this.isEnable,
       this.isName});
 
   final String title;
@@ -17,6 +18,7 @@ class LocationTextField extends StatelessWidget {
   TextEditingController? nameController = TextEditingController();
   bool? isName = false;
   bool? isAddress = false;
+  bool? isEnable = true;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -39,7 +41,7 @@ class LocationTextField extends StatelessWidget {
                     controller: nameController,
                     maxLines: null, // Allows multiple lines of text
                     keyboardType: TextInputType.multiline,
-                    enabled: false,
+                    enabled: isEnable,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText:
@@ -58,7 +60,7 @@ class LocationTextField extends StatelessWidget {
                         child: TextField(
                           controller: longitudeController,
                           keyboardType: TextInputType.number,
-                          enabled: false,
+                          enabled: isEnable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Longitude',
@@ -75,6 +77,7 @@ class LocationTextField extends StatelessWidget {
                         child: TextField(
                           controller: latitudeController,
                           keyboardType: TextInputType.number,
+                          enabled: isEnable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             enabled: false,

@@ -93,6 +93,7 @@ class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
                             index: i,
                             streetSegment: streetSegments[i],
                             stores: stores,
+                            street: widget.street,
                           ),
                           itemCount: streetSegments.length,
                         );
@@ -140,9 +141,12 @@ class ItemContainer extends StatelessWidget {
     required this.streetSegment,
     required this.index,
     required this.stores,
+    required this.street,
+    
   });
   final int index;
   final StreetSegment streetSegment;
+  final Street street;
   final List<Store> stores;
 
   @override
@@ -193,7 +197,12 @@ class ItemContainer extends StatelessWidget {
               PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
-                    print('Edit');
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => AddStreetSegment(
+                                street: street,
+                                store: store,
+                                streetSegment: streetSegment,
+                              )));
                   } else if (value == 'delete') {
                     print('Delete');
                   }
