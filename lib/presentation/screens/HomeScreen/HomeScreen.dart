@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:traffic_solution_dsc/core/constraints/status.dart';
+import 'package:traffic_solution_dsc/core/helper/assets_helper.dart';
 import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
 import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
 import 'package:traffic_solution_dsc/core/models/store/store.dart';
@@ -73,6 +77,57 @@ class MapSampleState extends State<MapSample> {
   );
   LatLng defaultLocation = LatLng(0, 0);
   static const LatLng _pUIT = LatLng(10.870251224876043, 106.80337596158505);
+  late BitmapDescriptor enableStoreIcon;
+  late BitmapDescriptor selectedStoreIcon;
+  late BitmapDescriptor disableStoreIcon;
+  
+Future getIcon() async {
+    enableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.enableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    selectedStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.selectedStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    disableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.disableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+  }
+
+  Future<BitmapDescriptor> createCustomMarkerFromAsset(
+      String assetName, Size size) async {
+    final ByteData byteData = await rootBundle.load(assetName);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    final Codec codec = await instantiateImageCodec(
+      uint8List,
+      targetHeight: size.height.toInt(),
+      targetWidth: size.width.toInt(),
+    );
+    final FrameInfo frameInfo = await codec.getNextFrame();
+    final ByteData? resizedByteData = await frameInfo.image.toByteData(
+      format: ImageByteFormat.png,
+    );
+    final Uint8List resizedUint8List = resizedByteData!.buffer.asUint8List();
+
+    final BitmapDescriptor customIcon =
+        BitmapDescriptor.fromBytes(resizedUint8List);
+    return customIcon;
+  }
+
+  getStoreMarker(Store e) async {
+    setState(() {
+      markers.add(Marker(
+          markerId: MarkerId(e.id!),
+          position: LatLng(e.latitude!, e.longitude!),
+          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+          onTap: () {
+            print("Hello");
+          }));
+    });
+  }
 
 // created method for getting user current location
   Future<Position> getUserCurrentLocation() async {
@@ -214,6 +269,10 @@ class MapSampleState extends State<MapSample> {
                         child: Text('Something went wrong! ${snapshot.error}'),
                       );
                     } else if (snapshot.hasData) {
+                       snapshot.data!.forEach((e) {
+                      getStoreMarker(e);
+                    });
+                   
                       return StreamBuilder<List<StreetSegment>>(
                           stream: FireBaseDataBase.readStreetSegment(),
                           builder: (context, snapshot) {
