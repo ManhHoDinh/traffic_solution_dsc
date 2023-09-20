@@ -2,7 +2,7 @@ name: traffic_solution_dsc
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0-417.4.beta <4.0.0"
+  sdk: '>=3.0.0-417.4.beta <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -72,7 +72,7 @@ dependencies:
   provider: ^6.0.5 # for State management
   #intl
   intl: ^0.18.1
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,11 +87,18 @@ dev_dependencies:
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
   flutter_native_splash: ^2.2.14
+  flutter_launcher_icons: ^0.13.1
 flutter_native_splash:
-  color: "#547AFF"
+  color: '#547AFF'
   image: assets/images/splash.png #u must place logo.png in your assets folder
   android: true
   ios: true
+
+flutter_launcher_icons:
+  android: 'launcher_icon'
+  ios: true
+  image_path: 'assets/images/bg.png'
+  min_sdk_android: 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -182,13 +182,32 @@ class _EmailInput extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return TextField(
-          onChanged: (email) {
-            context.read<LoginCubit>().emailChanged(email);
-          },
-          decoration: const InputDecoration(),
-        );
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextFormField(
+              onChanged: (email) {
+                context.read<LoginCubit>().emailChanged(email);
+              },
+              decoration: const InputDecoration(),
+              validator: (email) {
+                final bool emailValid = RegExp(
+                        r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                    .hasMatch(email!);
+                if (email.isEmpty) {
+                  return "Please enter username";
+                } else if (!emailValid) {
+                  return "Email is not Invalid";
+                }
+              }),
+          if (state.emailError != '') _buildRedText(state.emailError),
+        ]);
       },
+    );
+  }
+
+  Widget _buildRedText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.red),
     );
   }
 }
@@ -206,27 +225,44 @@ class _PasswordInputState extends State<_PasswordInput> {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
-        return TextFormField(
-          onChanged: (password) {
-            context.read<LoginCubit>().passwordChanged(password);
-          },
-          obscureText: !isPasswordVisible,
-          decoration: InputDecoration(
-            suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  isPasswordVisible = !isPasswordVisible;
-                });
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextFormField(
+              onChanged: (password) {
+                context.read<LoginCubit>().passwordChanged(password);
               },
-              icon: Icon(
-                isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
+              obscureText: !isPasswordVisible,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // Validator function
-        );
+              validator: (password) {
+                if (password == "") {
+                  return "Please enter your password!";
+                } else if (password != null && password.length <= 6) {
+                  return "Password is too short!";
+                }
+              }
+              // Validator function
+              ),
+          if (state.passwordError != '') _buildRedText(state.passwordError),
+        ]);
       },
+    );
+  }
+
+  Widget _buildRedText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.red),
     );
   }
 }
