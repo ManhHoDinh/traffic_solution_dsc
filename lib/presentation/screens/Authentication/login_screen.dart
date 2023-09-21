@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Authentication/forget_password_screen.dart';
 import '../../cubits/cubits.dart';
 import '../../repositories/repositories.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
@@ -10,7 +9,6 @@ late Size mediaSize;
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
-  static String routeName = "/login";
   static Page page() => const MaterialPage<void>(child: LoginScreen());
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => const LoginScreen());
@@ -108,20 +106,7 @@ class LoginUI extends StatelessWidget {
         const SizedBox(height: 40),
         _buildGreyText("Password"),
         _PasswordInput(),
-        const SizedBox(height: 15),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Spacer(), // Add Spacer widget to push the text to the right
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).push<void>(ForgotPasswordScreen.route());
-              },
-              child: _buildRedText("Forget Password?"),
-            ),
-          ],
-        ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 40),
         _LoginButton(),
         const SizedBox(height: 15),
         const SizedBox(height: 15),

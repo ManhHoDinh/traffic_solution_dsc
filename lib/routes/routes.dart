@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Authentication/forget_password_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Drawer/draweradmin_screen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Drawer/drawerguest_screen.dart';
@@ -14,8 +13,6 @@ final Map<String, WidgetBuilder> routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   SignIn.routeName: (context) => SignIn(),
   HomeScreen.routeName: (context) => HomeScreen(),
-  LoginScreen.routeName: (context) => LoginScreen(),
-  ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
 };
 List<Page> onGenerateAppViewPages(
   AppStatus state,

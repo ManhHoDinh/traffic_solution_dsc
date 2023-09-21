@@ -4,6 +4,8 @@ import 'package:traffic_solution_dsc/models/cdm.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DrawerGuestPage extends StatefulWidget {
   const DrawerGuestPage({Key? key}) : super(key: key);
@@ -22,7 +24,10 @@ class _DrawerGuestPageState extends State<DrawerGuestPage> {
     if (currentPage == DrawerSections.map) {
       container = HomeScreen.provider();
     } else if (currentPage == DrawerSections.route) {
-      container = SearchScreen.provider();
+      container = BlocProvider(
+        create: (context) => SearchCubit(),
+        child: SearchScreen(),
+      );
     }
     SizeConfig().init(context);
     return Scaffold(
@@ -56,7 +61,7 @@ class _DrawerGuestPageState extends State<DrawerGuestPage> {
                       currentPage == DrawerSections.map ? true : false),
                   menuItem(2, "Route", Icons.route,
                       currentPage == DrawerSections.route ? true : false),
-                  subMenu(),
+                  // subMenu(),
                 ],
               ),
             ),

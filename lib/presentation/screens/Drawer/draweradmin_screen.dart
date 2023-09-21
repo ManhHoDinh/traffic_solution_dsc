@@ -7,6 +7,7 @@ import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSre
 import 'package:traffic_solution_dsc/presentation/blocs/app/app_bloc.dart';
 import 'package:traffic_solution_dsc/models/user/user.dart';
 import 'package:traffic_solution_dsc/presentation/screens/homeAdmin/homeAdminScreen.dart';
+import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
 
 class DrawerAdminPage extends StatefulWidget {
   const DrawerAdminPage({Key? key}) : super(key: key);
@@ -30,7 +31,10 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
     } else if (currentPage == DrawerSections.map) {
       container = HomeScreen.provider();
     } else if (currentPage == DrawerSections.route) {
-      container = SearchScreen.provider();
+      container = BlocProvider(
+        create: (context) => SearchCubit(),
+        child: SearchScreen(),
+      );
     }
     SizeConfig().init(context);
 
@@ -67,7 +71,7 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
                       currentPage == DrawerSections.map ? true : false),
                   menuItem(3, "Route", Icons.route,
                       currentPage == DrawerSections.route ? true : false),
-                  subMenu(),
+                  // subMenu(),
                 ],
               ),
             ),
