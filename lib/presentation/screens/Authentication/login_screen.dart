@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Authentication/forget_password_screen.dart';
 import '../../cubits/cubits.dart';
 import '../../repositories/repositories.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
@@ -9,7 +10,7 @@ late Size mediaSize;
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
-
+  static String routeName = "/login";
   static Page page() => const MaterialPage<void>(child: LoginScreen());
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => const LoginScreen());
@@ -47,7 +48,7 @@ class LoginUI extends StatelessWidget {
             body: Stack(
               children: [
                 Positioned(top: 20, child: _buildTop()),
-                Positioned(bottom: 0, child: _buildBottom()),
+                Positioned(bottom: 0, child: _buildBottom(context)),
               ],
             ),
           ),
@@ -69,7 +70,7 @@ class LoginUI extends StatelessWidget {
     );
   }
 
-  Widget _buildBottom() {
+  Widget _buildBottom(BuildContext context) {
     return SizedBox(
       width: mediaSize.width,
       child: Card(
@@ -81,13 +82,13 @@ class LoginUI extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: _buildForm(),
+          child: _buildForm(context),
         ),
       ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,7 +109,18 @@ class LoginUI extends StatelessWidget {
         _buildGreyText("Password"),
         _PasswordInput(),
         const SizedBox(height: 15),
-        _buildRememberForgot(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Spacer(), // Add Spacer widget to push the text to the right
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push<void>(ForgotPasswordScreen.route());
+              },
+              child: _buildRedText("Forget Password?"),
+            ),
+          ],
+        ),
         const SizedBox(height: 15),
         _LoginButton(),
         const SizedBox(height: 15),
@@ -128,19 +140,6 @@ class LoginUI extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(color: Colors.red),
-    );
-  }
-
-  Widget _buildRememberForgot() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Spacer(), // Add Spacer widget to push the text to the right
-        TextButton(
-          onPressed: () {},
-          child: _buildRedText("Forget Password?"),
-        ),
-      ],
     );
   }
 
