@@ -87,28 +87,27 @@ class _AddStoreState extends State<AddStore> {
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
-        if (widget.store != null) {
-          latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
-          longitudeController.text =
-              widget.store!.longitude!.toStringAsFixed(3);
-          moveCamera(CameraPosition(
-              target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
-              zoom: 18));
-          addressController.text = widget.store!.address ?? '';
-          nameController.text = widget.store!.name ?? '';
-          _pickMarker = Marker(
-              markerId: MarkerId('start'),
-              position:
-                  LatLng(widget.store!.latitude!, widget.store!.longitude!),
-              icon: selectedStoreIcon,
-              onTap: () {
-                print("Hello");
-              });
-          setState(() {
-            markers.add(_pickMarker!);
-          });
-        }
-      });
+      if (widget.store != null) {
+        latitudeController.text = widget.store!.latitude!.toStringAsFixed(7);
+        longitudeController.text = widget.store!.longitude!.toStringAsFixed(6);
+        moveCamera(CameraPosition(
+            target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+            zoom: 18));
+        addressController.text = widget.store!.address ?? '';
+        nameController.text = widget.store!.name ?? '';
+        _pickMarker = Marker(
+            markerId: MarkerId('start'),
+            position: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+            icon: selectedStoreIcon,
+            onTap: () {
+              print("Hello");
+            });
+        setState(() {
+          markers.add(_pickMarker!);
+        });
+      }
+      setState(() {});
+    });
 
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -343,9 +342,9 @@ class _AddStoreState extends State<AddStore> {
                               double.parse(longitudeController.text);
                           if (_pickMarker != null) {
                             String lat = _pickMarker!.position.latitude
-                                .toStringAsFixed(3);
+                                .toStringAsFixed(7);
                             String long = _pickMarker!.position.longitude
-                                .toStringAsFixed(3);
+                                .toStringAsFixed(7);
                             if (lat != latitudeController.text ||
                                 longitudeController.text != long) {
                               refreshScreen(inputLat, inputLong);
@@ -399,9 +398,9 @@ class _AddStoreState extends State<AddStore> {
                         onTap: (value) {
                           setState(() {
                             latitudeController.text =
-                                value.latitude.toStringAsFixed(3);
+                                value.latitude.toStringAsFixed(7);
                             longitudeController.text =
-                                value.longitude.toStringAsFixed(3);
+                                value.longitude.toStringAsFixed(7);
                             _pickMarker = Marker(
                                 markerId: MarkerId('start'),
                                 icon: selectedStoreIcon,

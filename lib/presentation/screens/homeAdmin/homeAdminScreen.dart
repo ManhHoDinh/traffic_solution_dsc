@@ -1,6 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
-import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/main_street.dart';
+import 'package:traffic_solution_dsc/core/models/area/area.dart';
+import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
+import 'package:traffic_solution_dsc/core/models/business/business.dart';
+import 'package:traffic_solution_dsc/core/models/district/district.dart';
+import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/models/street/street.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
+import 'package:traffic_solution_dsc/core/models/ward/ward.dart';
+import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
+import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/district.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/app/app_bloc.dart';
 
@@ -17,6 +28,15 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   final String _imageUrl =
       'https://images.unsplash.com/photo-1529397938791-2aba4681454f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
   final String username = "admin_dsc";
+  List<Street> streets = [];
+  List<AreaStreet> areaStreets = [];
+  List<StreetSegment> streetSegments = [];
+  List<Area> areas = [];
+  List<Ward> wards = [];
+  List<District> districts = [];
+  List<Store> stores = [];
+  List<Business> business = [];
+
   @override
   Widget build(BuildContext context) {
     final user = context.select((AppBloc bloc) => bloc.state.user);
@@ -29,6 +49,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // header
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -87,25 +108,99 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               // overview
               Text('Overview', style: TextStyle(fontSize: 20)),
               SizedBox(height: 10),
-              Row(
-                children: const [
-                  OverviewContainer(
-                    icon: AssetHelper.ICON_CAMERA,
-                    title: 'Camera',
-                    quantity: 5,
-                    beginColor: Color(0xFF9B9CF8),
-                    endColor: Color(0xFF8082ED),
-                  ),
-                  SizedBox(width: 10),
-                  OverviewContainer(
-                    icon: AssetHelper.ICON_BUSINESS,
-                    title: 'Business',
-                    quantity: 10,
-                    beginColor: Color(0xFFFEB4C5),
-                    endColor: Color(0xFFDB869A),
-                  ),
-                ],
-              ),
+              StreamBuilder<List<Store>>(
+                  stream: FireBaseDataBase.readStores(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      stores = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<Business>>(
+                  stream: FireBaseDataBase.readBusinesses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      business = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+
+              StreamBuilder<List<Area>>(
+                  stream: FireBaseDataBase.readAllArea(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      areas = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+
+              StreamBuilder<List<AreaStreet>>(
+                  stream: FireBaseDataBase.readAllAreaStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      areaStreets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<Street>>(
+                  stream: FireBaseDataBase.readAllStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streetSegments = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<Ward>>(
+                  stream: FireBaseDataBase.readAllWard(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      wards = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<District>>(
+                  stream: FireBaseDataBase.readDistrict(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      districts = snapshot.data!;
+
+                      return Row(
+                        children: [
+                          OverviewContainer(
+                            icon: AssetHelper.ICON_CAMERA,
+                            title: 'Camera',
+                            streetSegments: streetSegments,
+                            districts: districts,
+                            wards: wards,
+                            areaStreets: areaStreets,
+                            areas: areas,
+                            streets: streets,
+                            beginColor: Color(0xFF9B9CF8),
+                            endColor: Color(0xFF8082ED),
+                          ),
+                          SizedBox(width: 10),
+                          OverviewContainer(
+                            icon: AssetHelper.ICON_BUSINESS,
+                            title: 'Business',
+                            stores: stores,
+                            business: business,
+                            beginColor: Color(0xFFFEB4C5),
+                            endColor: Color(0xFFDB869A),
+                          ),
+                        ],
+                      );
+                    }
+                    return Container();
+                  }),
+
               // managing area
               SizedBox(height: 30),
               Text('Managing Area', style: TextStyle(fontSize: 20)),
@@ -256,23 +351,95 @@ class FeatureContainer extends StatelessWidget {
 }
 
 class OverviewContainer extends StatelessWidget {
-  const OverviewContainer({
-    super.key,
-    required this.icon,
-    required this.beginColor,
-    required this.endColor,
-    required this.title,
-    required this.quantity,
-  });
+  OverviewContainer(
+      {super.key,
+      required this.icon,
+      required this.beginColor,
+      required this.endColor,
+      required this.title,
+      this.districts,
+      this.streets,
+      this.areaStreets,
+      this.areas,
+      this.streetSegments,
+      this.wards,
+      this.business,
+      this.stores});
 
   final Color beginColor;
   final Color endColor;
   final String title;
-  final int quantity;
+  late int quantity;
   final String icon;
+  List<District>? districts;
+  List<Ward>? wards;
+  List<Street>? streets;
+  List<AreaStreet>? areaStreets;
+  List<StreetSegment>? streetSegments;
+  List<Area>? areas;
+  List<Business>? business;
+  List<Store>? stores;
+  int getCountCameras() {
+    int result = 0;
+    districts!.forEach((district) {
+      result += countStreetSegmentInDistrict(district);
+    });
+    return result;
+  }
+
+  int countStore() {
+    int result = 0;
+    business!.forEach((e) {
+      result += stores!.where((store) => store.businessId == e.id).length;
+    });
+    return result;
+  }
+
+  int countStreetSegmentInStreet(Street street) {
+    return streetSegments!
+        .where((element) => element.streetId == street.id)
+        .length;
+  }
+
+  int countStreetSegmentInArea(Area area) {
+    int result = 0;
+    areaStreets!
+        .where((areaStreet) => area.id == areaStreet.areaId)
+        .forEach((areaStreet) {
+      streets!
+          .where((street) => areaStreet.streetId == street.id)
+          .forEach((street) {
+        result += countStreetSegmentInStreet(street);
+      });
+    });
+    return result;
+  }
+
+  int countStreetSegmentInWard(Ward ward) {
+    int result = 0;
+    areas!.where((element) => element.ward == ward.id).forEach((area) {
+      result += countStreetSegmentInArea(area);
+    });
+    return result;
+  }
+
+  int countStreetSegmentInDistrict(District district) {
+    int result = 0;
+    wards!
+        .where((element) => element.districtId == district.id)
+        .forEach((ward) {
+      result += countStreetSegmentInWard(ward);
+    });
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (districts != null) {
+      quantity = getCountCameras();
+    } else {
+      quantity = countStore();
+    }
     return Expanded(
       flex: 1,
       child: Container(

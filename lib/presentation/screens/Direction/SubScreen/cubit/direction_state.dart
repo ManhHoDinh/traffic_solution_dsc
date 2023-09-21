@@ -9,6 +9,8 @@ class DirectionState with _$DirectionState {
       LatLng source,
       String destinationText,
       LatLng destination,
+      Duration duration,
+      double distance,
       Set<Polyline> polyline) = _Loaded;
   const factory DirectionState.error(String error) = _Error;
 }

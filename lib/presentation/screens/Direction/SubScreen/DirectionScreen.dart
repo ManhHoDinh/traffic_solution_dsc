@@ -103,7 +103,7 @@ class _DirectionScreenState extends State<DirectionScreen> {
                   initial: () => Container(),
                   loading: () => CircularProgressIndicator(),
                   loaded: (sourceText, source, destinationText, destination,
-                      polylines) {
+                      duration, distance, polylines) {
                     return Column(
                       children: [
                         Padding(
@@ -138,6 +138,22 @@ class _DirectionScreenState extends State<DirectionScreen> {
                                         iconColor: Colors.red,
                                         iconSize: 20,
                                         onTap: () {}),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Text((duration.inHours != 0
+                                                ? "${duration.inHours} hr "
+                                                : "") +
+                                            "${duration.inMinutes % 60} min ", style: TextStyle(color: Colors.green, fontSize: 25),),
+                                        Text(distance / 1000>1?
+                                            "(${(distance / 1000).toStringAsFixed(0)} km)":"(${(distance % 1000).toStringAsFixed(0)} m)", style: TextStyle(fontSize: 25),)
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
