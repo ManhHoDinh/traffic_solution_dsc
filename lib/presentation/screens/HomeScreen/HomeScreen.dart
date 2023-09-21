@@ -148,10 +148,8 @@ class MapSampleState extends State<MapSample> {
   Future<void> moveCamera(CameraPosition camera) async {
     try {
       final GoogleMapController controller = await _controller.future;
-      // controller.moveCamera(CameraUpdate.newCameraPosition(camera));
-      setState(() {
-        context.read<HomeCubit>().getCameraPostion(camera.target);
-      });
+       controller.moveCamera(CameraUpdate.newCameraPosition(camera));
+      
     } catch (e) {}
   }
 
@@ -229,20 +227,20 @@ class MapSampleState extends State<MapSample> {
                         position: latLng,
                         backgroundColor: Colors.green,
                         icon: BitmapDescriptor.defaultMarker));
-                    //   if (location.bbox != null) {
-                    //     List<LatLng> coordinates = [
-                    //       LatLng(location.bbox![1], result.bbox![0]),
-                    //       LatLng(location.bbox![3], result.bbox![2]),
-                    //     ];
+                      // if (location.bbox != null) {
+                      //   List<LatLng> coordinates = [
+                      //     LatLng(location.bbox![1], result.bbox![0]),
+                      //     LatLng(location.bbox![3], result.bbox![2]),
+                      //   ];
 
-                    //     double zoomLevel = calculateZoomLevel(coordinates);
-                    //     print(zoomLevel);
-                    //     context.read<HomeCubit>().getCameraPostion(latLng);
-                    //     moveCamera(
-                    //         CameraPosition(target: latLng, zoom: zoomLevel));
-                    //   } else {
+                      //   double zoomLevel = calculateZoomLevel(coordinates);
+                      //   print(zoomLevel);
+                      //   context.read<HomeCubit>().getCameraPostion(latLng);
+                      //   moveCamera(
+                      //       CameraPosition(target: latLng, zoom: zoomLevel));
+                      // } else {
                     moveCamera(CameraPosition(target: latLng, zoom: 13));
-                    //   }
+                     //  }
                   }
                 } catch (e) {
                   print(e.toString());
