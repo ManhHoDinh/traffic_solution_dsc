@@ -71,10 +71,9 @@ class ReportScreenState extends State<ReportScreen> {
             ),
           )),
       Container(
-            color: Color(0xffB9B9B9).withOpacity(0.5),
+          color: Color(0xffB9B9B9).withOpacity(0.5),
           height: 50,
-            padding: EdgeInsets.only(left: 10),
-        
+          padding: EdgeInsets.only(left: 10),
           child: Center(
             child: Text(
               'MotoBikes Volume',
@@ -211,7 +210,8 @@ class ReportScreenState extends State<ReportScreen> {
                                                 borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(10),
                                                   topRight: Radius.circular(10),
-                                                  bottomLeft: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
                                                   bottomRight:
                                                       Radius.circular(10),
                                                 ),
@@ -245,7 +245,7 @@ class ReportScreenState extends State<ReportScreen> {
                                               },
                                               children: tableRows),
                                         ),
-                                       
+
                                         Expanded(
                                             child: _BarChart(
                                           data: reportTableData,
@@ -308,8 +308,14 @@ class ReportScreenState extends State<ReportScreen> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedStartDate) {
       setState(() {
-        selectedStartDate = selectedStartDate =
+        selectedStartDate =
             DateTime(picked.year, picked.month, picked.day, 0, 0);
+        if (selectedStartDate.isAfter(selectedEndDate)) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Start Day must is after End Day'),
+            backgroundColor: Colors.red,
+          ));
+        }
       });
     }
   }
@@ -328,7 +334,14 @@ class ReportScreenState extends State<ReportScreen> {
           picked.month,
           picked.day,
           23,
+          59
         );
+        if (selectedStartDate.isAfter(selectedEndDate)) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Start Day must is after End Day'),
+            backgroundColor: Colors.red,
+          ));
+        }
       });
     }
   }

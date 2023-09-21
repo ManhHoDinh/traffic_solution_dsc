@@ -3,7 +3,7 @@ import 'package:traffic_solution_dsc/core/models/TrafficData/TrafficData.dart';
 import 'package:traffic_solution_dsc/core/models/area/area.dart';
 import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
-import 'package:traffic_solution_dsc/core/models/distric/distric.dart';
+import 'package:traffic_solution_dsc/core/models/district/district.dart';
 import 'package:traffic_solution_dsc/core/models/store/store.dart';
 import 'package:traffic_solution_dsc/core/models/street/street.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';

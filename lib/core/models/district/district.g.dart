@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'distric.dart';
+part of 'district.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
