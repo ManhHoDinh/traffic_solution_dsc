@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:traffic_solution_dsc/core/models/TrafficData/TrafficData.dart';
 import 'package:traffic_solution_dsc/core/models/area/area.dart';
 import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
 import 'package:traffic_solution_dsc/core/models/business/business.dart';
 import 'package:traffic_solution_dsc/core/models/distric/distric.dart';
-import 'package:traffic_solution_dsc/core/models/report/report.dart';
 import 'package:traffic_solution_dsc/core/models/store/store.dart';
 import 'package:traffic_solution_dsc/core/models/street/street.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
@@ -27,13 +27,13 @@ class FireBaseDataBase {
                 return StreetSegment.fromJson(e.data());
               }).toList());
 
-  static Stream<List<Report>> readReportBySegmentId(String segmentId) =>
+  static Stream<List<TrafficData>> readReportBySegmentId(String segmentId) =>
       FirebaseFirestore.instance
-          .collection('Report')
-          .where('SegmentId', isEqualTo: segmentId)
+          .collection('TrafficData')
+          .where('SS_ID', isEqualTo: segmentId)
           .snapshots()
           .map((event) =>
-              event.docs.map((e) => Report.fromJson(e.data())).toList());
+              event.docs.map((e) => TrafficData.fromJson(e.data())).toList());
   static Stream<List<Business>> readBusinesses() => FirebaseFirestore.instance
       .collection('businesses')
       .snapshots()
@@ -64,6 +64,11 @@ class FireBaseDataBase {
       .where('district_id', isEqualTo: districtId)
       .snapshots()
       .map((event) => event.docs.map((e) => Ward.fromJson(e.data())).toList());
+  static Stream<List<Ward>> readAllWard() => FirebaseFirestore.instance
+      .collection('wards')
+      .snapshots()
+      .map((event) => event.docs.map((e) => Ward.fromJson(e.data())).toList());
+
   static Stream<List<Street>> readStreet(List<String> streetIds) {
     final CollectionReference collection =
         FirebaseFirestore.instance.collection('streets');
@@ -81,6 +86,20 @@ class FireBaseDataBase {
     });
   }
 
+  static Stream<List<Street>> readAllStreet() {
+    final CollectionReference collection =
+        FirebaseFirestore.instance.collection('streets');
+
+    return collection.snapshots().map((querySnapshot) {
+      List<Street> streets = [];
+      querySnapshot.docs.forEach((doc) {
+        streets.add(Street(id: doc['street_id'], name: doc['street_name']));
+      });
+
+      return streets;
+    });
+  }
+
   static Stream<List<AreaStreet>> readAreaStreet(String areaId) =>
       FirebaseFirestore.instance
           .collection('area_street')
@@ -88,10 +107,19 @@ class FireBaseDataBase {
           .snapshots()
           .map((event) =>
               event.docs.map((e) => AreaStreet.fromJson(e.data())).toList());
+  static Stream<List<AreaStreet>> readAllAreaStreet() =>
+      FirebaseFirestore.instance.collection('area_street').snapshots().map(
+          (event) =>
+              event.docs.map((e) => AreaStreet.fromJson(e.data())).toList());
+
   static Stream<List<Area>> readArea(String wardId) => FirebaseFirestore
       .instance
       .collection('areas')
       .where('ward_id', isEqualTo: wardId)
+      .snapshots()
+      .map((event) => event.docs.map((e) => Area.fromJson(e.data())).toList());
+  static Stream<List<Area>> readAllArea() => FirebaseFirestore.instance
+      .collection('areas')
       .snapshots()
       .map((event) => event.docs.map((e) => Area.fromJson(e.data())).toList());
 }

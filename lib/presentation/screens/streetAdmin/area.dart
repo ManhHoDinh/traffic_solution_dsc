@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/area/area.dart';
+import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
+import 'package:traffic_solution_dsc/core/models/street/street.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/models/ward/ward.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/street.dart';
@@ -13,6 +16,10 @@ class AreaScreen extends StatefulWidget {
 }
 
 class _AreaScreenState extends State<AreaScreen> {
+  List<Street> streets = [];
+  List<AreaStreet> areaStreets = [];
+  List<StreetSegment> streetSegments = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +40,31 @@ class _AreaScreenState extends State<AreaScreen> {
                     style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
+              StreamBuilder<List<AreaStreet>>(
+                  stream: FireBaseDataBase.readAllAreaStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      areaStreets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<Street>>(
+                  stream: FireBaseDataBase.readAllStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streetSegments = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+
               Expanded(
                 child: StreamBuilder<List<Area>>(
                     stream: FireBaseDataBase.readArea(widget.ward.id!),
@@ -48,6 +80,9 @@ class _AreaScreenState extends State<AreaScreen> {
                         return ListView.builder(
                           itemBuilder: (context, i) => ItemContainer(
                             area: areas[i],
+                            streetSegments: streetSegments,
+                            streets: streets,
+                            areaStreets: areaStreets,
                           ),
                           itemCount: areas.length,
                         );
@@ -78,13 +113,38 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.area,
+    required this.areaStreets,
+    required this.streetSegments,
+    required this.streets,
   });
 
   final Area area;
+  final List<Street> streets;
+  final List<AreaStreet> areaStreets;
+  final List<StreetSegment> streetSegments;
+  int countStreetSegmentInStreet(Street street) {
+    return streetSegments
+        .where((element) => element.streetId == street.id)
+        .length;
+  }
+
+  int countStreetSegmentInArea() {
+    int result = 0;
+    areaStreets
+        .where((areaStreet) => area.id == areaStreet.areaId)
+        .forEach((areaStreet) {
+      streets
+          .where((street) => areaStreet.streetId == street.id)
+          .forEach((street) {
+        result += countStreetSegmentInStreet(street);
+      });
+    });
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
-    int quantityCamera = 1;
+    int quantityCamera = countStreetSegmentInArea();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),

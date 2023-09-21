@@ -80,8 +80,8 @@ class MapSampleState extends State<MapSample> {
   late BitmapDescriptor enableStoreIcon;
   late BitmapDescriptor selectedStoreIcon;
   late BitmapDescriptor disableStoreIcon;
-  
-Future getIcon() async {
+
+  Future getIcon() async {
     enableStoreIcon = await createCustomMarkerFromAsset(
         AssetHelper.enableStoreMarkerIcon, // Path to your asset image
         Size(100, 100) // Height of the custom marker
@@ -175,7 +175,9 @@ Future getIcon() async {
     getUserCurrentLocation();
 
     WidgetsBinding.instance.endOfFrame.then((value) async {
-      getIcons();
+      getIcon().whenComplete(() {setState(() {
+        
+      });});
       getUserCurrentLocation();
       context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -184,19 +186,6 @@ Future getIcon() async {
         mapsImplementation.useAndroidViewSurface = true;
         initializeMapRenderer();
       }
-    });
-  }
-
-  getIcons() async {
-    await MarkerIcon.markerFromIcon(Icons.shop, Colors.blue, 100).then((value) {
-      markers.addAll([
-        Marker(
-          markerId: MarkerId('KTX khu B'),
-          position: _pVNUDorm,
-          icon: value,
-        ),
-        Marker(markerId: MarkerId('UIT'), position: _pUIT, icon: value)
-      ]);
     });
   }
 
@@ -269,10 +258,10 @@ Future getIcon() async {
                         child: Text('Something went wrong! ${snapshot.error}'),
                       );
                     } else if (snapshot.hasData) {
-                       snapshot.data!.forEach((e) {
-                      getStoreMarker(e);
-                    });
-                   
+                      snapshot.data!.forEach((e) {
+                        getStoreMarker(e);
+                      });
+
                       return StreamBuilder<List<StreetSegment>>(
                           stream: FireBaseDataBase.readStreetSegment(),
                           builder: (context, snapshot) {

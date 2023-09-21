@@ -567,7 +567,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
             points: [startMarker!.position, endMarker!.position]));
       } else if (startStoreNear != null &&
           endStoreNear != null &&
-          startStoreNear!.id == endStoreNear!.id) {
+          startStoreNear!.id != endStoreNear!.id) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Start Point and End Point need near only a store!!!'),
           backgroundColor: Colors.red,

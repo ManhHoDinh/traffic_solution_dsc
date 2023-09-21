@@ -3,6 +3,7 @@ import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
 import 'package:traffic_solution_dsc/core/models/area/area.dart';
 import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
 import 'package:traffic_solution_dsc/core/models/street/street.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/streetSegment.dart';
 
@@ -15,6 +16,7 @@ class StreetScreen extends StatefulWidget {
 
 class _StreetScreenState extends State<StreetScreen> {
   List<String> streetIds = [];
+  List<StreetSegment> streetSegments = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +37,14 @@ class _StreetScreenState extends State<StreetScreen> {
                     style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streetSegments = snapshot.data!;
+                    }
+                    return Container();
+                  }),
               Expanded(
                 child: StreamBuilder<List<AreaStreet>>(
                     stream:
@@ -65,6 +75,7 @@ class _StreetScreenState extends State<StreetScreen> {
                                 return ListView.builder(
                                   itemBuilder: (context, i) => ItemContainer(
                                     street: streets[i],
+                                    streetSegment: streetSegments,
                                   ),
                                   itemCount: streets.length,
                                 );
@@ -98,13 +109,22 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.street,
+    required this.streetSegment,
   });
 
   final Street street;
+  final List<StreetSegment> streetSegment;
+  int countStreetSegmentInStreet(
+      {required List<StreetSegment> streetSegments, required Street street}) {
+    return streetSegments
+        .where((element) => element.streetId == street.id)
+        .length;
+  }
 
   @override
   Widget build(BuildContext context) {
-    int quantityCamera = 1;
+    int quantityCamera = countStreetSegmentInStreet(
+        streetSegments: streetSegment, street: street);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),

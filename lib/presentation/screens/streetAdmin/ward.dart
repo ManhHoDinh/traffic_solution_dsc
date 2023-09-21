@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/models/area/area.dart';
+import 'package:traffic_solution_dsc/core/models/area_street/areaStreet.dart';
 import 'package:traffic_solution_dsc/core/models/distric/distric.dart';
+import 'package:traffic_solution_dsc/core/models/street/street.dart';
+import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/models/ward/ward.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/streetAdmin/area.dart';
@@ -15,6 +19,11 @@ class WardScreen extends StatefulWidget {
 }
 
 class _WardScreenState extends State<WardScreen> {
+  List<Street> streets = [];
+  List<AreaStreet> areaStreets = [];
+  List<StreetSegment> streetSegments = [];
+  List<Area> areas = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,13 +40,47 @@ class _WardScreenState extends State<WardScreen> {
           child: Column(
             children: [
               Center(
-                child:
-                    Text(widget.district.name??'', style: TextStyle(fontSize: 22)),
+                child: Text(widget.district.name ?? '',
+                    style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
+              StreamBuilder<List<Area>>(
+                  stream: FireBaseDataBase.readAllArea(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      areas = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+
+              StreamBuilder<List<AreaStreet>>(
+                  stream: FireBaseDataBase.readAllAreaStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      areaStreets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<Street>>(
+                  stream: FireBaseDataBase.readAllStreet(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streets = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+              StreamBuilder<List<StreetSegment>>(
+                  stream: FireBaseDataBase.readStreetSegment(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      streetSegments = snapshot.data!;
+                    }
+                    return Container();
+                  }),
+
               Expanded(
                 child: StreamBuilder<List<Ward>>(
-                    stream: FireBaseDataBase.readWard(widget.district.id??''),
+                    stream: FireBaseDataBase.readWard(widget.district.id ?? ''),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Center(
@@ -50,6 +93,10 @@ class _WardScreenState extends State<WardScreen> {
                         return ListView.builder(
                           itemBuilder: (context, i) => ItemContainer(
                             ward: wards[i],
+                            streetSegments: streetSegments,
+                            areaStreets: areaStreets,
+                            areas: areas,
+                            streets: streets,
                           ),
                           itemCount: wards.length,
                         );
@@ -80,13 +127,48 @@ class ItemContainer extends StatelessWidget {
   const ItemContainer({
     super.key,
     required this.ward,
+    required this.streets,
+    required this.areaStreets,
+    required this.areas,
+    required this.streetSegments,
   });
 
   final Ward ward;
+  final List<Street> streets;
+  final List<AreaStreet> areaStreets;
+  final List<StreetSegment> streetSegments;
+  final List<Area> areas;
+  int countStreetSegmentInStreet(Street street) {
+    return streetSegments
+        .where((element) => element.streetId == street.id)
+        .length;
+  }
+
+  int countStreetSegmentInArea(Area area) {
+    int result = 0;
+    areaStreets
+        .where((areaStreet) => area.id == areaStreet.areaId)
+        .forEach((areaStreet) {
+      streets
+          .where((street) => areaStreet.streetId == street.id)
+          .forEach((street) {
+        result += countStreetSegmentInStreet(street);
+      });
+    });
+    return result;
+  }
+
+  int countStreetSegmentInWard() {
+    int result = 0;
+    areas.where((element) => element.ward == ward.id).forEach((area) {
+      result += countStreetSegmentInArea(area);
+    });
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
-    int quantityCamera = 1;
+    int quantityCamera = countStreetSegmentInWard();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
