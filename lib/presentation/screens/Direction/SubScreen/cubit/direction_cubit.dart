@@ -25,13 +25,18 @@ class DirectionCubit extends Cubit<DirectionState> {
       res.route!.geometry!.coordinates!.forEach((e) {
         latLen.add(LatLng(e[0], e[1]));
       });
+      print("Time Route");
+      print(res.route!.distance);
+      print(res.route!.duration);
       _polylines.add(Polyline(
         polylineId: PolylineId('1'),
         points: latLen,
         color: Colors.green,
       ));
-      emit(DirectionState.loaded(
-          sourceText, source, destinationText, destination, _polylines));
+      Duration dateTime = Duration(seconds: res.route!.duration!);
+
+      emit(DirectionState.loaded(sourceText, source, destinationText,
+          destination, dateTime,res.route!.distance!.toDouble(), _polylines));
     } catch (error) {
       print(error);
       emit(DirectionState.error(error.toString()));

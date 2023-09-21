@@ -102,8 +102,8 @@ class _AddStoreState extends State<AddStore> {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
       if (widget.store != null) {
-        latitudeController.text = widget.store!.latitude!.toStringAsFixed(3);
-        longitudeController.text = widget.store!.longitude!.toStringAsFixed(3);
+        latitudeController.text = widget.store!.latitude!.toStringAsFixed(7);
+        longitudeController.text = widget.store!.longitude!.toStringAsFixed(6);
         moveCamera(CameraPosition(
             target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
             zoom: 18));
@@ -120,6 +120,7 @@ class _AddStoreState extends State<AddStore> {
           markers.add(_pickMarker!);
         });
       }
+      setState(() {});
     });
 
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
@@ -355,9 +356,9 @@ class _AddStoreState extends State<AddStore> {
                               double.parse(longitudeController.text);
                           if (_pickMarker != null) {
                             String lat = _pickMarker!.position.latitude
-                                .toStringAsFixed(3);
+                                .toStringAsFixed(7);
                             String long = _pickMarker!.position.longitude
-                                .toStringAsFixed(3);
+                                .toStringAsFixed(7);
                             if (lat != latitudeController.text ||
                                 longitudeController.text != long) {
                               refreshScreen(inputLat, inputLong);
@@ -411,9 +412,9 @@ class _AddStoreState extends State<AddStore> {
                         onTap: (value) {
                           setState(() {
                             latitudeController.text =
-                                value.latitude.toStringAsFixed(3);
+                                value.latitude.toStringAsFixed(7);
                             longitudeController.text =
-                                value.longitude.toStringAsFixed(3);
+                                value.longitude.toStringAsFixed(7);
                             _pickMarker = Marker(
                                 markerId: MarkerId('start'),
                                 icon: selectedStoreIcon,

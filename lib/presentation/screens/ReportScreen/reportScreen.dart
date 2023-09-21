@@ -5,8 +5,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:traffic_solution_dsc/core/helper/app_colors.dart';
+import 'package:traffic_solution_dsc/core/models/TrafficData/TrafficData.dart';
 import 'package:traffic_solution_dsc/core/models/placeNear/placeNear.dart';
-import 'package:traffic_solution_dsc/core/models/report/report.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/no_data_widget.dart';
 
@@ -27,7 +27,7 @@ class ReportScreenState extends State<ReportScreen> {
     selectedStartDate = DateTime(now.year, now.month, now.day, 0, 0);
     selectedEndDate = DateTime(now.year, now.month, now.day, 23, 59);
   }
-  
+
   getDefaultTableRow() {
     tableRows.clear();
     tableRows.add(TableRow(children: [
@@ -43,11 +43,12 @@ class ReportScreenState extends State<ReportScreen> {
             ),
           )),
       Container(
+          padding: EdgeInsets.only(left: 10),
           height: 50,
           color: Color(0xffB9B9B9).withOpacity(0.5),
           child: Center(
             child: Text(
-              'Traffic volume of daily',
+              'Traffic volume',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           )),
@@ -61,20 +62,39 @@ class ReportScreenState extends State<ReportScreen> {
             ),
           )),
       Container(
+          color: Color(0xffB9B9B9).withOpacity(0.5),
+          height: 50,
+          child: Center(
+            child: Text(
+              'Cars Volume',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+      Container(
+          color: Color(0xffB9B9B9).withOpacity(0.5),
+          height: 50,
+          padding: EdgeInsets.only(left: 10),
+          child: Center(
+            child: Text(
+              'MotoBikes Volume',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )),
+      Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(topRight: Radius.circular(10)),
               color: Color(0xffB9B9B9).withOpacity(0.5)),
           height: 50,
           child: Center(
             child: Text(
-              'Avg Speed(Km/h)',
+              'Others',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           )),
     ]));
   }
 
-  List<ReportTableData> reportTableData = [];
+  List<TrafficDataTableData> reportTableData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +129,7 @@ class ReportScreenState extends State<ReportScreen> {
               Expanded(
                 child: widget.segmentId != null
                     ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,7 +179,7 @@ class ReportScreenState extends State<ReportScreen> {
                             ],
                           ),
                           Expanded(
-                            child: StreamBuilder<List<Report>>(
+                            child: StreamBuilder<List<TrafficData>>(
                                 stream: FireBaseDataBase.readReportBySegmentId(
                                     widget.segmentId!),
                                 builder: (context, snapshot) {
@@ -169,7 +189,7 @@ class ReportScreenState extends State<ReportScreen> {
                                           'Something went wrong! ${snapshot.error}'),
                                     );
                                   } else if (snapshot.hasData) {
-                                    List<Report> report = snapshot.data!
+                                    List<TrafficData> report = snapshot.data!
                                         .where((element) =>
                                             element.time
                                                 .isAfter(selectedStartDate) &&
@@ -179,44 +199,53 @@ class ReportScreenState extends State<ReportScreen> {
                                     generateData(report);
                                     return Column(
                                       children: [
-                                        Table(
-                                            defaultVerticalAlignment:
-                                                TableCellVerticalAlignment.middle,
-                                            border: TableBorder.all(
-                                              color: Colors.grey,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight: Radius.circular(10),
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Table(
+                                              defaultVerticalAlignment:
+                                                  TableCellVerticalAlignment
+                                                      .middle,
+                                              border: TableBorder.all(
+                                                color: Colors.grey,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
+                                                  bottomRight:
+                                                      Radius.circular(10),
+                                                ),
                                               ),
-                                            ),
-                                            columnWidths: {
-                                              0: FixedColumnWidth(90),
-                                              1: FixedColumnWidth(90),
-                                              2: FixedColumnWidth(90),
-                                              3: FixedColumnWidth(90),
-                                              // 3: FixedColumnWidth(80),
-                                              //
-                                              // for (int i = 0;
-                                              //     i < GuestKindModel.AllGuestKinds.length;
-                                              //     i++)
-                                              //   4 + i: FixedColumnWidth(120),
-                                              // //
-                                              // 4 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(100),
-                                              // 5 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(80),
-                                              // 6 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(140),
-                                              // 7 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(200),
-                                              // 8 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(200),
-                                              // 9 + GuestKindModel.AllGuestKinds.length:
-                                              //     FixedColumnWidth(100),
-                                            },
-                                            children: tableRows),
+                                              columnWidths: {
+                                                0: FixedColumnWidth(90),
+                                                1: FixedColumnWidth(90),
+                                                2: FixedColumnWidth(90),
+                                                3: FixedColumnWidth(90),
+                                                4: FixedColumnWidth(90),
+                                                5: FixedColumnWidth(90),
+                                                // 3: FixedColumnWidth(80),
+                                                //
+                                                // for (int i = 0;
+                                                //     i < GuestKindModel.AllGuestKinds.length;
+                                                //     i++)
+                                                //   4 + i: FixedColumnWidth(120),
+                                                // //
+                                                // 4 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(100),
+                                                // 5 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(80),
+                                                // 6 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(140),
+                                                // 7 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(200),
+                                                // 8 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(200),
+                                                // 9 + GuestKindModel.AllGuestKinds.length:
+                                                //     FixedColumnWidth(100),
+                                              },
+                                              children: tableRows),
+                                        ),
+
                                         Expanded(
                                             child: _BarChart(
                                           data: reportTableData,
@@ -246,24 +275,19 @@ class ReportScreenState extends State<ReportScreen> {
             final time = random.nextInt(20);
 
             final reportDoc =
-                FirebaseFirestore.instance.collection('Report').doc();
-            Report report = Report(
-                reportId: reportDoc.id,
+                FirebaseFirestore.instance.collection('TrafficData').doc();
+            TrafficData report = TrafficData(
+                trafficDataId: reportDoc.id,
                 time: getRandomDateTime(startHour: time, endHour: time + 4),
-                SegmentId: widget.segmentId,
-                avgSpeed: getAvgSpeedAuto(),
-                count: getAutoTrafficVolume());
+                streetSegmentId: widget.segmentId,
+                car: getAutoTrafficVolume(),
+                moto: getAutoTrafficVolume(),
+                other: getAutoTrafficVolume());
             final json = report.toJson();
             await reportDoc.set(json);
           },
           child: Center(child: Text('Fake'))),
     );
-  }
-
-  double getAvgSpeedAuto() {
-    final random = Random();
-    final speed = (random.nextInt(12000) / 100) + 50;
-    return speed;
   }
 
   int getAutoTrafficVolume() {
@@ -284,8 +308,14 @@ class ReportScreenState extends State<ReportScreen> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedStartDate) {
       setState(() {
-        selectedStartDate = selectedStartDate =
+        selectedStartDate =
             DateTime(picked.year, picked.month, picked.day, 0, 0);
+        if (selectedStartDate.isAfter(selectedEndDate)) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Start Day must is after End Day'),
+            backgroundColor: Colors.red,
+          ));
+        }
       });
     }
   }
@@ -304,7 +334,14 @@ class ReportScreenState extends State<ReportScreen> {
           picked.month,
           picked.day,
           23,
+          59
         );
+        if (selectedStartDate.isAfter(selectedEndDate)) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Start Day must is after End Day'),
+            backgroundColor: Colors.red,
+          ));
+        }
       });
     }
   }
@@ -338,11 +375,11 @@ class ReportScreenState extends State<ReportScreen> {
     return randomDateTime;
   }
 
-  void generateData(List<Report> report) {
+  void generateData(List<TrafficData> report) {
     getDefaultTableRow();
     reportTableData = getReportTableRowData(report);
     for (int i = 0; i < reportTableData.length; i++) {
-      ReportTableData e = reportTableData[i];
+      TrafficDataTableData e = reportTableData[i];
       Color color =
           i % 2 == 0 ? Color(0xff66018CF1).withOpacity(0.4) : Color(0xffffff);
       tableRows.add(TableRow(children: [
@@ -360,7 +397,7 @@ class ReportScreenState extends State<ReportScreen> {
             color: color,
             child: Center(
               child: Text(
-                e.trafficVolume,
+                e.getTrafficVolume(),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             )),
@@ -378,7 +415,25 @@ class ReportScreenState extends State<ReportScreen> {
             height: 50,
             child: Center(
               child: Text(
-                e.avgSpeed,
+                e.car,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Container(
+            decoration: BoxDecoration(color: color),
+            height: 50,
+            child: Center(
+              child: Text(
+                e.moto,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Container(
+            decoration: BoxDecoration(color: color),
+            height: 50,
+            child: Center(
+              child: Text(
+                e.others,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             )),
@@ -386,100 +441,125 @@ class ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  List<ReportTableData> getReportTableRowData(List<Report> report) {
-    List<ReportTableData> result = [];
+  List<TrafficDataTableData> getReportTableRowData(List<TrafficData> report) {
+    List<TrafficDataTableData> result = [];
     double totalTraffic = double.tryParse(getTrafficVolume(report)) ?? 0;
-    List<Report> report1 = report
+    List<TrafficData> report1 = report
         .where((element) => element.time.hour >= 0 && element.time.hour < 4)
         .toList();
-    result.add(ReportTableData(
-        timeOfDay: '0 - 4',
-        trafficVolume: getTrafficVolume(report1),
-        ratio: getRatio(report1, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report1)));
+    result.add(TrafficDataTableData(
+      timeOfDay: '0 - 4',
+      moto: getMotoBikesVolume(report1),
+      ratio: getRatio(report1, totalTraffic),
+      car: getCarsVolume(report1),
+      others: getOthersVolume(report1),
+    ));
 
-    List<Report> report2 = report
+    List<TrafficData> report2 = report
         .where((element) => element.time.hour >= 4 && element.time.hour < 8)
         .toList();
 
-    result.add(ReportTableData(
-        timeOfDay: '4 - 8',
-        trafficVolume: getTrafficVolume(report2),
-        ratio: getRatio(report2, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report2)));
-    List<Report> report3 = report
-        .where((element) => element.time.hour >= 8 && element.time.hour < 10)
+    result.add(TrafficDataTableData(
+      timeOfDay: '8 - 12',
+      moto: getMotoBikesVolume(report2),
+      ratio: getRatio(report2, totalTraffic),
+      car: getCarsVolume(report2),
+      others: getOthersVolume(report2),
+    ));
+    List<TrafficData> report3 = report
+        .where((element) => element.time.hour >= 8 && element.time.hour < 12)
         .toList();
 
-    result.add(ReportTableData(
-        timeOfDay: '8 - 12',
-        trafficVolume: getTrafficVolume(report3),
-        ratio: getRatio(report3, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report3)));
-    List<Report> report4 = report
+    result.add(TrafficDataTableData(
+      timeOfDay: '12 - 16',
+      moto: getMotoBikesVolume(report3),
+      ratio: getRatio(report3, totalTraffic),
+      car: getCarsVolume(report3),
+      others: getOthersVolume(report3),
+    ));
+    List<TrafficData> report4 = report
         .where((element) => element.time.hour >= 12 && element.time.hour < 16)
         .toList();
 
-    result.add(ReportTableData(
-        timeOfDay: '12 - 16',
-        trafficVolume: getTrafficVolume(report4),
-        ratio: getRatio(report4, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report4)));
-    List<Report> report5 = report
+    result.add(TrafficDataTableData(
+      timeOfDay: '12 - 16',
+      moto: getMotoBikesVolume(report4),
+      ratio: getRatio(report4, totalTraffic),
+      car: getCarsVolume(report4),
+      others: getOthersVolume(report4),
+    ));
+    List<TrafficData> report5 = report
         .where((element) => element.time.hour >= 16 && element.time.hour < 20)
         .toList();
 
-    result.add(ReportTableData(
+    result.add(TrafficDataTableData(
         timeOfDay: '16 - 20',
-        trafficVolume: getTrafficVolume(report5),
+        moto: getMotoBikesVolume(report5),
         ratio: getRatio(report5, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report5)));
-    List<Report> report6 = report
+        car: getCarsVolume(report5),
+        others: getOthersVolume(report5)));
+    List<TrafficData> report6 = report
         .where((element) => element.time.hour >= 16 && element.time.hour < 20)
         .toList();
 
-    result.add(ReportTableData(
+    result.add(TrafficDataTableData(
         timeOfDay: '20 - 24',
-        trafficVolume: getTrafficVolume(report6),
-        ratio: getRatio(report6, totalTraffic),
-        avgSpeed: getTrafficAvgSpeed(report6)));
+        moto: getMotoBikesVolume(report5),
+        ratio: getRatio(report5, totalTraffic),
+        car: getCarsVolume(report5),
+        others: getOthersVolume(report5)));
 
     return result;
   }
 
-  String getRatio(List<Report> report, double total) {
+  String getRatio(List<TrafficData> report, double total) {
     if (total == 0) return '0';
     double volume = double.tryParse(getTrafficVolume(report)) ?? 0;
     return (volume * 100 / total).toStringAsFixed(2);
   }
 
-  String getTrafficVolume(List<Report> report) {
+  String getTrafficVolume(List<TrafficData> report) {
     double result = 0;
     report.forEach((element) {
-      result += element.count ?? 0;
+      result += (element.car! + element.moto! + element.other!) ?? 0;
     });
     return result.toString();
   }
 
-  String getTrafficAvgSpeed(List<Report> report) {
+  String getCarsVolume(List<TrafficData> report) {
     double result = 0;
     report.forEach((element) {
-      result += element.count ?? 0;
+      result += (element.car) ?? 0;
     });
+    return result.toString();
+  }
 
-    if (report.isEmpty) {
-      return '0';
-    }
+  String getMotoBikesVolume(List<TrafficData> report) {
+    double result = 0;
+    report.forEach((element) {
+      result += (element.moto) ?? 0;
+    });
+    return result.toString();
+  }
 
-    result = result / report.length;
-    return result.toStringAsFixed(2);
+  String getOthersVolume(List<TrafficData> report) {
+    double result = 0;
+    report.forEach((element) {
+      result += (element.other) ?? 0;
+    });
+    return result.toString();
   }
 }
 
-bool checkLargeData(List<ReportTableData> data, double total) {
+bool checkLargeData(List<TrafficDataTableData> data, double total) {
   bool result = false;
   for (int i = 0; i < data.length; i++) {
-    if (double.parse(data[i].trafficVolume) * 100 / total >= 50) {
+    if ((double.parse(data[i].car) +
+                double.parse(data[i].moto) +
+                double.parse(data[i].others)) *
+            100 /
+            total >=
+        40) {
       result = true;
       break;
     }
@@ -489,12 +569,12 @@ bool checkLargeData(List<ReportTableData> data, double total) {
 
 class _BarChart extends StatelessWidget {
   _BarChart({required this.data});
-  List<ReportTableData> data;
+  List<TrafficDataTableData> data;
   @override
   Widget build(BuildContext context) {
     double total = 0;
     data.forEach((element) {
-      total += double.tryParse(element.trafficVolume) ?? 0;
+      total += double.tryParse(element.getTrafficVolume()) ?? 0;
     });
     bool haveLargeData = checkLargeData(data, total);
     return data.isEmpty
@@ -507,7 +587,7 @@ class _BarChart extends StatelessWidget {
               barGroups: barGroups,
               gridData: const FlGridData(show: false),
               alignment: BarChartAlignment.spaceAround,
-              maxY: haveLargeData ? total * 1.25 : total / 3.3,
+              maxY: haveLargeData ? total * 1 : total / 3.1,
             ),
           );
   }
@@ -612,7 +692,7 @@ class _BarChart extends StatelessWidget {
             x: 0,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[0].trafficVolume) ?? 0,
+                toY: double.tryParse(data[0].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],
@@ -622,7 +702,7 @@ class _BarChart extends StatelessWidget {
             x: 1,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[1].trafficVolume) ?? 0,
+                toY: double.tryParse(data[1].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],
@@ -632,7 +712,7 @@ class _BarChart extends StatelessWidget {
             x: 2,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[2].trafficVolume) ?? 0,
+                toY: double.tryParse(data[2].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],
@@ -642,7 +722,7 @@ class _BarChart extends StatelessWidget {
             x: 3,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[3].trafficVolume) ?? 0,
+                toY: double.tryParse(data[3].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],
@@ -652,7 +732,7 @@ class _BarChart extends StatelessWidget {
             x: 4,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[4].trafficVolume) ?? 0,
+                toY: double.tryParse(data[4].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],
@@ -662,7 +742,7 @@ class _BarChart extends StatelessWidget {
             x: 5,
             barRods: [
               BarChartRodData(
-                toY: double.tryParse(data[5].trafficVolume) ?? 0,
+                toY: double.tryParse(data[5].getTrafficVolume()) ?? 0,
                 gradient: _barsGradient,
               )
             ],

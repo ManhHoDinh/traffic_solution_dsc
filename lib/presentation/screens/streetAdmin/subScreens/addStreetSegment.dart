@@ -1,26 +1,23 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
-
-import 'package:traffic_solution_dsc/core/constraints/status.dart';
-import 'package:traffic_solution_dsc/core/models/placeNear/locations.dart';
-import 'package:traffic_solution_dsc/core/models/search/mapbox/feature.dart';
+import 'package:traffic_solution_dsc/core/helper/app_resources.dart';
+import 'package:traffic_solution_dsc/core/models/business/business.dart';
+import 'package:traffic_solution_dsc/core/models/store/store.dart';
+import 'package:traffic_solution_dsc/core/models/street/street.dart';
 import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dart';
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/DirectionScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
-
-import 'package:traffic_solution_dsc/presentation/screens/ReportScreen/reportScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
-import 'package:place_picker/place_picker.dart';
+import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 
 import 'package:label_marker/label_marker.dart';
 import 'dart:async';
@@ -28,26 +25,21 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationText_widget.dart';
 
+// ignore: must_be_immutable
 class AddStreetSegment extends StatefulWidget {
+  AddStreetSegment(
+      {super.key, this.streetSegment, this.store, required this.street});
+  StreetSegment? streetSegment;
+  Store? store;
+  Street street;
+
   @override
   _AddStreetSegmentState createState() => _AddStreetSegmentState();
 }
 
+enum SingingCharacter { from, to }
+
 class _AddStreetSegmentState extends State<AddStreetSegment> {
-  @override
-  Widget build(BuildContext context) {
-    return MapSample();
-  }
-}
-
-class MapSample extends StatefulWidget {
-  const MapSample({super.key});
-
-  @override
-  State<MapSample> createState() => MapSampleState();
-}
-
-class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -66,12 +58,10 @@ class MapSampleState extends State<MapSample> {
         .then((value) {})
         .onError((error, stackTrace) async {
       await Geolocator.requestPermission();
-      print("ERROR" + error.toString());
     });
     Position currentPosition = await Geolocator.getCurrentPosition();
 
     source = LatLng(currentPosition.latitude, currentPosition.longitude);
-    print("Source $source");
     return currentPosition;
   }
 
@@ -79,10 +69,7 @@ class MapSampleState extends State<MapSample> {
   Future<void> moveCamera(CameraPosition camera) async {
     try {
       final GoogleMapController controller = await _controller.future;
-      // controller.moveCamera(CameraUpdate.newCameraPosition(camera));
-      setState(() {
-        //context.read<HomeCubit>().getCameraPostion(camera.target);
-      });
+      controller.moveCamera(CameraUpdate.newCameraPosition(camera));
     } catch (e) {}
   }
 
@@ -95,6 +82,7 @@ class MapSampleState extends State<MapSample> {
   late BitmapDescriptor customIcon;
   Set<Polyline> _polylines = {};
   List<StreetSegment> streetSegments = [];
+  List<Store> stores = [];
   LatLng source = LatLng(0, 0);
   LatLng destination = LatLng(0, 0);
   String sourceText = 'Your location';
@@ -104,9 +92,55 @@ class MapSampleState extends State<MapSample> {
     // TODO: implement initState
     super.initState();
     getUserCurrentLocation();
-
+    getIcon();
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
+      getIcon().whenComplete(() {
+        setState(() {
+          if (widget.streetSegment != null) {
+            startLatitudeController.text =
+                widget.streetSegment!.StartLat!.toStringAsFixed(5);
+            startLongitudeController.text =
+                widget.streetSegment!.StartLng!.toStringAsFixed(5);
+            endLatitudeController.text =
+                widget.streetSegment!.EndLat!.toStringAsFixed(5);
+            endLongitudeController.text =
+                widget.streetSegment!.EndLng!.toStringAsFixed(5);
+
+            moveCamera(CameraPosition(
+                target:
+                    LatLng(widget.store!.latitude!, widget.store!.longitude!),
+                zoom: 18));
+            storeNameController.text = widget.store!.name ?? '';
+
+            startStoreNear = widget.store;
+            endStoreNear = widget.store;
+            startMarker = Marker(
+                markerId: MarkerId('start'),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueYellow),
+                position: LatLng(widget.streetSegment!.StartLat!,
+                    widget.streetSegment!.StartLng!),
+                onTap: () {
+                  print("Hello");
+                });
+            markers.add(startMarker!);
+
+            endMarker = Marker(
+                markerId: MarkerId('end'),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueYellow),
+                position: LatLng(widget.streetSegment!.EndLat!,
+                    widget.streetSegment!.EndLng!),
+                onTap: () {
+                  print("Hello");
+                });
+            markers.add(endMarker!);
+            drawerPolyline();
+          }
+        });
+      });
+
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
           GoogleMapsFlutterPlatform.instance;
@@ -119,9 +153,71 @@ class MapSampleState extends State<MapSample> {
 
   TextEditingController startLongitudeController = TextEditingController();
   TextEditingController startLatitudeController = TextEditingController();
-
   TextEditingController endLongitudeController = TextEditingController();
   TextEditingController endLatitudeController = TextEditingController();
+  TextEditingController storeNameController = TextEditingController();
+
+  Store? startStoreNear;
+  Store? endStoreNear;
+  Marker? startMarker;
+  Marker? endMarker;
+  late BitmapDescriptor enableStoreIcon;
+  late BitmapDescriptor selectedStoreIcon;
+  late BitmapDescriptor disableStoreIcon;
+
+  SingingCharacter? selectPick = SingingCharacter.from;
+
+  Future getIcon() async {
+    enableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.enableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    selectedStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.selectedStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+    disableStoreIcon = await createCustomMarkerFromAsset(
+        AssetHelper.disableStoreMarkerIcon, // Path to your asset image
+        Size(100, 100) // Height of the custom marker
+        );
+  }
+
+  Future<BitmapDescriptor> createCustomMarkerFromAsset(
+      String assetName, Size size) async {
+    final ByteData byteData = await rootBundle.load(assetName);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    final Codec codec = await instantiateImageCodec(
+      uint8List,
+      targetHeight: size.height.toInt(),
+      targetWidth: size.width.toInt(),
+    );
+    final FrameInfo frameInfo = await codec.getNextFrame();
+    final ByteData? resizedByteData = await frameInfo.image.toByteData(
+      format: ImageByteFormat.png,
+    );
+    final Uint8List resizedUint8List = resizedByteData!.buffer.asUint8List();
+
+    final BitmapDescriptor customIcon =
+        BitmapDescriptor.fromBytes(resizedUint8List);
+    return customIcon;
+  }
+
+  getStoreMarker(Store e) async {
+    setState(() {
+      if (e.status == false) {
+        print(e.name);
+      }
+      markers.add(Marker(
+          markerId: MarkerId(e.id!),
+          position: LatLng(e.latitude!, e.longitude!),
+          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+          infoWindow: InfoWindow(title: e.name!),
+          onTap: () {
+            print("Hello");
+          }));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,198 +226,287 @@ class MapSampleState extends State<MapSample> {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: MediaQuery.of(context).viewInsets,
+            SingleChildScrollView(
               child: Stack(
                 children: [
-                  SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                     child: Column(
                       children: [
                         LocationTextField(
-                          title: 'From:',
-                          latitudeController: startLatitudeController,
-                          longitudeController: startLongitudeController,
+                          title: 'Store Name:',
+                          nameController: storeNameController,
+                          isName: true,
+                          isEnable: false,
                         ),
-                        SizedBox(height: 10),
-                        Divider(color: Colors.grey),
-                        SizedBox(height: 10),
-                        LocationTextField(
-                          title: 'To:',
-                          latitudeController: endLatitudeController,
-                          longitudeController: endLongitudeController,
+                        SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LocationTextField(
+                                  title: 'From:',
+                                  isEnable: false,
+                                  latitudeController: startLatitudeController,
+                                  longitudeController:
+                                      startLongitudeController),
+                            ),
+                            Radio(
+                                value: SingingCharacter.from,
+                                groupValue: selectPick,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectPick = value;
+                                  });
+                                  print(value); //selected value
+                                })
+                          ],
                         ),
-                        SizedBox(height: 30),
+                        SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LocationTextField(
+                                  isEnable: false,
+                                  title: 'To:',
+                                  latitudeController: endLatitudeController,
+                                  longitudeController: endLongitudeController),
+                            ),
+                            Radio(
+                                value: SingingCharacter.to,
+                                groupValue: selectPick,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectPick = value;
+                                  });
+                                  print(value); //selected value
+                                })
+                          ],
+                        ),
+                        SizedBox(height: 50),
                       ],
                     ),
                   ),
                   Positioned(
-                    bottom: 5,
-                    right: 16,
-                    child: FloatingActionButton(
-                      backgroundColor: const Color.fromARGB(255, 148, 226, 58),
-                      child: Icon(Icons.check, size: 36, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context);
+                    bottom: 16,
+                    right: 20,
+                    child: InkWell(
+                      child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(360)),
+                            color: Color.fromARGB(255, 148, 226, 58),
+                          ),
+                          child:
+                              Icon(Icons.check, size: 25, color: Colors.white)),
+                      onTap: () async {
+                        try {
+                          List<Polyline> polyline = _polylines
+                              .where((element) =>
+                                  element.polylineId.value == 'line')
+                              .toList();
+                          if (polyline.isNotEmpty) {
+                            DocumentReference streetSegmentDoc =
+                                FirebaseFirestore.instance
+                                    .collection('streetsegments')
+                                    .doc();
+                            bool status = true;
+                            if (widget.streetSegment != null) {
+                              streetSegmentDoc = FirebaseFirestore.instance
+                                  .collection('streetsegments')
+                                  .doc(widget.streetSegment!.id);
+                            }
+                            StreetSegment report = StreetSegment(
+                                id: streetSegmentDoc.id,
+                                StartLat: polyline.first.points.first.latitude,
+                                StartLng: polyline.first.points.first.longitude,
+                                EndLat:
+                                    polyline.first.points.elementAt(1).latitude,
+                                EndLng: polyline.first.points
+                                    .elementAt(1)
+                                    .longitude,
+                                status: status,
+                                streetId: widget.street.id,
+                                storeId: startStoreNear!.id);
+                            final json = report.toJson();
+
+                            await streetSegmentDoc.set(json).whenComplete(() {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(widget.streetSegment != null
+                                    ? 'Update Street Segment success'
+                                    : 'Add Street Segment success'),
+                                backgroundColor: Colors.green,
+                              ));
+                            });
+                          } else {}
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Check input location!!!'),
+                            backgroundColor: Colors.red,
+                          ));
+                        }
                       },
                     ),
                   ),
                 ],
               ),
             ),
-            StreamBuilder<List<StreetSegment>>(
-                stream: FireBaseDataBase.readStreetSegment(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Something went wrong! ${snapshot.error}'),
-                    );
-                  } else if (snapshot.hasData) {
-                    snapshot.data!.forEach((e) {
-                      _polylines.add(Polyline(
-                        polylineId: PolylineId(e.id.toString()),
-                        points: [
-                          LatLng(e.StartLat!, e.StartLng!),
-                          LatLng(e.EndLat!, e.EndLng!)
-                        ],
-                        color: Colors.green,
-                      ));
-                    });
-                    return Expanded(
-                      child: GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: _kBVNUDorm,
-                        markers: markers,
-                        onMapCreated: (GoogleMapController controller) {
-                          if (!_controller.isCompleted) {
-                            //first calling is false
-                            //call "completer()"
-                            _controller.complete(controller);
-                          } else {
-                            //other calling, later is true,
-                            //don't call again completer()
-                          }
-                        },
-                        trafficEnabled: false,
-                        zoomControlsEnabled: true,
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: true,
-                        polylines: _polylines,
-                        onTap: (value) {
-                          setState(() {
-                            defaultLocation = value;
-                            markers.add(Marker(
-                                markerId: MarkerId('start'), position: value));
-                            print(checkAllStreetSegment(value));
+            Expanded(
+              child: StreamBuilder<List<Store>>(
+                  stream: FireBaseDataBase.readStores(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Something went wrong! ${snapshot.error}'),
+                      );
+                    } else if (snapshot.hasData) {
+                      stores = snapshot.data!;
+                      snapshot.data!.forEach((e) {
+                        getStoreMarker(e);
+                      });
+                      return StreamBuilder<List<StreetSegment>>(
+                          stream: FireBaseDataBase.readStreetSegment(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Something went wrong! ${snapshot.error}'),
+                              );
+                            } else if (snapshot.hasData) {
+                              streetSegments = snapshot.data!;
+                              snapshot.data!.forEach((e) {
+                                if (widget.streetSegment != null) {
+                                  if (e.id == widget.streetSegment!.id) return;
+                                }
+                                _polylines.add(Polyline(
+                                  polylineId: PolylineId(e.id.toString()),
+                                  points: [
+                                    LatLng(e.StartLat!, e.StartLng!),
+                                    LatLng(e.EndLat!, e.EndLng!)
+                                  ],
+                                  color: Colors.green,
+                                ));
+                              });
+
+                              return GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: _kBVNUDorm,
+                                markers: markers,
+                                onMapCreated: (GoogleMapController controller) {
+                                  if (!_controller.isCompleted) {
+                                    //first calling is false
+                                    //call "completer()"
+                                    _controller.complete(controller);
+                                  } else {
+                                    //other calling, later is true,
+                                    //don't call again completer()
+                                  }
+                                },
+                                trafficEnabled: false,
+                                zoomControlsEnabled: true,
+                                myLocationEnabled: true,
+                                myLocationButtonEnabled: true,
+                                polylines: _polylines,
+                                onTap: (value) {
+                                  Store? store = checkAllStoreNear(value);
+                                  storeNameController.text = '';
+                                  setState(() {
+                                    _polylines.removeWhere((element) =>
+                                        element.polylineId.value == 'line');
+                                    if (selectPick == SingingCharacter.from) {
+                                      startLatitudeController.text =
+                                          value.latitude.toStringAsFixed(5);
+                                      startLongitudeController.text =
+                                          value.longitude.toStringAsFixed(5);
+                                      startMarker = Marker(
+                                          markerId: MarkerId('start'),
+                                          icon: BitmapDescriptor
+                                              .defaultMarkerWithHue(
+                                                  BitmapDescriptor.hueYellow),
+                                          position: value,
+                                          onTap: () {
+                                            print("Hello");
+                                          });
+                                      markers.add(startMarker!);
+                                      startStoreNear = store;
+                                      if (store != null) {
+                                        drawerPolyline();
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              'Pick location must near a store!!!'),
+                                          backgroundColor: Colors.red,
+                                        ));
+                                      }
+                                    }
+                                    if (selectPick == SingingCharacter.to) {
+                                      endLatitudeController.text =
+                                          value.latitude.toStringAsFixed(5);
+                                      endLongitudeController.text =
+                                          value.longitude.toStringAsFixed(5);
+                                      endMarker = Marker(
+                                          markerId: MarkerId('end'),
+                                          icon: BitmapDescriptor
+                                              .defaultMarkerWithHue(
+                                                  BitmapDescriptor.hueYellow),
+                                          position: value,
+                                          onTap: () {
+                                            print("Hello");
+                                          });
+                                      markers.add(endMarker!);
+                                      endStoreNear = store;
+                                      if (store != null) {
+                                        drawerPolyline();
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              'Pick location must near a store!!!'),
+                                          backgroundColor: Colors.red,
+                                        ));
+                                      }
+                                    }
+
+                                    // latitudeController.text =
+                                    //     value.latitude.toStringAsFixed(3);
+                                    // longitudeController.text =
+                                    //     value.longitude.toStringAsFixed(3);
+                                    // _pickMarker = Marker(
+                                    //     markerId: MarkerId('start'),
+                                    //     icon: selectedStoreIcon,
+                                    //     position: value,
+                                    //     onTap: () {
+                                    //       print("Hello");
+                                    //     });
+                                    // markers.add(_pickMarker!);
+                                    // context
+                                    //     .read<HomeCubit>()
+                                    //     .getPlaceNear(value)
+                                    //     .then((result) {
+                                    //   addressController.text = result.locationSelected!
+                                    //           .results!.first.address ??
+                                    //       '';
+                                    // });
+                                  });
+                                },
+                              );
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
                           });
-                        },
-                      ),
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  }),
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => ChooseLocation()));
-          },
-          child: Icon(Icons.directions)),
-
-      // bottomSheet: BlocBuilder<HomeCubit, HomeState>(
-      //   buildWhen: (previous, current) => true,
-      //   builder: (context, state) {
-      //     if (defaultLocation != LatLng(0, 0)) {
-      //       context
-      //           .read<HomeCubit>()
-      //           .getPlaceNear(state.data!.locationSelected);
-      //       return Container(
-      //         height: 150,
-      //       );
-      //     }
-
-      //     return Container(
-      //       height: 0,
-      //     );
-      //   },
-      // ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     // getUserCurrentLocation().then((value) async {
-      //     //   print(value.latitude.toString() + " " + value.longitude.toString());
-
-      //     //   // marker added for current users location
-
-      //     //   // specified current users location
-      //     //   CameraPosition cameraPosition = new CameraPosition(
-      //     //     target: LatLng(value.latitude, value.longitude),
-      //     //     zoom: 14,
-      //     //   );
-
-      //     //   final GoogleMapController controller = await _controller.future;
-      //     //   controller
-      //     //       .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      //     //   setState(() {});
-      //     // });
-      //   },
-      //   label: const Text(''),
-      //   icon: const Icon(Icons.directions),
-      // ),
     );
   }
-
-  // Future<void> _goToTheLake() async {
-  //   final GoogleMapController controller = await _controller.future;
-  //   await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  // }
-//   double calculateDistance(LatLng point1, LatLng point2) {
-//   const double earthRadius = 6371; // Earth's radius in kilometers
-
-//   double lat1 = point1.latitude;
-//   double lon1 = point1.longitude;
-//   double lat2 = point2.latitude;
-//   double lon2 = point2.longitude;
-
-//   double dLat = radians(lat2 - lat1);
-//   double dLon = radians(lon2 - lon1);
-
-//   double a = sin(dLat / 2) * sin(dLat / 2) +
-//       cos(radians(lat1)) * cos(radians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
-
-//   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-//   double distance = earthRadius * c; // Distance in kilometers
-//   return distance;
-// }
-
-//   void _onTap(LatLng tappedPoint) {
-//     double minDistance = double.infinity;
-
-//     // Iterate through the polyline coordinates and calculate the distance
-//     for (int i = 0; i < polylineCoordinates.length - 1; i++) {
-//       final LatLng point1 = polylineCoordinates[i];
-//       final LatLng point2 = polylineCoordinates[i + 1];
-
-//       // Calculate the distance between the clicked point and the polyline segment
-//       final double distance = LatLng.distance(tappedPoint, point1, point2);
-
-//       // Check if this distance is smaller than the minimum distance found so far
-//       if (distance < minDistance) {
-//         minDistance = distance;
-//       }
-//     }
-
-//     // Define a threshold (in degrees) to consider it a click near the polyline
-//     final double clickThreshold = 0.01;
-
-//     if (minDistance < clickThreshold) {
-//       // The click is near the polyline
-//       print('Clicked near the polyline!');
-//     }
-//   }
 
   double calculateZoomLevel(List<LatLng> boundingBox) {
     // Tính toán độ rộng của khu vực theo kinh tuyến
@@ -340,7 +525,7 @@ class MapSampleState extends State<MapSample> {
 
     // Nếu diện tích nhỏ, thì zoomLevel phải lớn
     if (height / width < 0.001) {
-      zoomLevel = 15;
+      zoomLevel = 16;
     }
     // Trả về tỉ lệ zoom
     return 15;
@@ -370,16 +555,51 @@ class MapSampleState extends State<MapSample> {
     return distance;
   }
 
-  String? checkAllStreetSegment(LatLng position) {
-    String? results;
-    _polylines.forEach((element) {
-      if (checkStreetSegmentNear(
-          element.points[0], element.points[1], position)) {
-        results = element.polylineId.value;
+  void drawerPolyline() {
+    if (startMarker != null && endMarker != null) {
+      if (startStoreNear != null &&
+          endStoreNear != null &&
+          startStoreNear!.id == endStoreNear!.id) {
+        storeNameController.text = startStoreNear!.name ?? '';
+        _polylines.add(Polyline(
+            polylineId: PolylineId('line'),
+            color: Colors.yellow,
+            points: [startMarker!.position, endMarker!.position]));
+      } else if (startStoreNear != null &&
+          endStoreNear != null &&
+          startStoreNear!.id != endStoreNear!.id) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Start Point and End Point need near only a store!!!'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    }
+  }
+
+  Store? checkAllStoreNear(LatLng tapPoint) {
+    Store? results;
+    stores.forEach((element) {
+      if (checkStoreNear(
+          LatLng(element.latitude ?? 0, element.longitude ?? 0), tapPoint)) {
+        //results = element.polylineId.value;
+        results = element;
         return;
       }
     });
     return results;
+  }
+
+  bool checkStoreNear(LatLng tapPoint, LatLng storePoint) {
+    double distance = 1000 *
+        distanceBetweenLatLng(storePoint.latitude, storePoint.longitude,
+            tapPoint.latitude, tapPoint.longitude);
+
+    if (distance <= 15.0) {
+      return true;
+    } else {
+      // Handle the case when the tap is outside the 100-meter radius
+      return false;
+    }
   }
 
   bool checkStreetSegmentNear(LatLng A, LatLng B, LatLng C) {

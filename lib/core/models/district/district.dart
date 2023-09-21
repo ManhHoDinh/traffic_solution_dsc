@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-part 'distric.freezed.dart';
-part 'distric.g.dart';
+part 'district.freezed.dart';
+part 'district.g.dart';
 
 @freezed
 class District with _$District {

@@ -9,6 +9,7 @@ class LocationTextField extends StatelessWidget {
       this.latitudeController,
       this.nameController,
       this.isAddress,
+      this.isEnable,
       this.isName});
 
   final String title;
@@ -17,6 +18,7 @@ class LocationTextField extends StatelessWidget {
   TextEditingController? nameController = TextEditingController();
   bool? isName = false;
   bool? isAddress = false;
+  bool? isEnable = true;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -32,16 +34,18 @@ class LocationTextField extends StatelessWidget {
             ),
           ),
         ),
-        isName == true||isAddress==true
+        isName == true || isAddress == true
             ? Expanded(
                 child: SingleChildScrollView(
                   child: TextFormField(
                     controller: nameController,
                     maxLines: null, // Allows multiple lines of text
                     keyboardType: TextInputType.multiline,
+                    enabled: isEnable,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText:isName==true? 'Store Name':'Store Address',
+                      labelText:
+                          isName == true ? 'Store Name' : 'Store Address',
                     ),
                     style: TextStyle(fontSize: 16),
                   ),
@@ -56,6 +60,7 @@ class LocationTextField extends StatelessWidget {
                         child: TextField(
                           controller: longitudeController,
                           keyboardType: TextInputType.number,
+                          enabled: isEnable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Longitude',
@@ -65,13 +70,14 @@ class LocationTextField extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 24),
+                    SizedBox(width: 15),
                     Expanded(
                       child: SizedBox(
                         height: 40,
                         child: TextField(
                           controller: latitudeController,
                           keyboardType: TextInputType.number,
+                          enabled: isEnable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Latitude',

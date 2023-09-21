@@ -22,6 +22,7 @@ class ManagementStoreScreen extends StatefulWidget {
 
 class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
   List<StreetSegment> streetSegments = [];
+  String? searchValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,13 +59,18 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                   ],
                 ),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Icon(Icons.search, size: 30, color: Colors.black),
                     ),
                     Expanded(
                       child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchValue = value;
+                          });
+                        },
                         style: TextStyle(fontSize: 16),
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -75,16 +81,7 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              Row(
-                children: const [
-                  Text('4',
-                      style: TextStyle(fontSize: 20, color: Colors.black)),
-                  Text(' results',
-                      style: TextStyle(fontSize: 16, color: Colors.black)),
-                ],
-              ),
-              SizedBox(height: 20),
+              SizedBox(height: 40),
               StreamBuilder<List<StreetSegment>>(
                   stream: FireBaseDataBase.readStreetSegment(),
                   builder: (context, snapshot) {
@@ -102,7 +99,7 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                               Text('Something went wrong! ${snapshot.error}'),
                         );
                       } else if (snapshot.hasData) {
-                        List<Store> stores = snapshot.data!;
+                        List<Store> stores = filterStore(snapshot.data!);
                         return ListView.builder(
                           itemBuilder: (context, i) => ItemContainer(
                             business: widget.business,
@@ -143,6 +140,17 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
         },
       ),
     );
+  }
+
+  List<Store> filterStore(List<Store> source) {
+    List<Store> result = source;
+    if (searchValue != null) {
+      result = result
+          .where(
+              (e) => e.name!.toLowerCase().contains(searchValue!.toLowerCase()))
+          .toList();
+    }
+    return result;
   }
 }
 
@@ -287,7 +295,7 @@ class ItemContainer extends StatelessWidget {
                     .where((element) => element.storeId == store.id)
                     .toList();
                 if (streetWithStoreId.isEmpty) {
-                   await docRoomKind.delete();
+                  await docRoomKind.delete();
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Delete Success!!!'),
                     backgroundColor: Colors.green,
@@ -306,4 +314,5 @@ class ItemContainer extends StatelessWidget {
       },
     );
   }
+
 }

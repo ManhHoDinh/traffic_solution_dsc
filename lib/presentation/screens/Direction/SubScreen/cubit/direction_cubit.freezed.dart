@@ -20,8 +20,14 @@ mixin _$DirectionState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String sourceText, LatLng source,
-            String destinationText, LatLng destination, Set<Polyline> polyline)
+    required TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)
         loaded,
     required TResult Function(String error) error,
   }) =>
@@ -30,8 +36,14 @@ mixin _$DirectionState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult? Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult? Function(String error)? error,
   }) =>
@@ -40,8 +52,14 @@ mixin _$DirectionState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult Function(String error)? error,
     required TResult orElse(),
@@ -131,8 +149,14 @@ class _$_Initial implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String sourceText, LatLng source,
-            String destinationText, LatLng destination, Set<Polyline> polyline)
+    required TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)
         loaded,
     required TResult Function(String error) error,
   }) {
@@ -144,8 +168,14 @@ class _$_Initial implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult? Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult? Function(String error)? error,
   }) {
@@ -157,8 +187,14 @@ class _$_Initial implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult Function(String error)? error,
     required TResult orElse(),
@@ -250,8 +286,14 @@ class _$_Loading implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String sourceText, LatLng source,
-            String destinationText, LatLng destination, Set<Polyline> polyline)
+    required TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)
         loaded,
     required TResult Function(String error) error,
   }) {
@@ -263,8 +305,14 @@ class _$_Loading implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult? Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult? Function(String error)? error,
   }) {
@@ -276,8 +324,14 @@ class _$_Loading implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult Function(String error)? error,
     required TResult orElse(),
@@ -340,6 +394,8 @@ abstract class _$$_LoadedCopyWith<$Res> {
       LatLng source,
       String destinationText,
       LatLng destination,
+      Duration duration,
+      double distance,
       Set<Polyline> polyline});
 }
 
@@ -357,6 +413,8 @@ class __$$_LoadedCopyWithImpl<$Res>
     Object? source = null,
     Object? destinationText = null,
     Object? destination = null,
+    Object? duration = null,
+    Object? distance = null,
     Object? polyline = null,
   }) {
     return _then(_$_Loaded(
@@ -376,6 +434,14 @@ class __$$_LoadedCopyWithImpl<$Res>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as LatLng,
+      null == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      null == distance
+          ? _value.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
       null == polyline
           ? _value._polyline
           : polyline // ignore: cast_nullable_to_non_nullable
@@ -387,8 +453,14 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded implements _Loaded {
-  const _$_Loaded(this.sourceText, this.source, this.destinationText,
-      this.destination, final Set<Polyline> polyline)
+  const _$_Loaded(
+      this.sourceText,
+      this.source,
+      this.destinationText,
+      this.destination,
+      this.duration,
+      this.distance,
+      final Set<Polyline> polyline)
       : _polyline = polyline;
 
   @override
@@ -399,6 +471,10 @@ class _$_Loaded implements _Loaded {
   final String destinationText;
   @override
   final LatLng destination;
+  @override
+  final Duration duration;
+  @override
+  final double distance;
   final Set<Polyline> _polyline;
   @override
   Set<Polyline> get polyline {
@@ -409,7 +485,7 @@ class _$_Loaded implements _Loaded {
 
   @override
   String toString() {
-    return 'DirectionState.loaded(sourceText: $sourceText, source: $source, destinationText: $destinationText, destination: $destination, polyline: $polyline)';
+    return 'DirectionState.loaded(sourceText: $sourceText, source: $source, destinationText: $destinationText, destination: $destination, duration: $duration, distance: $distance, polyline: $polyline)';
   }
 
   @override
@@ -424,6 +500,10 @@ class _$_Loaded implements _Loaded {
                 other.destinationText == destinationText) &&
             (identical(other.destination, destination) ||
                 other.destination == destination) &&
+            (identical(other.duration, duration) ||
+                other.duration == duration) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
             const DeepCollectionEquality().equals(other._polyline, _polyline));
   }
 
@@ -434,6 +514,8 @@ class _$_Loaded implements _Loaded {
       source,
       destinationText,
       destination,
+      duration,
+      distance,
       const DeepCollectionEquality().hash(_polyline));
 
   @JsonKey(ignore: true)
@@ -447,12 +529,19 @@ class _$_Loaded implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String sourceText, LatLng source,
-            String destinationText, LatLng destination, Set<Polyline> polyline)
+    required TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)
         loaded,
     required TResult Function(String error) error,
   }) {
-    return loaded(sourceText, source, destinationText, destination, polyline);
+    return loaded(sourceText, source, destinationText, destination, duration,
+        distance, polyline);
   }
 
   @override
@@ -460,13 +549,19 @@ class _$_Loaded implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult? Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult? Function(String error)? error,
   }) {
-    return loaded?.call(
-        sourceText, source, destinationText, destination, polyline);
+    return loaded?.call(sourceText, source, destinationText, destination,
+        duration, distance, polyline);
   }
 
   @override
@@ -474,14 +569,21 @@ class _$_Loaded implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult Function(String error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(sourceText, source, destinationText, destination, polyline);
+      return loaded(sourceText, source, destinationText, destination, duration,
+          distance, polyline);
     }
     return orElse();
   }
@@ -530,12 +632,16 @@ abstract class _Loaded implements DirectionState {
       final LatLng source,
       final String destinationText,
       final LatLng destination,
+      final Duration duration,
+      final double distance,
       final Set<Polyline> polyline) = _$_Loaded;
 
   String get sourceText;
   LatLng get source;
   String get destinationText;
   LatLng get destination;
+  Duration get duration;
+  double get distance;
   Set<Polyline> get polyline;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
@@ -606,8 +712,14 @@ class _$_Error implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String sourceText, LatLng source,
-            String destinationText, LatLng destination, Set<Polyline> polyline)
+    required TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)
         loaded,
     required TResult Function(String error) error,
   }) {
@@ -619,8 +731,14 @@ class _$_Error implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult? Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult? Function(String error)? error,
   }) {
@@ -632,8 +750,14 @@ class _$_Error implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String sourceText, LatLng source, String destinationText,
-            LatLng destination, Set<Polyline> polyline)?
+    TResult Function(
+            String sourceText,
+            LatLng source,
+            String destinationText,
+            LatLng destination,
+            Duration duration,
+            double distance,
+            Set<Polyline> polyline)?
         loaded,
     TResult Function(String error)? error,
     required TResult orElse(),
