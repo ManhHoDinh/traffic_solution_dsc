@@ -29,7 +29,6 @@ import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSre
 import 'package:place_picker/place_picker.dart';
 
 import 'package:label_marker/label_marker.dart';
-import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 

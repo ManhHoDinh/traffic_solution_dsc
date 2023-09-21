@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../models/user/user.dart';
 import '../../../repositories/repositories.dart';
 
 part 'login_state.dart';
@@ -10,24 +8,72 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthRepository _authRepository;
 
   LoginCubit(this._authRepository) : super(LoginState.initial());
-
   void emailChanged(String value) {
+    // Perform email validation
+    final isValidEmail = _isValidEmail(value);
+
     emit(
       state.copyWith(
         email: value,
+        emailError: isValidEmail,
         status: LoginStatus.initial,
       ),
     );
   }
 
   void passwordChanged(String value) {
+    // Perform password validation
+    final isValidPassword = _isValidPassword(value);
+
     emit(
       state.copyWith(
         password: value,
+        passwordError: isValidPassword,
         status: LoginStatus.initial,
       ),
     );
   }
+
+  String _isValidEmail(String email) {
+    // Add your email validation logic here
+    // Return true if email is valid, false otherwise
+    final bool emailValid = RegExp(
+            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+        .hasMatch(email);
+    if (email.isEmpty) {
+      return "Please enter username";
+    } else if (!emailValid) {
+      return "Email is not Invalid";
+    }
+    return '';
+  }
+
+  String _isValidPassword(String password) {
+    if (password == "") {
+      return "Please enter your password!";
+    } else if (password != null && password.length < 6) {
+      return "Password is too short!";
+    }
+    return '';
+  }
+  // void emailChanged(String value) {
+
+  //   emit(
+  //     state.copyWith(
+  //       email: value,
+  //       status: LoginStatus.initial,
+  //     ),
+  //   );
+  // }
+
+  // void passwordChanged(String value) {
+  //   emit(
+  //     state.copyWith(
+  //       password: value,
+  //       status: LoginStatus.initial,
+  //     ),
+  //   );
+  // }
 
 // Future<void> logInWithCredentials() async {
 //   if (state.status == LoginStatus.submitting) return;

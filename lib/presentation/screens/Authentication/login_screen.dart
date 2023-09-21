@@ -9,7 +9,6 @@ late Size mediaSize;
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
-
   static Page page() => const MaterialPage<void>(child: LoginScreen());
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => const LoginScreen());
@@ -32,21 +31,26 @@ class LoginUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     mediaSize = MediaQuery.of(context).size;
-    return Container(
-      width: mediaSize.width,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned(top: 20, child: _buildTop()),
-            Positioned(bottom: 0, child: _buildBottom()),
-          ],
-        ),
-      ),
-    );
+    return GestureDetector(
+        onTap: () {
+          // Remove focus from the text fields when tapping outside
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          width: mediaSize.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                Positioned(top: 20, child: _buildTop()),
+                Positioned(bottom: 0, child: _buildBottom(context)),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget _buildTop() {
@@ -64,7 +68,7 @@ class LoginUI extends StatelessWidget {
     );
   }
 
-  Widget _buildBottom() {
+  Widget _buildBottom(BuildContext context) {
     return SizedBox(
       width: mediaSize.width,
       child: Card(
@@ -76,13 +80,13 @@ class LoginUI extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: _buildForm(),
+          child: _buildForm(context),
         ),
       ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -102,9 +106,7 @@ class LoginUI extends StatelessWidget {
         const SizedBox(height: 40),
         _buildGreyText("Password"),
         _PasswordInput(),
-        const SizedBox(height: 15),
-        _buildRememberForgot(),
-        const SizedBox(height: 15),
+        const SizedBox(height: 40),
         _LoginButton(),
         const SizedBox(height: 15),
         const SizedBox(height: 15),
@@ -123,19 +125,6 @@ class LoginUI extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(color: Colors.red),
-    );
-  }
-
-  Widget _buildRememberForgot() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Spacer(), // Add Spacer widget to push the text to the right
-        TextButton(
-          onPressed: () {},
-          child: _buildRedText("Forget Password?"),
-        ),
-      ],
     );
   }
 
@@ -177,13 +166,32 @@ class _EmailInput extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return TextField(
-          onChanged: (email) {
-            context.read<LoginCubit>().emailChanged(email);
-          },
-          decoration: const InputDecoration(),
-        );
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextFormField(
+              onChanged: (email) {
+                context.read<LoginCubit>().emailChanged(email);
+              },
+              decoration: const InputDecoration(),
+              validator: (email) {
+                final bool emailValid = RegExp(
+                        r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                    .hasMatch(email!);
+                if (email.isEmpty) {
+                  return "Please enter username";
+                } else if (!emailValid) {
+                  return "Email is not Invalid";
+                }
+              }),
+          if (state.emailError != '') _buildRedText(state.emailError),
+        ]);
       },
+    );
+  }
+
+  Widget _buildRedText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.red),
     );
   }
 }
@@ -201,27 +209,44 @@ class _PasswordInputState extends State<_PasswordInput> {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
-        return TextFormField(
-          onChanged: (password) {
-            context.read<LoginCubit>().passwordChanged(password);
-          },
-          obscureText: !isPasswordVisible,
-          decoration: InputDecoration(
-            suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  isPasswordVisible = !isPasswordVisible;
-                });
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextFormField(
+              onChanged: (password) {
+                context.read<LoginCubit>().passwordChanged(password);
               },
-              icon: Icon(
-                isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
+              obscureText: !isPasswordVisible,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // Validator function
-        );
+              validator: (password) {
+                if (password == "") {
+                  return "Please enter your password!";
+                } else if (password != null && password.length <= 6) {
+                  return "Password is too short!";
+                }
+              }
+              // Validator function
+              ),
+          if (state.passwordError != '') _buildRedText(state.passwordError),
+        ]);
       },
+    );
+  }
+
+  Widget _buildRedText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(color: Colors.red),
     );
   }
 }

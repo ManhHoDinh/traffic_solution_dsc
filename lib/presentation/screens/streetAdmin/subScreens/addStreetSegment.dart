@@ -19,8 +19,6 @@ import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dar
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 
-import 'package:label_marker/label_marker.dart';
-import 'dart:async';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationText_widget.dart';
