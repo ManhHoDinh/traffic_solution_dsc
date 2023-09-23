@@ -60,7 +60,7 @@ class _MainStoreScreenState extends State<MainStoreScreen> {
                         child: TextField(
                           onChanged: (value) {
                             setState(() {
-                                searchValue = value;
+                              searchValue = value;
                             });
                           },
                           style: TextStyle(fontSize: 16),
@@ -75,37 +75,37 @@ class _MainStoreScreenState extends State<MainStoreScreen> {
                 ),
                 SizedBox(height: 30),
                 // items
-                StreamBuilder<List<Store>>(
-                    stream: FireBaseDataBase.readStores(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        stores = snapshot.data!;
-                      }
-                      return Container();
-                    }),
                 Expanded(
-                  child: StreamBuilder<List<Business>>(
-                      stream: FireBaseDataBase.readBusinesses(),
+                  child: StreamBuilder<List<Store>>(
+                      stream: FireBaseDataBase.readStores(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child:
-                                Text('Something went wrong! ${snapshot.error}'),
-                          );
-                        } else if (snapshot.hasData) {
-                          List<Business> business = filterBusiness(snapshot.data!);
-                          return ListView.builder(
-                            itemBuilder: (context, i) => ItemContainer(
-                              business: business[i],
-                              stores: stores,
-                            ),
-                            itemCount: business.length,
-                          );
-                        } else {
-                          return Expanded(
-                              child:
-                                  Center(child: CircularProgressIndicator()));
+                        if (snapshot.hasData) {
+                          stores = snapshot.data!;
                         }
+                        return StreamBuilder<List<Business>>(
+                            stream: FireBaseDataBase.readBusinesses(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text(
+                                      'Something went wrong! ${snapshot.error}'),
+                                );
+                              } else if (snapshot.hasData) {
+                                List<Business> business =
+                                    filterBusiness(snapshot.data!);
+                                return ListView.builder(
+                                  itemBuilder: (context, i) => ItemContainer(
+                                    business: business[i],
+                                    stores: stores,
+                                  ),
+                                  itemCount: business.length,
+                                );
+                              } else {
+                                return Expanded(
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                            });
                       }),
                 ),
               ],

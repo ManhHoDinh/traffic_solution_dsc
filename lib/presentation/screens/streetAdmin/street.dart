@@ -37,55 +37,56 @@ class _StreetScreenState extends State<StreetScreen> {
                     style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streetSegments = snapshot.data!;
-                    }
-                    return Container();
-                  }),
               Expanded(
-                child: StreamBuilder<List<AreaStreet>>(
-                    stream:
-                        FireBaseDataBase.readAreaStreet(widget.area.id ?? ''),
+                child: StreamBuilder<List<StreetSegment>>(
+                    stream: FireBaseDataBase.readStreetSegment(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        streetIds.clear();
-                        snapshot.data!.forEach((element) {
-                          streetIds.add(element.streetId ?? '');
-                        });
-                        print(streetIds);
-                        return StreamBuilder<List<Street>>(
-                            stream: FireBaseDataBase.readStreet(streetIds),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Center(
-                                  child: Text(
-                                      'Something went wrong! ${snapshot.error}'),
-                                );
-                              } else if (snapshot.hasData) {
-                                List<Street> streets = snapshot
-                                    .data!; //filterBusiness(snapshot.data!);
-                                return ListView.builder(
-                                  itemBuilder: (context, i) => ItemContainer(
-                                    street: streets[i],
-                                    streetSegment: streetSegments,
-                                  ),
-                                  itemCount: streets.length,
-                                );
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            });
+                      if (snapshot.hasData) {
+                        streetSegments = snapshot.data!;
                       }
-                      return Center(child: CircularProgressIndicator());
+                      return StreamBuilder<List<AreaStreet>>(
+                          stream: FireBaseDataBase.readAreaStreet(
+                              widget.area.id ?? ''),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Something went wrong! ${snapshot.error}'),
+                              );
+                            } else if (snapshot.hasData) {
+                              streetIds.clear();
+                              snapshot.data!.forEach((element) {
+                                streetIds.add(element.streetId ?? '');
+                              });
+                              print(streetIds);
+                              return StreamBuilder<List<Street>>(
+                                  stream:
+                                      FireBaseDataBase.readStreet(streetIds),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text(
+                                            'Something went wrong! ${snapshot.error}'),
+                                      );
+                                    } else if (snapshot.hasData) {
+                                      List<Street> streets = snapshot
+                                          .data!; //filterBusiness(snapshot.data!);
+                                      return ListView.builder(
+                                        itemBuilder: (context, i) =>
+                                            ItemContainer(
+                                          street: streets[i],
+                                          streetSegment: streetSegments,
+                                        ),
+                                        itemCount: streets.length,
+                                      );
+                                    } else {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  });
+                            }
+                            return Center(child: CircularProgressIndicator());
+                          });
                     }),
               ),
 

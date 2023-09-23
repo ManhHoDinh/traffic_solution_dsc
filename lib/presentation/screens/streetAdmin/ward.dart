@@ -44,66 +44,67 @@ class _WardScreenState extends State<WardScreen> {
                     style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
-              StreamBuilder<List<Area>>(
-                  stream: FireBaseDataBase.readAllArea(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areas = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-
-              StreamBuilder<List<AreaStreet>>(
-                  stream: FireBaseDataBase.readAllAreaStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areaStreets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Street>>(
-                  stream: FireBaseDataBase.readAllStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streetSegments = snapshot.data!;
-                    }
-                    return Container();
-                  }),
 
               Expanded(
-                child: StreamBuilder<List<Ward>>(
-                    stream: FireBaseDataBase.readWard(widget.district.id ?? ''),
+                child: StreamBuilder<List<Street>>(
+                    stream: FireBaseDataBase.readAllStreet(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        List<Ward> wards =
-                            snapshot.data!; //filterBusiness(snapshot.data!);
-                        return ListView.builder(
-                          itemBuilder: (context, i) => ItemContainer(
-                            ward: wards[i],
-                            streetSegments: streetSegments,
-                            areaStreets: areaStreets,
-                            areas: areas,
-                            streets: streets,
-                          ),
-                          itemCount: wards.length,
-                        );
-                      } else {
-                        return Expanded(
-                            child: Center(child: CircularProgressIndicator()));
+                      if (snapshot.hasData) {
+                        streets = snapshot.data!;
                       }
+                      return StreamBuilder<List<Area>>(
+                          stream: FireBaseDataBase.readAllArea(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              areas = snapshot.data!;
+                            }
+                            return StreamBuilder<List<AreaStreet>>(
+                                stream: FireBaseDataBase.readAllAreaStreet(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    areaStreets = snapshot.data!;
+                                  }
+                                  return StreamBuilder<List<StreetSegment>>(
+                                      stream:
+                                          FireBaseDataBase.readStreetSegment(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          streetSegments = snapshot.data!;
+                                        }
+                                        return StreamBuilder<List<Ward>>(
+                                            stream: FireBaseDataBase.readWard(
+                                                widget.district.id ?? ''),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return Center(
+                                                  child: Text(
+                                                      'Something went wrong! ${snapshot.error}'),
+                                                );
+                                              } else if (snapshot.hasData) {
+                                                List<Ward> wards = snapshot
+                                                    .data!; //filterBusiness(snapshot.data!);
+                                                return ListView.builder(
+                                                  itemBuilder: (context, i) =>
+                                                      ItemContainer(
+                                                    ward: wards[i],
+                                                    streetSegments:
+                                                        streetSegments,
+                                                    areaStreets: areaStreets,
+                                                    areas: areas,
+                                                    streets: streets,
+                                                  ),
+                                                  itemCount: wards.length,
+                                                );
+                                              } else {
+                                                return Expanded(
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator()));
+                                              }
+                                            });
+                                      });
+                                });
+                          });
                     }),
               ),
 
