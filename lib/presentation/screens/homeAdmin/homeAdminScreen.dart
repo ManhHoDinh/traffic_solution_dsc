@@ -108,22 +108,6 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
               // overview
               Text('Overview', style: TextStyle(fontSize: 20)),
               SizedBox(height: 10),
-              StreamBuilder<List<Store>>(
-                  stream: FireBaseDataBase.readStores(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      stores = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Business>>(
-                  stream: FireBaseDataBase.readBusinesses(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      business = snapshot.data!;
-                    }
-                    return Container();
-                  }),
 
               StreamBuilder<List<Area>>(
                   stream: FireBaseDataBase.readAllArea(),
@@ -131,74 +115,119 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                     if (snapshot.hasData) {
                       areas = snapshot.data!;
                     }
-                    return Container();
-                  }),
+                    return StreamBuilder<List<Business>>(
+                        stream: FireBaseDataBase.readBusinesses(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            business = snapshot.data!;
+                          }
+                          return StreamBuilder<List<Store>>(
+                              stream: FireBaseDataBase.readStores(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  stores = snapshot.data!;
+                                }
+                                return StreamBuilder<List<AreaStreet>>(
+                                    stream:
+                                        FireBaseDataBase.readAllAreaStreet(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        areaStreets = snapshot.data!;
+                                      }
+                                      return StreamBuilder<List<Street>>(
+                                          stream:
+                                              FireBaseDataBase.readAllStreet(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              streets = snapshot.data!;
+                                            }
+                                            return StreamBuilder<
+                                                    List<StreetSegment>>(
+                                                stream: FireBaseDataBase
+                                                    .readStreetSegment(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    streetSegments =
+                                                        snapshot.data!;
+                                                  }
+                                                  return StreamBuilder<
+                                                          List<Ward>>(
+                                                      stream: FireBaseDataBase
+                                                          .readAllWard(),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot.hasData) {
+                                                          wards =
+                                                              snapshot.data!;
+                                                        }
+                                                        return StreamBuilder<
+                                                                List<District>>(
+                                                            stream: FireBaseDataBase
+                                                                .readDistrict(),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (snapshot
+                                                                  .hasData) {
+                                                                districts =
+                                                                    snapshot
+                                                                        .data!;
 
-              StreamBuilder<List<AreaStreet>>(
-                  stream: FireBaseDataBase.readAllAreaStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areaStreets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Street>>(
-                  stream: FireBaseDataBase.readAllStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streetSegments = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Ward>>(
-                  stream: FireBaseDataBase.readAllWard(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      wards = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<District>>(
-                  stream: FireBaseDataBase.readDistrict(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      districts = snapshot.data!;
-
-                      return Row(
-                        children: [
-                          OverviewContainer(
-                            icon: AssetHelper.ICON_CAMERA,
-                            title: 'Camera',
-                            streetSegments: streetSegments,
-                            districts: districts,
-                            wards: wards,
-                            areaStreets: areaStreets,
-                            areas: areas,
-                            streets: streets,
-                            beginColor: Color(0xFF9B9CF8),
-                            endColor: Color(0xFF8082ED),
-                          ),
-                          SizedBox(width: 10),
-                          OverviewContainer(
-                            icon: AssetHelper.ICON_BUSINESS,
-                            title: 'Business',
-                            stores: stores,
-                            business: business,
-                            beginColor: Color(0xFFFEB4C5),
-                            endColor: Color(0xFFDB869A),
-                          ),
-                        ],
-                      );
-                    }
-                    return Container();
+                                                                return Row(
+                                                                  children: [
+                                                                    OverviewContainer(
+                                                                      icon: AssetHelper
+                                                                          .ICON_CAMERA,
+                                                                      title:
+                                                                          'Camera',
+                                                                      streetSegments:
+                                                                          streetSegments,
+                                                                      districts:
+                                                                          districts,
+                                                                      wards:
+                                                                          wards,
+                                                                      areaStreets:
+                                                                          areaStreets,
+                                                                      areas:
+                                                                          areas,
+                                                                      streets:
+                                                                          streets,
+                                                                      beginColor:
+                                                                          Color(
+                                                                              0xFF9B9CF8),
+                                                                      endColor:
+                                                                          Color(
+                                                                              0xFF8082ED),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    OverviewContainer(
+                                                                      icon: AssetHelper
+                                                                          .ICON_BUSINESS,
+                                                                      title:
+                                                                          'Business',
+                                                                      stores:
+                                                                          stores,
+                                                                      business:
+                                                                          business,
+                                                                      beginColor:
+                                                                          Color(
+                                                                              0xFFFEB4C5),
+                                                                      endColor:
+                                                                          Color(
+                                                                              0xFFDB869A),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              }
+                                                              return Container();
+                                                            });
+                                                      });
+                                                });
+                                          });
+                                    });
+                              });
+                        });
                   }),
 
               // managing area

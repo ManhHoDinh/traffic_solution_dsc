@@ -40,56 +40,56 @@ class _AreaScreenState extends State<AreaScreen> {
                     style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
-              StreamBuilder<List<AreaStreet>>(
-                  stream: FireBaseDataBase.readAllAreaStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areaStreets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Street>>(
-                  stream: FireBaseDataBase.readAllStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streetSegments = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-
               Expanded(
-                child: StreamBuilder<List<Area>>(
-                    stream: FireBaseDataBase.readArea(widget.ward.id!),
+                child: StreamBuilder<List<AreaStreet>>(
+                    stream: FireBaseDataBase.readAllAreaStreet(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        List<Area> areas =
-                            snapshot.data!; //filterBusiness(snapshot.data!);
-                        return ListView.builder(
-                          itemBuilder: (context, i) => ItemContainer(
-                            area: areas[i],
-                            streetSegments: streetSegments,
-                            streets: streets,
-                            areaStreets: areaStreets,
-                          ),
-                          itemCount: areas.length,
-                        );
-                      } else {
-                        return Expanded(
-                            child: Center(child: CircularProgressIndicator()));
+                      if (snapshot.hasData) {
+                        areaStreets = snapshot.data!;
                       }
+                      return StreamBuilder<List<Street>>(
+                          stream: FireBaseDataBase.readAllStreet(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              streets = snapshot.data!;
+                            }
+                            return StreamBuilder<List<StreetSegment>>(
+                                stream: FireBaseDataBase.readStreetSegment(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    streetSegments = snapshot.data!;
+                                  }
+                                  return StreamBuilder<List<Area>>(
+                                      stream: FireBaseDataBase.readArea(
+                                          widget.ward.id!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasError) {
+                                          return Center(
+                                            child: Text(
+                                                'Something went wrong! ${snapshot.error}'),
+                                          );
+                                        } else if (snapshot.hasData) {
+                                          List<Area> areas = snapshot
+                                              .data!; //filterBusiness(snapshot.data!);
+                                          return ListView.builder(
+                                            itemBuilder: (context, i) =>
+                                                ItemContainer(
+                                              area: areas[i],
+                                              streetSegments: streetSegments,
+                                              streets: streets,
+                                              areaStreets: areaStreets,
+                                            ),
+                                            itemCount: areas.length,
+                                          );
+                                        } else {
+                                          return Expanded(
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator()));
+                                        }
+                                      });
+                                });
+                          });
                     }),
               ),
 

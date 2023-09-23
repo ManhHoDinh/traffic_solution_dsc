@@ -35,6 +35,7 @@ class _DrawerAdminPageState extends State<DrawerAdminPage> {
         create: (context) => SearchCubit(),
         child: SearchScreen(),
       );
+      container = Container();
     }
     SizeConfig().init(context);
 

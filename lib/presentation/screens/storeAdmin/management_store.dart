@@ -82,36 +82,36 @@ class _ManagementStoreScreenState extends State<ManagementStoreScreen> {
                 ),
               ),
               SizedBox(height: 40),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) streetSegments = snapshot.data!;
-                    return Container();
-                  }),
               Expanded(
-                child: StreamBuilder<List<Store>>(
-                    stream: FireBaseDataBase.readStoreWithBusinessID(
-                        widget.business.id!),
+                child: StreamBuilder<List<StreetSegment>>(
+                    stream: FireBaseDataBase.readStreetSegment(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        List<Store> stores = filterStore(snapshot.data!);
-                        return ListView.builder(
-                          itemBuilder: (context, i) => ItemContainer(
-                            business: widget.business,
-                            store: stores[i],
-                            streetSegments: streetSegments,
-                          ),
-                          itemCount: stores.length,
-                        );
-                      } else {
-                        return Expanded(
-                            child: Center(child: CircularProgressIndicator()));
-                      }
+                      if (snapshot.hasData) streetSegments = snapshot.data!;
+                      return StreamBuilder<List<Store>>(
+                          stream: FireBaseDataBase.readStoreWithBusinessID(
+                              widget.business.id!),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Something went wrong! ${snapshot.error}'),
+                              );
+                            } else if (snapshot.hasData) {
+                              List<Store> stores = filterStore(snapshot.data!);
+                              return ListView.builder(
+                                itemBuilder: (context, i) => ItemContainer(
+                                  business: widget.business,
+                                  store: stores[i],
+                                  streetSegments: streetSegments,
+                                ),
+                                itemCount: stores.length,
+                              );
+                            } else {
+                              return Expanded(
+                                  child: Center(
+                                      child: CircularProgressIndicator()));
+                            }
+                          });
                     }),
               ),
             ],
@@ -314,5 +314,4 @@ class ItemContainer extends StatelessWidget {
       },
     );
   }
-
 }

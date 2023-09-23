@@ -15,7 +15,7 @@ class StreetSegmentScreen extends StatefulWidget {
 
 class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
   List<Store> stores = [];
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,37 +37,37 @@ class _StreetSegmentScreenState extends State<StreetSegmentScreen> {
               SizedBox(height: 30),
               // search bar
               SizedBox(height: 20),
-              StreamBuilder<List<Store>>(
-                  stream: FireBaseDataBase.readStores(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) stores = snapshot.data!;
-                    return Container();
-                  }),
 
               Expanded(
-                child: StreamBuilder<List<StreetSegment>>(
-                    stream: FireBaseDataBase.readStreetSegmentByStreetId(
-                        widget.street.id ?? ''),
+                child: StreamBuilder<List<Store>>(
+                    stream: FireBaseDataBase.readStores(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        List<StreetSegment> streetSegments = snapshot.data!;
-                        return ListView.builder(
-                          itemBuilder: (context, i) => ItemContainer(
-                            index: i,
-                            streetSegment: streetSegments[i],
-                            stores: stores,
-                            street: widget.street,
-                          ),
-                          itemCount: streetSegments.length,
-                        );
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
+                      if (snapshot.hasData) stores = snapshot.data!;
+                      return StreamBuilder<List<StreetSegment>>(
+                          stream: FireBaseDataBase.readStreetSegmentByStreetId(
+                              widget.street.id ?? ''),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Something went wrong! ${snapshot.error}'),
+                              );
+                            } else if (snapshot.hasData) {
+                              List<StreetSegment> streetSegments =
+                                  snapshot.data!;
+                              return ListView.builder(
+                                itemBuilder: (context, i) => ItemContainer(
+                                  index: i,
+                                  streetSegment: streetSegments[i],
+                                  stores: stores,
+                                  street: widget.street,
+                                ),
+                                itemCount: streetSegments.length,
+                              );
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          });
                     }),
               ),
 
