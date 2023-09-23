@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 import 'dart:async';
@@ -16,6 +15,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  PageController _pageController = PageController();
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
@@ -71,6 +71,7 @@ class _BodyState extends State<Body> {
             Expanded(
               flex: 3,
               child: PageView.builder(
+                controller: _pageController,
                 onPageChanged: (value) {
                   setState(() {
                     currentPage = value;
@@ -79,9 +80,9 @@ class _BodyState extends State<Body> {
                 itemCount: splashData.length,
                 itemBuilder: (context, index) {
                   return SplashContent(
-                    title: splashData[index]["title"],
-                    image: splashData[index]["image"],
-                    text: splashData[index]['text'],
+                    title: splashData[currentPage]["title"],
+                    image: splashData[currentPage]["image"],
+                    text: splashData[currentPage]['text'],
                   );
                 },
               ),
@@ -90,7 +91,8 @@ class _BodyState extends State<Body> {
               flex: 2,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: getProportionateScreenWidth(20)),
+                  horizontal: getProportionateScreenWidth(20),
+                ),
                 child: Column(
                   children: <Widget>[
                     Spacer(),
@@ -113,33 +115,27 @@ class _BodyState extends State<Body> {
                       ),
                     ),
                     Spacer(flex: 1),
-                    // Padding(
-                    //   padding:
-                    //       EdgeInsets.all(10.0), // Define the padding you want
-                    //   child: DefaultButton(
-                    //       color: Color(0xFFAFF8E9),
-                    //       text: "Continue as guest",
-                    //       press: () {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //             builder: (context) => BlocProvider(
-                    //               create: (context) => HomeCubit(),
-                    //               child: HomeScreen(),
-                    //             ),
-                    //           ),
-                    //         );
-                    //       }),
-                    // ),
                     Padding(
-                      padding:
-                          EdgeInsets.all(10.0), // Define the padding you want
+                      padding: EdgeInsets.all(10.0),
                       child: DefaultButton(
                         color: Color(0xFF003860),
-                        text: "Next",
+                        text: currentPage == splashData.length - 1
+                            ? "Next"
+                            : "Skip", // Change button text on the last page
                         press: () {
-                          markOnboardingComplete();
-                          navigateToFlowBuilder();
+                          if (currentPage == splashData.length - 1) {
+                            markOnboardingComplete();
+                            navigateToFlowBuilder();
+                          } else {
+                            // Optionally, you can handle skipping to the next page here
+                            // For example, you can programmatically move to the next page:
+                            final nextPage = currentPage + 1;
+                            _pageController.animateToPage(
+                              nextPage,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.ease,
+                            );
+                          }
                         },
                       ),
                     ),
