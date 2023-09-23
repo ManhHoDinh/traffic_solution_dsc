@@ -592,7 +592,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
         distanceBetweenLatLng(storePoint.latitude, storePoint.longitude,
             tapPoint.latitude, tapPoint.longitude);
 
-    if (distance <= 15.0) {
+    if (distance <= 10.0) {
       return true;
     } else {
       // Handle the case when the tap is outside the 100-meter radius

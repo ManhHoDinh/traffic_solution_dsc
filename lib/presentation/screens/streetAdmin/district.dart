@@ -43,74 +43,83 @@ class _MainStreetScreenState extends State<MainStreetScreen> {
                 child: Text('TP. Ho Chi Minh', style: TextStyle(fontSize: 22)),
               ),
               SizedBox(height: 30),
-              StreamBuilder<List<Area>>(
-                  stream: FireBaseDataBase.readAllArea(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areas = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-
-              StreamBuilder<List<AreaStreet>>(
-                  stream: FireBaseDataBase.readAllAreaStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      areaStreets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Street>>(
-                  stream: FireBaseDataBase.readAllStreet(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streets = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<StreetSegment>>(
-                  stream: FireBaseDataBase.readStreetSegment(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      streetSegments = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-              StreamBuilder<List<Ward>>(
-                  stream: FireBaseDataBase.readAllWard(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      wards = snapshot.data!;
-                    }
-                    return Container();
-                  }),
-
               Expanded(
-                child: StreamBuilder<List<District>>(
-                    stream: FireBaseDataBase.readDistrict(),
+                child: StreamBuilder<List<Area>>(
+                    stream: FireBaseDataBase.readAllArea(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child:
-                              Text('Something went wrong! ${snapshot.error}'),
-                        );
-                      } else if (snapshot.hasData) {
-                        List<District> districts =
-                            snapshot.data!; //filterBusiness(snapshot.data!);
-                        return ListView.builder(
-                          itemBuilder: (context, i) => ItemContainer(
-                              district: districts[i],
-                              streetSegments: streetSegments,
-                              areaStreets: areaStreets,
-                              areas: areas,
-                              streets: streets,
-                              wards: wards),
-                          itemCount: districts.length,
-                        );
-                      } else {
-                        return Expanded(
-                            child: Center(child: CircularProgressIndicator()));
+                      if (snapshot.hasData) {
+                        areas = snapshot.data!;
                       }
+                      return StreamBuilder<List<AreaStreet>>(
+                          stream: FireBaseDataBase.readAllAreaStreet(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              areaStreets = snapshot.data!;
+                            }
+                            return StreamBuilder<List<Street>>(
+                                stream: FireBaseDataBase.readAllStreet(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    streets = snapshot.data!;
+                                  }
+                                  return StreamBuilder<List<StreetSegment>>(
+                                      stream:
+                                          FireBaseDataBase.readStreetSegment(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          streetSegments = snapshot.data!;
+                                        }
+                                        return StreamBuilder<List<Ward>>(
+                                            stream:
+                                                FireBaseDataBase.readAllWard(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                wards = snapshot.data!;
+                                              }
+                                              return StreamBuilder<
+                                                      List<District>>(
+                                                  stream: FireBaseDataBase
+                                                      .readDistrict(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasError) {
+                                                      return Center(
+                                                        child: Text(
+                                                            'Something went wrong! ${snapshot.error}'),
+                                                      );
+                                                    } else if (snapshot
+                                                        .hasData) {
+                                                      List<District> districts =
+                                                          snapshot
+                                                              .data!; //filterBusiness(snapshot.data!);
+                                                      return ListView.builder(
+                                                        itemBuilder: (context,
+                                                                i) =>
+                                                            ItemContainer(
+                                                                district:
+                                                                    districts[
+                                                                        i],
+                                                                streetSegments:
+                                                                    streetSegments,
+                                                                areaStreets:
+                                                                    areaStreets,
+                                                                areas: areas,
+                                                                streets:
+                                                                    streets,
+                                                                wards: wards),
+                                                        itemCount:
+                                                            districts.length,
+                                                      );
+                                                    } else {
+                                                      return Expanded(
+                                                          child: Center(
+                                                              child:
+                                                                  CircularProgressIndicator()));
+                                                    }
+                                                  });
+                                            });
+                                      });
+                                });
+                          });
                     }),
               ),
 
