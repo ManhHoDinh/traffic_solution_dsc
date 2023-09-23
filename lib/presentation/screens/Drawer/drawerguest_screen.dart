@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:traffic_solution_dsc/core/constraints/size_config.dart';
 import 'package:traffic_solution_dsc/models/cdm.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/HomeScreen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Authentication/login_screen.dart';
-import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:traffic_solution_dsc/presentation/screens/Direction/chooseLocation.dart';
 
 class DrawerGuestPage extends StatefulWidget {
   const DrawerGuestPage({Key? key}) : super(key: key);
@@ -24,10 +22,7 @@ class _DrawerGuestPageState extends State<DrawerGuestPage> {
     if (currentPage == DrawerSections.map) {
       container = HomeScreen.provider();
     } else if (currentPage == DrawerSections.route) {
-      container = BlocProvider(
-        create: (context) => SearchCubit(),
-        child: SearchScreen(),
-      );
+      container = ChooseLocation();
     }
     SizeConfig().init(context);
     return Scaffold(

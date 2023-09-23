@@ -94,11 +94,10 @@ flutter_native_splash:
   android: true
   ios: true
 
-
 flutter_launcher_icons:
   android: 'launcher_icon'
   ios: true
-  image_path: 'assets/images/bg.png'
+  image_path: 'assets/images/logo.jpg'
   min_sdk_android: 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
