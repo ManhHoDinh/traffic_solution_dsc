@@ -2,7 +2,7 @@ name: traffic_solution_dsc
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0-417.4.beta <4.0.0'
+  sdk: ">=2.15.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -36,11 +36,10 @@ dependencies:
   fl_chart: ^0.63.0
   #maps
   google_maps_flutter: ^2.5.0
-  address_search_field: ^5.0.3
   flutter_polyline_points: ^1.0.0
-  place_picker: ^0.10.0
-  geolocator: ^9.0.2
-  google_places_flutter: ^2.0.6
+  permission_handler: ^8.2.5
+  geolocator: ^7.7.0
+  geocoding: ^2.0.1
   label_marker: ^1.0.1
   google_maps_flutter_android: ^2.5.1
   #mapbox_gl: ^0.16.0
@@ -72,10 +71,6 @@ dependencies:
   provider: ^6.0.5 # for State management
   #intl
   intl: ^0.18.1
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
   retrofit_generator: ^4.2.0
   rename_app: ^1.3.1
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -88,16 +83,21 @@ dev_dependencies:
   json_serializable: ^6.7.1
   flutter_native_splash: ^2.2.14
   flutter_launcher_icons: ^0.13.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 flutter_native_splash:
-  color: '#547AFF'
+  color: "#547AFF"
   image: assets/images/splash.png #u must place logo.png in your assets folder
   android: true
   ios: true
 
 flutter_launcher_icons:
-  android: 'launcher_icon'
+  android: "launcher_icon"
   ios: true
-  image_path: 'assets/images/logo.jpg'
+  image_path: "assets/images/logo.jpg"
   min_sdk_android: 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

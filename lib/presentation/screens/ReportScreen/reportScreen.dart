@@ -521,7 +521,7 @@ class ReportScreenState extends State<ReportScreen> {
   String getTrafficVolume(List<TrafficData> report) {
     double result = 0;
     report.forEach((element) {
-      result += (element.car! + element.moto! + element.other!) ?? 0;
+      result += (element.car??0) + (element.moto??0) + (element.other??0);
     });
     return result.toString();
   }

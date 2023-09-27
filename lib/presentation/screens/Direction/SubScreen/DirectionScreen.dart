@@ -10,7 +10,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traffic_solution_dsc/presentation/screens/Direction/SubScreen/cubit/direction_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationChooseWidget.dart';
-import 'package:place_picker/place_picker.dart';
 
 class DirectionScreen extends StatefulWidget {
   const DirectionScreen({Key? key}) : super(key: key);
