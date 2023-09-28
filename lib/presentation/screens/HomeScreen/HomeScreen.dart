@@ -276,7 +276,7 @@ class MapSampleState extends State<MapSample> {
                                 ));
                               });
 
-                              return GoogleMap(
+                              return Expended(child:GoogleMap(
                                 mapType: MapType.normal,
                                 initialCameraPosition: _kBVNUDorm,
                                 markers: markers,
@@ -426,7 +426,7 @@ class MapSampleState extends State<MapSample> {
                                                 })
                                           });
                                 },
-                              );
+                              ));
                             } else {
                               return Center(child: CircularProgressIndicator());
                             }
