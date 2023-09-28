@@ -243,8 +243,7 @@ class MapSampleState extends State<MapSample> {
                 }
               },
             ),
-            Expanded(
-              child: StreamBuilder<List<Store>>(
+            StreamBuilder<List<Store>>(
                   stream: FireBaseDataBase.readStores(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
@@ -436,7 +435,7 @@ class MapSampleState extends State<MapSample> {
                       return Center(child: CircularProgressIndicator());
                     }
                   }),
-            )
+           
           ],
         ),
       ),
