@@ -202,11 +202,7 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
   }
 
   getStoreMarker(Store e) async {
-    setState(() {
-      if (e.status == false) {
-        print(e.name);
-      }
-      markers.add(Marker(
+    markers.add(Marker(
           markerId: MarkerId(e.id!),
           position: LatLng(e.latitude!, e.longitude!),
           icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
@@ -214,7 +210,6 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
           onTap: () {
             print("Hello");
           }));
-    });
   }
 
   @override

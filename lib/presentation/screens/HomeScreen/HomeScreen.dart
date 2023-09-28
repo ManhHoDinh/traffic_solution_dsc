@@ -170,6 +170,8 @@ class MapSampleState extends State<MapSample> {
   WidgetsFlutterBinding.ensureInitialized();
    
     WidgetsBinding.instance.endOfFrame.then((value) async {
+        getUserCurrentLocation();
+  
       getIcon().whenComplete(() {
         setState(() {});
       });
@@ -276,7 +278,7 @@ class MapSampleState extends State<MapSample> {
                                 ));
                               });
 
-                              return Expended(child:GoogleMap(
+                              return Expanded(child:GoogleMap(
                                 mapType: MapType.normal,
                                 initialCameraPosition: _kBVNUDorm,
                                 markers: markers,
