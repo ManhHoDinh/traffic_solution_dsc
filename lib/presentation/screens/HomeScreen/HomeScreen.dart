@@ -192,8 +192,7 @@ class MapSampleState extends State<MapSample> {
         child: Column(
           children: [
             InkWell(
-              child: Expanded(
-                child: Container(
+              child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -204,7 +203,7 @@ class MapSampleState extends State<MapSample> {
                     'Search here',
                     style: TextStyle(color: Colors.grey, fontSize: 20),
                   ),
-                ),
+                
               ),
               onTap: () async {
                 var result = await Navigator.of(context).push(MaterialPageRoute(
