@@ -203,13 +203,13 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
 
   getStoreMarker(Store e) async {
     markers.add(Marker(
-          markerId: MarkerId(e.id!),
-          position: LatLng(e.latitude!, e.longitude!),
-          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
-          infoWindow: InfoWindow(title: e.name!),
-          onTap: () {
-            print("Hello");
-          }));
+        markerId: MarkerId(e.id!),
+        position: LatLng(e.latitude!, e.longitude!),
+        icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+        infoWindow: InfoWindow(title: e.name!),
+        onTap: () {
+          print("Hello");
+        }));
   }
 
   @override
@@ -346,155 +346,154 @@ class _AddStreetSegmentState extends State<AddStreetSegment> {
                 ],
               ),
             ),
-            Expanded(
-              child: StreamBuilder<List<Store>>(
-                  stream: FireBaseDataBase.readStores(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Something went wrong! ${snapshot.error}'),
-                      );
-                    } else if (snapshot.hasData) {
-                      stores = snapshot.data!;
-                      snapshot.data!.forEach((e) {
-                        getStoreMarker(e);
-                      });
-                      return StreamBuilder<List<StreetSegment>>(
-                          stream: FireBaseDataBase.readStreetSegment(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Center(
-                                child: Text(
-                                    'Something went wrong! ${snapshot.error}'),
-                              );
-                            } else if (snapshot.hasData) {
-                              streetSegments = snapshot.data!;
-                              snapshot.data!.forEach((e) {
-                                if (widget.streetSegment != null) {
-                                  if (e.id == widget.streetSegment!.id) return;
+            StreamBuilder<List<Store>>(
+                stream: FireBaseDataBase.readStores(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Something went wrong! ${snapshot.error}'),
+                    );
+                  } else if (snapshot.hasData) {
+                    stores = snapshot.data!;
+                    snapshot.data!.forEach((e) {
+                      getStoreMarker(e);
+                    });
+                    return StreamBuilder<List<StreetSegment>>(
+                        stream: FireBaseDataBase.readStreetSegment(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                  'Something went wrong! ${snapshot.error}'),
+                            );
+                          } else if (snapshot.hasData) {
+                            streetSegments = snapshot.data!;
+                            snapshot.data!.forEach((e) {
+                              if (widget.streetSegment != null) {
+                                if (e.id == widget.streetSegment!.id) return;
+                              }
+                              _polylines.add(Polyline(
+                                polylineId: PolylineId(e.id.toString()),
+                                points: [
+                                  LatLng(e.StartLat!, e.StartLng!),
+                                  LatLng(e.EndLat!, e.EndLng!)
+                                ],
+                                color: Colors.green,
+                              ));
+                            });
+
+                            return Expanded(
+                                child: GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: _kBVNUDorm,
+                              markers: markers,
+                              onMapCreated: (GoogleMapController controller) {
+                                if (!_controller.isCompleted) {
+                                  //first calling is false
+                                  //call "completer()"
+                                  _controller.complete(controller);
+                                } else {
+                                  //other calling, later is true,
+                                  //don't call again completer()
                                 }
-                                _polylines.add(Polyline(
-                                  polylineId: PolylineId(e.id.toString()),
-                                  points: [
-                                    LatLng(e.StartLat!, e.StartLng!),
-                                    LatLng(e.EndLat!, e.EndLng!)
-                                  ],
-                                  color: Colors.green,
-                                ));
-                              });
-
-                              return GoogleMap(
-                                mapType: MapType.normal,
-                                initialCameraPosition: _kBVNUDorm,
-                                markers: markers,
-                                onMapCreated: (GoogleMapController controller) {
-                                  if (!_controller.isCompleted) {
-                                    //first calling is false
-                                    //call "completer()"
-                                    _controller.complete(controller);
-                                  } else {
-                                    //other calling, later is true,
-                                    //don't call again completer()
+                              },
+                              trafficEnabled: false,
+                              zoomControlsEnabled: true,
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: true,
+                              polylines: _polylines,
+                              onTap: (value) {
+                                Store? store = checkAllStoreNear(value);
+                                storeNameController.text = '';
+                                setState(() {
+                                  _polylines.removeWhere((element) =>
+                                      element.polylineId.value == 'line');
+                                  if (selectPick == SingingCharacter.from) {
+                                    startLatitudeController.text =
+                                        value.latitude.toStringAsFixed(5);
+                                    startLongitudeController.text =
+                                        value.longitude.toStringAsFixed(5);
+                                    startMarker = Marker(
+                                        markerId: MarkerId('start'),
+                                        icon: BitmapDescriptor
+                                            .defaultMarkerWithHue(
+                                                BitmapDescriptor.hueYellow),
+                                        position: value,
+                                        onTap: () {
+                                          print("Hello");
+                                        });
+                                    markers.add(startMarker!);
+                                    startStoreNear = store;
+                                    if (store != null) {
+                                      drawerPolyline();
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(
+                                            'Pick location must near a store!!!'),
+                                        backgroundColor: Colors.red,
+                                      ));
+                                    }
                                   }
-                                },
-                                trafficEnabled: false,
-                                zoomControlsEnabled: true,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: true,
-                                polylines: _polylines,
-                                onTap: (value) {
-                                  Store? store = checkAllStoreNear(value);
-                                  storeNameController.text = '';
-                                  setState(() {
-                                    _polylines.removeWhere((element) =>
-                                        element.polylineId.value == 'line');
-                                    if (selectPick == SingingCharacter.from) {
-                                      startLatitudeController.text =
-                                          value.latitude.toStringAsFixed(5);
-                                      startLongitudeController.text =
-                                          value.longitude.toStringAsFixed(5);
-                                      startMarker = Marker(
-                                          markerId: MarkerId('start'),
-                                          icon: BitmapDescriptor
-                                              .defaultMarkerWithHue(
-                                                  BitmapDescriptor.hueYellow),
-                                          position: value,
-                                          onTap: () {
-                                            print("Hello");
-                                          });
-                                      markers.add(startMarker!);
-                                      startStoreNear = store;
-                                      if (store != null) {
-                                        drawerPolyline();
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Pick location must near a store!!!'),
-                                          backgroundColor: Colors.red,
-                                        ));
-                                      }
+                                  if (selectPick == SingingCharacter.to) {
+                                    endLatitudeController.text =
+                                        value.latitude.toStringAsFixed(5);
+                                    endLongitudeController.text =
+                                        value.longitude.toStringAsFixed(5);
+                                    endMarker = Marker(
+                                        markerId: MarkerId('end'),
+                                        icon: BitmapDescriptor
+                                            .defaultMarkerWithHue(
+                                                BitmapDescriptor.hueYellow),
+                                        position: value,
+                                        onTap: () {
+                                          print("Hello");
+                                        });
+                                    markers.add(endMarker!);
+                                    endStoreNear = store;
+                                    if (store != null) {
+                                      drawerPolyline();
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(
+                                            'Pick location must near a store!!!'),
+                                        backgroundColor: Colors.red,
+                                      ));
                                     }
-                                    if (selectPick == SingingCharacter.to) {
-                                      endLatitudeController.text =
-                                          value.latitude.toStringAsFixed(5);
-                                      endLongitudeController.text =
-                                          value.longitude.toStringAsFixed(5);
-                                      endMarker = Marker(
-                                          markerId: MarkerId('end'),
-                                          icon: BitmapDescriptor
-                                              .defaultMarkerWithHue(
-                                                  BitmapDescriptor.hueYellow),
-                                          position: value,
-                                          onTap: () {
-                                            print("Hello");
-                                          });
-                                      markers.add(endMarker!);
-                                      endStoreNear = store;
-                                      if (store != null) {
-                                        drawerPolyline();
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Pick location must near a store!!!'),
-                                          backgroundColor: Colors.red,
-                                        ));
-                                      }
-                                    }
+                                  }
 
-                                    // latitudeController.text =
-                                    //     value.latitude.toStringAsFixed(3);
-                                    // longitudeController.text =
-                                    //     value.longitude.toStringAsFixed(3);
-                                    // _pickMarker = Marker(
-                                    //     markerId: MarkerId('start'),
-                                    //     icon: selectedStoreIcon,
-                                    //     position: value,
-                                    //     onTap: () {
-                                    //       print("Hello");
-                                    //     });
-                                    // markers.add(_pickMarker!);
-                                    // context
-                                    //     .read<HomeCubit>()
-                                    //     .getPlaceNear(value)
-                                    //     .then((result) {
-                                    //   addressController.text = result.locationSelected!
-                                    //           .results!.first.address ??
-                                    //       '';
-                                    // });
-                                  });
-                                },
-                              );
-                            } else {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                          });
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
-            )
+                                  // latitudeController.text =
+                                  //     value.latitude.toStringAsFixed(3);
+                                  // longitudeController.text =
+                                  //     value.longitude.toStringAsFixed(3);
+                                  // _pickMarker = Marker(
+                                  //     markerId: MarkerId('start'),
+                                  //     icon: selectedStoreIcon,
+                                  //     position: value,
+                                  //     onTap: () {
+                                  //       print("Hello");
+                                  //     });
+                                  // markers.add(_pickMarker!);
+                                  // context
+                                  //     .read<HomeCubit>()
+                                  //     .getPlaceNear(value)
+                                  //     .then((result) {
+                                  //   addressController.text = result.locationSelected!
+                                  //           .results!.first.address ??
+                                  //       '';
+                                  // });
+                                });
+                              },
+                            ));
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        });
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
           ],
         ),
       ),

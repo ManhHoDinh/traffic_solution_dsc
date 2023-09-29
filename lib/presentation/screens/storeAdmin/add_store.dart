@@ -16,7 +16,6 @@ import 'package:traffic_solution_dsc/core/models/streetSegment/streetSegment.dar
 import 'package:traffic_solution_dsc/core/networks/firebase_request.dart';
 import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_cubit.dart';
 
-
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:traffic_solution_dsc/presentation/widgets/locationText_widget.dart';
@@ -86,27 +85,29 @@ class _AddStoreState extends State<AddStore> {
     WidgetsBinding.instance.endOfFrame.then((value) async {
       getUserCurrentLocation();
       getIcon().whenComplete(() {
-      if (widget.store != null) {
-        latitudeController.text = widget.store!.latitude!.toStringAsFixed(7);
-        longitudeController.text = widget.store!.longitude!.toStringAsFixed(6);
-        moveCamera(CameraPosition(
-            target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
-            zoom: 18));
-        addressController.text = widget.store!.address ?? '';
-        nameController.text = widget.store!.name ?? '';
-        _pickMarker = Marker(
-            markerId: MarkerId('start'),
-            position: LatLng(widget.store!.latitude!, widget.store!.longitude!),
-            icon: selectedStoreIcon,
-            onTap: () {
-              print("Hello");
-            });
-        setState(() {
-          markers.add(_pickMarker!);
-        });
-      }
-      setState(() {});
-    });
+        if (widget.store != null) {
+          latitudeController.text = widget.store!.latitude!.toStringAsFixed(7);
+          longitudeController.text =
+              widget.store!.longitude!.toStringAsFixed(6);
+          moveCamera(CameraPosition(
+              target: LatLng(widget.store!.latitude!, widget.store!.longitude!),
+              zoom: 18));
+          addressController.text = widget.store!.address ?? '';
+          nameController.text = widget.store!.name ?? '';
+          _pickMarker = Marker(
+              markerId: MarkerId('start'),
+              position:
+                  LatLng(widget.store!.latitude!, widget.store!.longitude!),
+              icon: selectedStoreIcon,
+              onTap: () {
+                print("Hello");
+              });
+          setState(() {
+            markers.add(_pickMarker!);
+          });
+        }
+        setState(() {});
+      });
 
       // context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -166,15 +167,13 @@ class _AddStoreState extends State<AddStore> {
     if (widget.store != null) {
       if (widget.store!.id == e.id) return;
     }
-    setState(() {
-      markers.add(Marker(
-          markerId: MarkerId(e.id!),
-          position: LatLng(e.latitude!, e.longitude!),
-          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
-          onTap: () {
-            print("Hello");
-          }));
-    });
+    markers.add(Marker(
+        markerId: MarkerId(e.id!),
+        position: LatLng(e.latitude!, e.longitude!),
+        icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+        onTap: () {
+          print("Hello");
+        }));
   }
 
   void refreshScreen(double inputLat, double inputLong) async {

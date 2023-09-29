@@ -329,13 +329,8 @@ class ReportScreenState extends State<ReportScreen> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedEndDate) {
       setState(() {
-        selectedEndDate = DateTime(
-          picked.year,
-          picked.month,
-          picked.day,
-          23,
-          59
-        );
+        selectedEndDate =
+            DateTime(picked.year, picked.month, picked.day, 23, 59);
         if (selectedStartDate.isAfter(selectedEndDate)) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Start Day must is after End Day'),
@@ -499,15 +494,15 @@ class ReportScreenState extends State<ReportScreen> {
         car: getCarsVolume(report5),
         others: getOthersVolume(report5)));
     List<TrafficData> report6 = report
-        .where((element) => element.time.hour >= 16 && element.time.hour < 20)
+        .where((element) => element.time.hour >= 20 && element.time.hour <= 23)
         .toList();
 
     result.add(TrafficDataTableData(
         timeOfDay: '20 - 24',
-        moto: getMotoBikesVolume(report5),
-        ratio: getRatio(report5, totalTraffic),
-        car: getCarsVolume(report5),
-        others: getOthersVolume(report5)));
+        moto: getMotoBikesVolume(report6),
+        ratio: getRatio(report6, totalTraffic),
+        car: getCarsVolume(report6),
+        others: getOthersVolume(report6)));
 
     return result;
   }
@@ -521,7 +516,7 @@ class ReportScreenState extends State<ReportScreen> {
   String getTrafficVolume(List<TrafficData> report) {
     double result = 0;
     report.forEach((element) {
-      result += (element.car??0) + (element.moto??0) + (element.other??0);
+      result += (element.car ?? 0) + (element.moto ?? 0) + (element.other ?? 0);
     });
     return result.toString();
   }
