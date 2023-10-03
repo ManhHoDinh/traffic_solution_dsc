@@ -22,6 +22,6 @@ List<Page> onGenerateAppViewPages(
     case AppStatus.authenticated:
       return [DrawerAdminPage.page()];
     case AppStatus.unauthenticated:
-      return [DrawerAdminPage.page()];
+      return [DrawerGuestPage.page()];
   }
 }

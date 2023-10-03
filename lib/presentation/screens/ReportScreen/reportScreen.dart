@@ -269,24 +269,24 @@ class ReportScreenState extends State<ReportScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final random = Random();
-            final time = random.nextInt(20);
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () async {
+      //       final random = Random();
+      //       final time = random.nextInt(20);
 
-            final reportDoc =
-                FirebaseFirestore.instance.collection('TrafficData').doc();
-            TrafficData report = TrafficData(
-                trafficDataId: reportDoc.id,
-                time: getRandomDateTime(startHour: time, endHour: time + 4),
-                streetSegmentId: widget.segmentId,
-                car: getAutoTrafficVolume(),
-                moto: getAutoTrafficVolume(),
-                other: getAutoTrafficVolume());
-            final json = report.toJson();
-            await reportDoc.set(json);
-          },
-          child: Center(child: Text('Fake'))),
+      //       final reportDoc =
+      //           FirebaseFirestore.instance.collection('TrafficData').doc();
+      //       TrafficData report = TrafficData(
+      //           trafficDataId: reportDoc.id,
+      //           time: getRandomDateTime(startHour: time, endHour: time + 4),
+      //           streetSegmentId: widget.segmentId,
+      //           car: getAutoTrafficVolume(),
+      //           moto: getAutoTrafficVolume(),
+      //           other: getAutoTrafficVolume());
+      //       final json = report.toJson();
+      //       await reportDoc.set(json);
+      //     },
+      //     child: Center(child: Text('Fake'))),
     );
   }
 
@@ -455,7 +455,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '8 - 12',
+      timeOfDay: '4 - 8',
       moto: getMotoBikesVolume(report2),
       ratio: getRatio(report2, totalTraffic),
       car: getCarsVolume(report2),
@@ -466,7 +466,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '12 - 16',
+      timeOfDay: '8 - 12',
       moto: getMotoBikesVolume(report3),
       ratio: getRatio(report3, totalTraffic),
       car: getCarsVolume(report3),

@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCL_Kn3lVo4ebBk9RdObFCAxUUEqvkswVs',
+    apiKey: 'AIzaSyBVFGtHueDHqQ0siCL4qMlmOwpUFkZutUk',
     appId: '1:844473077697:android:93fb2d9b759260d1416940',
     messagingSenderId: '844473077697',
     projectId: 'trafficsolution-395806',

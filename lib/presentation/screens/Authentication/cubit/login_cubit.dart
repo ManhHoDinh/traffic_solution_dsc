@@ -132,6 +132,8 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.password,
       );
       emit(state.copyWith(status: LoginStatus.success));
-    } catch (_) {}
+    } catch (_) {
+      emit(state.copyWith(emailError: 'Email or Password is incorrect',passwordError: 'Email or Password is incorrect'));
+    }
   }
 }
