@@ -217,12 +217,12 @@ class MapSampleState extends State<MapSample> {
                     LatLng latLng = LatLng(
                         location.center!.elementAt(1), location.center!.first);
 
-                    markers.addLabelMarker(LabelMarker(
+                    setState((){markers.addLabelMarker(LabelMarker(
                         label: location.text!,
                         markerId: MarkerId(location.text!),
                         position: latLng,
                         backgroundColor: Colors.green,
-                        icon: BitmapDescriptor.defaultMarker));
+                        icon: BitmapDescriptor.defaultMarker));});
                     // if (location.bbox != null) {
                     //   List<LatLng> coordinates = [
                     //     LatLng(location.bbox![1], result.bbox![0]),
