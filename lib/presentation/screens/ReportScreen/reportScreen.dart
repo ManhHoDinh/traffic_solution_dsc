@@ -455,7 +455,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '8 - 12',
+      timeOfDay: '4 - 8',
       moto: getMotoBikesVolume(report2),
       ratio: getRatio(report2, totalTraffic),
       car: getCarsVolume(report2),
@@ -466,7 +466,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '12 - 16',
+      timeOfDay: '8 - 12',
       moto: getMotoBikesVolume(report3),
       ratio: getRatio(report3, totalTraffic),
       car: getCarsVolume(report3),
