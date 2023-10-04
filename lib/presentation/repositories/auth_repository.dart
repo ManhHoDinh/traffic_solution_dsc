@@ -69,23 +69,20 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      // After successful login, fetch user data from Firestore
-      final firebaseUser = _firebaseAuth.currentUser;
-      final userDoc =
-          await _firestore.collection('user').doc(firebaseUser?.uid).get();
+    // After successful login, fetch user data from Firestore
+    final firebaseUser = _firebaseAuth.currentUser;
+    final userDoc =
+        await _firestore.collection('user').doc(firebaseUser?.uid).get();
 
-      if (userDoc.exists) {
-        // Create a User object from Firestore data and update currentUser
-        currentUser =
-            User.fromFirestore(userDoc.data() as Map<String, dynamic>);
-      }
-    } catch (_) {}
+    if (userDoc.exists) {
+      // Create a User object from Firestore data and update currentUser
+      currentUser = User.fromFirestore(userDoc.data() as Map<String, dynamic>);
+    }
   }
 
   Future<void> logOut() async {

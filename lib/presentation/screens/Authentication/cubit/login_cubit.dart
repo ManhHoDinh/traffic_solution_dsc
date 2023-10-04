@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../repositories/repositories.dart';
@@ -123,15 +124,23 @@ class LoginCubit extends Cubit<LoginState> {
 //   }
 // }
 
-  Future<void> logInWithCredentials() async {
-    if (state.status == LoginStatus.submitting) return;
+  Future<int> logInWithCredentials() async {
+    if (state.status == LoginStatus.submitting) return 0;
     emit(state.copyWith(status: LoginStatus.submitting));
     try {
       await _authRepository.logInWithEmailAndPassword(
         email: state.email,
         password: state.password,
       );
+      print("correct");
       emit(state.copyWith(status: LoginStatus.success));
-    } catch (_) {}
+      return 1;
+    } catch (_) {
+      print("incorrect");
+      emit(state.copyWith(
+          emailError: 'Email or Password is incorrect',
+          passwordError: 'Email or Password is incorrect',status: LoginStatus.initial));
+      return 0;
+    }
   }
 }

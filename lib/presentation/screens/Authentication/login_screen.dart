@@ -257,35 +257,42 @@ class _LoginButton extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            backgroundColor: AppColors.primary,
-            minimumSize:
-                Size(double.infinity, getProportionateScreenHeight(56)),
-          ),
-          onPressed: () {
-            context.read<LoginCubit>().logInWithCredentials();
-            Navigator.pop(context);
-          },
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                "Login",
-                style: TextStyle(
-                  fontSize: getProportionateScreenWidth(18),
-                  color: Colors.white,
+        return Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
+                backgroundColor: AppColors.primary,
+                minimumSize:
+                    Size(double.infinity, getProportionateScreenHeight(56)),
               ),
-              if (state.status == LoginStatus.submitting)
-                CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-            ],
-          ),
+              onPressed: () {
+                context
+                    .read<LoginCubit>()
+                    .logInWithCredentials()
+                    ;
+                    Navigator.of(context).pop();
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: getProportionateScreenWidth(18),
+                      color: Colors.white,
+                    ),
+                  ),
+                  if (state.status == LoginStatus.submitting)
+                    CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                ],
+              ),
+            )
+          ],
         );
       },
     );

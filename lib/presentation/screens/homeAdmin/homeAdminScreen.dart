@@ -473,7 +473,6 @@ class OverviewContainer extends StatelessWidget {
       flex: 1,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-        height: 70,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,

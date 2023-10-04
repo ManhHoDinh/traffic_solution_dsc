@@ -269,24 +269,24 @@ class ReportScreenState extends State<ReportScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final random = Random();
-            final time = random.nextInt(20);
+      // floatingActionButton: FloatingActionButton(
+      //     onPressed: () async {
+      //       final random = Random();
+      //       final time = random.nextInt(20);
 
-            final reportDoc =
-                FirebaseFirestore.instance.collection('TrafficData').doc();
-            TrafficData report = TrafficData(
-                trafficDataId: reportDoc.id,
-                time: getRandomDateTime(startHour: time, endHour: time + 4),
-                streetSegmentId: widget.segmentId,
-                car: getAutoTrafficVolume(),
-                moto: getAutoTrafficVolume(),
-                other: getAutoTrafficVolume());
-            final json = report.toJson();
-            await reportDoc.set(json);
-          },
-          child: Center(child: Text('Fake'))),
+      //       final reportDoc =
+      //           FirebaseFirestore.instance.collection('TrafficData').doc();
+      //       TrafficData report = TrafficData(
+      //           trafficDataId: reportDoc.id,
+      //           time: getRandomDateTime(startHour: time, endHour: time + 4),
+      //           streetSegmentId: widget.segmentId,
+      //           car: getAutoTrafficVolume(),
+      //           moto: getAutoTrafficVolume(),
+      //           other: getAutoTrafficVolume());
+      //       final json = report.toJson();
+      //       await reportDoc.set(json);
+      //     },
+      //     child: Center(child: Text('Fake'))),
     );
   }
 
@@ -329,13 +329,8 @@ class ReportScreenState extends State<ReportScreen> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedEndDate) {
       setState(() {
-        selectedEndDate = DateTime(
-          picked.year,
-          picked.month,
-          picked.day,
-          23,
-          59
-        );
+        selectedEndDate =
+            DateTime(picked.year, picked.month, picked.day, 23, 59);
         if (selectedStartDate.isAfter(selectedEndDate)) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Start Day must is after End Day'),
@@ -460,7 +455,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '8 - 12',
+      timeOfDay: '4 - 8',
       moto: getMotoBikesVolume(report2),
       ratio: getRatio(report2, totalTraffic),
       car: getCarsVolume(report2),
@@ -471,7 +466,7 @@ class ReportScreenState extends State<ReportScreen> {
         .toList();
 
     result.add(TrafficDataTableData(
-      timeOfDay: '12 - 16',
+      timeOfDay: '8 - 12',
       moto: getMotoBikesVolume(report3),
       ratio: getRatio(report3, totalTraffic),
       car: getCarsVolume(report3),
@@ -499,15 +494,15 @@ class ReportScreenState extends State<ReportScreen> {
         car: getCarsVolume(report5),
         others: getOthersVolume(report5)));
     List<TrafficData> report6 = report
-        .where((element) => element.time.hour >= 16 && element.time.hour < 20)
+        .where((element) => element.time.hour >= 20 && element.time.hour <= 23)
         .toList();
 
     result.add(TrafficDataTableData(
         timeOfDay: '20 - 24',
-        moto: getMotoBikesVolume(report5),
-        ratio: getRatio(report5, totalTraffic),
-        car: getCarsVolume(report5),
-        others: getOthersVolume(report5)));
+        moto: getMotoBikesVolume(report6),
+        ratio: getRatio(report6, totalTraffic),
+        car: getCarsVolume(report6),
+        others: getOthersVolume(report6)));
 
     return result;
   }
@@ -521,7 +516,7 @@ class ReportScreenState extends State<ReportScreen> {
   String getTrafficVolume(List<TrafficData> report) {
     double result = 0;
     report.forEach((element) {
-      result += (element.car! + element.moto! + element.other!) ?? 0;
+      result += (element.car ?? 0) + (element.moto ?? 0) + (element.other ?? 0);
     });
     return result.toString();
   }

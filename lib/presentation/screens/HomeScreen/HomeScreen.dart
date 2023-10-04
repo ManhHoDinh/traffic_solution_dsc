@@ -26,7 +26,6 @@ import 'package:traffic_solution_dsc/presentation/screens/HomeScreen/cubit/home_
 import 'package:traffic_solution_dsc/presentation/screens/ReportScreen/reportScreen.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/cubit/search_cubit.dart';
 import 'package:traffic_solution_dsc/presentation/screens/searchScreen/searchSreen.dart';
-import 'package:place_picker/place_picker.dart';
 
 import 'package:label_marker/label_marker.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -117,15 +116,13 @@ class MapSampleState extends State<MapSample> {
   }
 
   getStoreMarker(Store e) async {
-    setState(() {
-      markers.add(Marker(
-          markerId: MarkerId(e.id!),
-          position: LatLng(e.latitude!, e.longitude!),
-          icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
-          onTap: () {
-            print("Hello");
-          }));
-    });
+    markers.add(Marker(
+        markerId: MarkerId(e.id!),
+        position: LatLng(e.latitude!, e.longitude!),
+        icon: (e.status ?? true) ? enableStoreIcon : disableStoreIcon,
+        onTap: () {
+          print("Hello");
+        }));
   }
 
 // created method for getting user current location
@@ -147,8 +144,7 @@ class MapSampleState extends State<MapSample> {
   Future<void> moveCamera(CameraPosition camera) async {
     try {
       final GoogleMapController controller = await _controller.future;
-       controller.moveCamera(CameraUpdate.newCameraPosition(camera));
-      
+      controller.moveCamera(CameraUpdate.newCameraPosition(camera));
     } catch (e) {}
   }
 
@@ -170,11 +166,14 @@ class MapSampleState extends State<MapSample> {
     // TODO: implement initState
     super.initState();
     getUserCurrentLocation();
+    WidgetsFlutterBinding.ensureInitialized();
 
     WidgetsBinding.instance.endOfFrame.then((value) async {
-      getIcon().whenComplete(() {setState(() {
-        
-      });});
+      getUserCurrentLocation();
+
+      getIcon().whenComplete(() {
+        setState(() {});
+      });
       getUserCurrentLocation();
       context.read<HomeCubit>().getCameraPostion(_pVNUDorm);
       final GoogleMapsFlutterPlatform mapsImplementation =
@@ -194,18 +193,16 @@ class MapSampleState extends State<MapSample> {
         child: Column(
           children: [
             InkWell(
-              child: Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  width: double.infinity,
-                  child: Text(
-                    'Search here',
-                    style: TextStyle(color: Colors.grey, fontSize: 20),
-                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                width: double.infinity,
+                child: Text(
+                  'Search here',
+                  style: TextStyle(color: Colors.grey, fontSize: 20),
                 ),
               ),
               onTap: () async {
@@ -220,230 +217,220 @@ class MapSampleState extends State<MapSample> {
                     LatLng latLng = LatLng(
                         location.center!.elementAt(1), location.center!.first);
 
-                    markers.addLabelMarker(LabelMarker(
+                    setState((){markers.addLabelMarker(LabelMarker(
                         label: location.text!,
                         markerId: MarkerId(location.text!),
                         position: latLng,
                         backgroundColor: Colors.green,
-                        icon: BitmapDescriptor.defaultMarker));
-                      // if (location.bbox != null) {
-                      //   List<LatLng> coordinates = [
-                      //     LatLng(location.bbox![1], result.bbox![0]),
-                      //     LatLng(location.bbox![3], result.bbox![2]),
-                      //   ];
+                        icon: BitmapDescriptor.defaultMarker));});
+                    // if (location.bbox != null) {
+                    //   List<LatLng> coordinates = [
+                    //     LatLng(location.bbox![1], result.bbox![0]),
+                    //     LatLng(location.bbox![3], result.bbox![2]),
+                    //   ];
 
-                      //   double zoomLevel = calculateZoomLevel(coordinates);
-                      //   print(zoomLevel);
-                      //   context.read<HomeCubit>().getCameraPostion(latLng);
-                      //   moveCamera(
-                      //       CameraPosition(target: latLng, zoom: zoomLevel));
-                      // } else {
+                    //   double zoomLevel = calculateZoomLevel(coordinates);
+                    //   print(zoomLevel);
+                    //   context.read<HomeCubit>().getCameraPostion(latLng);
+                    //   moveCamera(
+                    //       CameraPosition(target: latLng, zoom: zoomLevel));
+                    // } else {
                     moveCamera(CameraPosition(target: latLng, zoom: 13));
-                     //  }
+                    //  }
                   }
                 } catch (e) {
                   print(e.toString());
                 }
               },
             ),
-            Expanded(
-              child: StreamBuilder<List<Store>>(
-                  stream: FireBaseDataBase.readStores(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Something went wrong! ${snapshot.error}'),
-                      );
-                    } else if (snapshot.hasData) {
-                      snapshot.data!.forEach((e) {
-                        getStoreMarker(e);
-                      });
+            StreamBuilder<List<Store>>(
+                stream: FireBaseDataBase.readStores(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Something went wrong! ${snapshot.error}'),
+                    );
+                  } else if (snapshot.hasData) {
+                    snapshot.data!.forEach((e) {
+                      getStoreMarker(e);
+                    });
 
-                      return StreamBuilder<List<StreetSegment>>(
-                          stream: FireBaseDataBase.readStreetSegment(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Center(
-                                child: Text(
-                                    'Something went wrong! ${snapshot.error}'),
-                              );
-                            } else if (snapshot.hasData) {
-                              streetSegments = snapshot.data!;
-                              snapshot.data!.forEach((e) {
-                                _polylines.add(Polyline(
-                                  polylineId: PolylineId(e.id.toString()),
-                                  points: [
-                                    LatLng(e.StartLat!, e.StartLng!),
-                                    LatLng(e.EndLat!, e.EndLng!)
-                                  ],
-                                  color: Colors.green,
-                                ));
-                              });
+                    return StreamBuilder<List<StreetSegment>>(
+                        stream: FireBaseDataBase.readStreetSegment(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                  'Something went wrong! ${snapshot.error}'),
+                            );
+                          } else if (snapshot.hasData) {
+                            streetSegments = snapshot.data!;
+                            snapshot.data!.forEach((e) {
+                              _polylines.add(Polyline(
+                                polylineId: PolylineId(e.id.toString()),
+                                points: [
+                                  LatLng(e.StartLat!, e.StartLng!),
+                                  LatLng(e.EndLat!, e.EndLng!)
+                                ],
+                                color: Colors.green,
+                              ));
+                            });
 
-                              return GoogleMap(
-                                mapType: MapType.normal,
-                                initialCameraPosition: _kBVNUDorm,
-                                markers: markers,
-                                onMapCreated: (GoogleMapController controller) {
-                                  if (!_controller.isCompleted) {
-                                    //first calling is false
-                                    //call "completer()"
-                                    _controller.complete(controller);
-                                  } else {
-                                    //other calling, later is true,
-                                    //don't call again completer()
-                                  }
-                                },
-                                trafficEnabled: false,
-                                zoomControlsEnabled: true,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: true,
-                                polylines: _polylines,
-                                onTap: (value) {
-                                  setState(() {
-                                    String? streetId =
-                                        checkAllStreetSegment(value);
-                                    context
-                                        .read<HomeCubit>()
-                                        .getPlaceNear(value)
-                                        .then((value) => {
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    if (value.status ==
-                                                        StatusType.loaded) {
-                                                      return InkWell(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (_) =>
-                                                                      ReportScreen(
-                                                                        place: value
-                                                                            .locationSelected,
-                                                                        segmentId:
-                                                                            streetId,
-                                                                      )));
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Container(
-                                                                height: 150,
-                                                                width: double
-                                                                    .infinity,
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            20),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      height:
-                                                                          15,
-                                                                    ),
-                                                                    Text(
-                                                                      toBeginningOfSentenceCase(value
-                                                                              .locationSelected!
-                                                                              .results!
-                                                                              .first
-                                                                              .name) ??
-                                                                          '',
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              20),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height:
-                                                                          15,
-                                                                    ),
-                                                                    Text(toBeginningOfSentenceCase(value
-                                                                            .locationSelected!
-                                                                            .results!
-                                                                            .first
-                                                                            .address) ??
-                                                                        '')
-                                                                  ],
+                            return Expanded(
+                                child: GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: _kBVNUDorm,
+                              markers: markers,
+                              onMapCreated: (GoogleMapController controller) {
+                                if (!_controller.isCompleted) {
+                                  //first calling is false
+                                  //call "completer()"
+                                  _controller.complete(controller);
+                                } else {
+                                  //other calling, later is true,
+                                  //don't call again completer()
+                                }
+                              },
+                              trafficEnabled: false,
+                              zoomControlsEnabled: true,
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: true,
+                              polylines: _polylines,
+                              onTap: (value) {
+                                String? streetId = checkAllStreetSegment(value);
+                                context
+                                    .read<HomeCubit>()
+                                    .getPlaceNear(value)
+                                    .then((value) => {
+                                          showModalBottomSheet(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                if (value.status ==
+                                                    StatusType.loaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  ReportScreen(
+                                                                    place: value
+                                                                        .locationSelected,
+                                                                    segmentId:
+                                                                        streetId,
+                                                                  )));
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            height: 150,
+                                                            width:
+                                                                double.infinity,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        20),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  height: 15,
                                                                 ),
-                                                              ),
+                                                                Text(
+                                                                  toBeginningOfSentenceCase(value
+                                                                          .locationSelected!
+                                                                          .results!
+                                                                          .first
+                                                                          .name) ??
+                                                                      '',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          20),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 15,
+                                                                ),
+                                                                Text(toBeginningOfSentenceCase(value
+                                                                        .locationSelected!
+                                                                        .results!
+                                                                        .first
+                                                                        .address) ??
+                                                                    '')
+                                                              ],
                                                             ),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                destinationText = toBeginningOfSentenceCase(value
+                                                          ),
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            destinationText =
+                                                                toBeginningOfSentenceCase(value
                                                                         .locationSelected!
                                                                         .results!
                                                                         .first
                                                                         .name) ??
                                                                     '';
-                                                                Location?
-                                                                    location =
-                                                                    value
-                                                                        .locationSelected!
-                                                                        .results!
-                                                                        .first
-                                                                        .location;
-                                                                destination = LatLng(
-                                                                    location!
-                                                                            .lat ??
-                                                                        0,
-                                                                    location.lng ??
-                                                                        0);
+                                                            Location? location =
+                                                                value
+                                                                    .locationSelected!
+                                                                    .results!
+                                                                    .first
+                                                                    .location;
+                                                            destination = LatLng(
+                                                                location!.lat ??
+                                                                    0,
+                                                                location.lng ??
+                                                                    0);
 
-                                                                print(source);
-                                                                print(
-                                                                    destination);
+                                                            print(source);
+                                                            print(destination);
 
-                                                                if (checkCanRoute())
-                                                                  Navigator.of(context).push(MaterialPageRoute(
-                                                                      builder: (_) => DirectionScreen.providers(
-                                                                          sourceText,
-                                                                          source,
-                                                                          destinationText,
-                                                                          destination)));
-                                                                else
-                                                                  print(
-                                                                      "error");
-                                                              },
-                                                              child: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            20),
-                                                                child: Icon(
-                                                                    FontAwesomeIcons
-                                                                        .locationArrow),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                            if (checkCanRoute())
+                                                              Navigator.of(context).push(MaterialPageRoute(
+                                                                  builder: (_) => DirectionScreen.providers(
+                                                                      sourceText,
+                                                                      source,
+                                                                      destinationText,
+                                                                      destination)));
+                                                            else
+                                                              print("error");
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    20),
+                                                            child: Icon(
+                                                                FontAwesomeIcons
+                                                                    .locationArrow),
+                                                          ),
                                                         ),
-                                                      );
-                                                    }
-                                                    return Container(
-                                                      height: 150,
-                                                      width: double.infinity,
-                                                    );
-                                                  })
-                                            });
-                                  });
-                                },
-                              );
-                            } else {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                          });
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
-            )
+                                                      ],
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  height: 150,
+                                                  width: double.infinity,
+                                                );
+                                              })
+                                        });
+                              },
+                            ));
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        });
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
           ],
         ),
       ),
