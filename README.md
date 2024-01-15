@@ -25,7 +25,8 @@ The app allows users to monitor and manage traffic flow efficiently. Features in
 
 ### Yolo v8 - Deepsort - Tracking traffic
 
-[AI Demo repo)](https://github.com/NguyenMinhMY/traffic_tracking_yolov8)
+DSC - Traffic Tracking Yolov8
+[AI Demo repo](https://github.com/NguyenMinhMY/traffic_tracking_yolov8)
 
 ## Overview
 
